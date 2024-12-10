@@ -49,5 +49,5 @@ def loop1():
     return render_template("loop1.html")
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
 
