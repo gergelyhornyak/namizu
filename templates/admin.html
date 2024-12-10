@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Admin Page</h1>
+<form method="post">
+    <label for="apple_new">Apple new Value:</label>
+    <input type="number" step="0.01" name="apple_new" value="{{ page_values['apple'] }}"><br>
+    <label for="banana_new">Banana new Value:</label>
+    <input type="number" step="0.01" name="banana_new" value="{{ page_values['banana'] }}"><br>
+    <label for="coconut_new">Coconut new Value:</label>
+    <input type="number" step="0.01" name="coconut_new" value="{{ page_values['coconut'] }}"><br>
+    <label for="dates_new">Dates new Value:</label>
+    <input type="number" step="0.01" name="dates_new" value="{{ page_values['dates'] }}"><br>
+    <button type="submit">Submit</button>
+</form>
+{% endblock %}

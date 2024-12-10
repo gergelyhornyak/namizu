@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask Website</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <meta http-equiv="refresh" content="10">
+</head>
+<body>
+    <nav>
+        <a href="{{ url_for('apple') }}">Apple 🍎</a>
+        &nbsp;&nbsp;&nbsp;
+        <a href="{{ url_for('banana') }}">Banana 🍌</a>
+        &nbsp;&nbsp;&nbsp;
+        <a href="{{ url_for('coconut') }}">Coconut 🥥</a>
+        &nbsp;&nbsp;&nbsp;
+        <a href="{{ url_for('dates') }}">Dates 🫘</a>
+    </nav>
+    <div>
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
