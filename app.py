@@ -48,6 +48,10 @@ def maze():
 def loop1():
     return render_template("loop1.html")
 
+@app.route("/loop2")
+def loop2():
+    return render_template("loop2.html")
+
 if __name__ == '__main__':
     app.run(debug=False)
 
