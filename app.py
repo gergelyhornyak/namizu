@@ -52,6 +52,10 @@ def loop1():
 def loop2():
     return render_template("loop2.html")
 
+@app.route("/loop3")
+def loop3():
+    return render_template("loop3.html")
+
 if __name__ == '__main__':
     app.run(debug=False)
 
