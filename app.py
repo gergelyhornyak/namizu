@@ -14,6 +14,10 @@ page_values = {
 def home():
     return render_template('home.html')
 
+@app.route('/readme')
+def readme():
+    return render_template('readme')
+
 @app.route('/apple')
 def apple():
     return render_template('apple.html', value=page_values["apple"])
