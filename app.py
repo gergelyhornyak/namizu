@@ -48,6 +48,10 @@ def admin():
 def maze():
     return render_template("minigame.html")
 
+@app.route("/game")
+def game():
+    return render_template("game01.html")
+
 @app.route("/loop1")
 def loop1():
     return render_template("loop1.html")
