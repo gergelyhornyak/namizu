@@ -37,10 +37,10 @@ def dates():
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
     if request.method == 'POST':
-        page_values["apple"] = float(request.form['apple_new'])
-        page_values["banana"] = float(request.form['banana_new'])
-        page_values["coconut"] = float(request.form['coconut_new'])
-        page_values["dates"] = float(request.form['dates_new'])
+        page_values["apple"] = int(request.form['apple_new'])
+        page_values["banana"] = int(request.form['banana_new'])
+        page_values["coconut"] = int(request.form['coconut_new'])
+        page_values["dates"] = int(request.form['dates_new'])
         return redirect(url_for('admin'))
     return render_template('admin.html', page_values=page_values)
 
