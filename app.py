@@ -48,7 +48,15 @@ def admin():
 def maze():
     return render_template("minigame.html")
 
-@app.route("/game")
+@app.route("/wof")
+def wof():
+    return render_template("wheel_of_fortune.html")
+
+@app.route("/wofreal")
+def wof_real():
+    return render_template("wheel_of_fortune_real.html")
+
+@app.route("/vetelkedo")
 def game():
     return render_template("game01.html")
 
