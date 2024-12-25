@@ -14,6 +14,10 @@ page_values = {
 def home():
     return render_template('home.html')
 
+@app.route('/gc')
+def gchome():
+    return render_template('gchome.html')
+
 @app.route('/readme')
 def readme():
     return render_template('readme')
@@ -44,35 +48,35 @@ def admin():
         return redirect(url_for('admin'))
     return render_template('admin.html', page_values=page_values)
 
-@app.route("/maze")
+@app.route("/gc/maze")
 def maze():
     return render_template("minigame.html")
 
-@app.route("/wof")
+@app.route("/gc/wof")
 def wof():
     return render_template("wheel_of_fortune.html")
 
-@app.route("/wofreal")
+@app.route("/gc/wofreal")
 def wof_real():
     return render_template("wheel_of_fortune_real.html")
 
-@app.route("/vetelkedo")
+@app.route("/gc/quiz")
 def game():
     return render_template("game01.html")
 
-@app.route("/loop1")
+@app.route("/gc/loop1")
 def loop1():
     return render_template("loop1.html")
 
-@app.route("/loop2")
+@app.route("/gc/loop2")
 def loop2():
     return render_template("loop2.html")
 
-@app.route("/loop3")
+@app.route("/gc/loop3")
 def loop3():
     return render_template("loop3.html")
 
-@app.route("/loop4")
+@app.route("/gc/loop4")
 def loop4():
     return render_template("loop4.html")
 
