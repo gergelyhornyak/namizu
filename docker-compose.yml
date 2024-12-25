@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  flask-app:
+    build:
+      context: ./flask-app
+      dockerfile: Dockerfile  # Replace with your Flask app Dockerfile name
+    container_name: flask-app
+    networks:
+      - web-app-network
+    #ports:
+    #  - "8080:5000"
+    expose:
+      - "5000"  # Expose Flask app's internal port
+    restart: always
+
+  apache-proxy:
+    build:
+      context: ./apache-proxy  # Replace with the folder containing Apache Dockerfile
+      dockerfile: Dockerfile    # Replace with your Apache Dockerfile name
+    container_name: apache-proxy
+    ports:
+      - "8080:80"  # Map host port 80 to container port 80
+    networks:
+      - web-app-network
+    depends_on:
+      - flask-app  # Ensures Flask app starts first
+    restart: always
+
+networks:
+  web-app-network:
+    driver: bridge
