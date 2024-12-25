@@ -8,7 +8,7 @@
 
 .score-display {
     font-family: 'Courier New', Courier, monospace; /* Digital scoreboard font */
-    font-size: 4rem; /* Large text size */
+    font-size: 10rem; /* Large text size */
     background-color: #333; /* Dark background to mimic a scoreboard */
     color: #0f0; /* Bright green color to resemble LED text */
     padding: 20px 40px; /* Space around the text */

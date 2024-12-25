@@ -22,23 +22,23 @@ def gchome():
 def readme():
     return render_template('readme')
 
-@app.route('/apple')
+@app.route('/gc/apple')
 def apple():
     return render_template('apple.html', value=page_values["apple"])
 
-@app.route('/banana')
+@app.route('/gc/banana')
 def banana():
     return render_template('banana.html', value=page_values["banana"])
 
-@app.route('/coconut')
+@app.route('/gc/coconut')
 def coconut():
     return render_template('coconut.html', value=page_values["coconut"])
 
-@app.route('/dates')
+@app.route('/gc/dates')
 def dates():
     return render_template('dates.html', value=page_values["dates"])
 
-@app.route('/admin', methods=['GET', 'POST'])
+@app.route('/gc/admin', methods=['GET', 'POST'])
 def admin():
     if request.method == 'POST':
         page_values["apple"] = int(request.form['apple_new'])

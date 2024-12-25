@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--
-    <title>GCS: HE</title>-->
-    <title>zuhanoforint</title>
+    <title>QUIZ</title>
     
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <meta http-equiv="refresh" content="10">
@@ -32,7 +30,7 @@
         }
 
         .banner h1 {
-            font-size: 4rem;
+            font-size: 6rem;
             margin: 0;
             color: #fff;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
@@ -40,7 +38,7 @@
         }
 
         .banner p {
-            font-size: 1.5rem;
+            font-size: 2rem;
             margin: 10px 0 20px;
             color: #fff;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
@@ -91,8 +89,8 @@
     </style>
 </head>
 <body>
-    <!--
-    <nav>
+    
+    <nav style="font-size: 2rem;">
         <a href="{{ url_for('apple') }}">Apple 🍎</a>
         &nbsp;&nbsp;&nbsp;
         <a href="{{ url_for('banana') }}">Banana 🍌</a>
@@ -101,7 +99,7 @@
         &nbsp;&nbsp;&nbsp;
         <a href="{{ url_for('dates') }}">Dates 🫘</a>
     </nav>
-    -->
+    
     <div>
         {% block content %}{% endblock %}
     </div>
