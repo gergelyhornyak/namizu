@@ -45,7 +45,7 @@ def admin():
         page_values["banana"] = int(request.form['banana_new'])
         page_values["coconut"] = int(request.form['coconut_new'])
         page_values["dates"] = int(request.form['dates_new'])
-        return redirect(url_for('admin'))
+        return redirect('/gc/admin')
     return render_template('admin.html', page_values=page_values)
 
 @app.route("/gc/maze")
