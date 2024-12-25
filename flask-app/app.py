@@ -4,11 +4,16 @@ app = Flask(__name__)
 
 # Initial variables to be displayed on subpages
 page_values = {
-    "apple": 25,
-    "banana": 25,
-    "coconut": 25,
-    "dates": 25
+    "apple": 0,
+    "banana": 0,
+    "coconut": 0,
+    "dates": 0
 }
+
+@app.before_request
+def remove_trailing_slash():
+    if request.url.endswith('/'):
+        return redirect(request.url[:-1], code=301)
 
 @app.route('/')
 def home():
@@ -79,6 +84,8 @@ def loop3():
 @app.route("/gc/loop4")
 def loop4():
     return render_template("loop4.html")
+
+
 
 if __name__ == '__main__':
     app.run(debug=False)
