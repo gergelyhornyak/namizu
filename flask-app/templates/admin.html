@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <h1>Admin Page</h1>
-<form method="post">
+<form method="post" style="font-size: 2rem;">
     <label for="apple_new">Apple new Value:</label>
     <input type="number" name="apple_new" value="{{ page_values['apple'] }}"><br>
     <label for="banana_new">Banana new Value:</label>
@@ -10,6 +10,7 @@
     <input type="number" name="coconut_new" value="{{ page_values['coconut'] }}"><br>
     <label for="dates_new">Dates new Value:</label>
     <input type="number" name="dates_new" value="{{ page_values['dates'] }}"><br>
-    <button type="submit">Submit</button>
+    <input type="submit" id="search" value="Submit"  style="font-size: 2rem;" />
+
 </form>
 {% endblock %}
