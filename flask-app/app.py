@@ -10,12 +10,14 @@ page_values = {
     "dates": 0
 }
 
-@app.before_request
-def remove_trailing_slash():
-    if request.url.endswith('/'):
-        return redirect(request.url[:-1], code=301)
-
-@app.route('/')
+@app.errorhandler(404)
+def page_not_found(e):
+    # You can render a custom template or return a message
+    return render_template('404.html'), 404  # Returns a custom 404 page
+       
+@app.route('/home')
+@app.route('/index')
+@app.route('/zuhanoforint')
 def home():
     return render_template('home.html')
 
@@ -84,7 +86,6 @@ def loop3():
 @app.route("/gc/loop4")
 def loop4():
     return render_template("loop4.html")
-
 
 
 if __name__ == '__main__':
