@@ -20,7 +20,7 @@ services:
       dockerfile: Dockerfile    # Replace with your Apache Dockerfile name
     container_name: apache-proxy
     ports:
-      - "8080:80"  # Map host port 80 to container port 80
+      - "80:80"  # Map host port 80 to container port 80
     networks:
       - web-app-network
     depends_on:

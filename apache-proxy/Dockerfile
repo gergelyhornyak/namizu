@@ -12,9 +12,6 @@ RUN sed -i '/mpm_event_module/d' /usr/local/apache2/conf/httpd.conf \
     && echo "LoadModule proxy_http_module modules/mod_proxy_http.so" >> /usr/local/apache2/conf/httpd.conf \
     && echo "Include conf/extra/apache-config.conf" >> /usr/local/apache2/conf/httpd.conf
 
-RUN a2dissite 000-default.conf
-# RUN a2ensite apache-config.conf
-
 # Copy custom config into the container
 # COPY apache.conf /usr/local/apache2/conf/httpd.conf
 COPY apache.conf /usr/local/apache2/conf/extra/apache-config.conf

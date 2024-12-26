@@ -8,8 +8,6 @@ COPY . /app
 
 RUN mkdir -p /app/logs
 
-RUN ls
-
 # Install dependencies
 RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
