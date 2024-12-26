@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 
 app = Flask(__name__)
 
@@ -15,6 +15,7 @@ def page_not_found(e):
     # You can render a custom template or return a message
     return render_template('404.html'), 404  # Returns a custom 404 page
        
+@app.route('/')
 @app.route('/home')
 @app.route('/index')
 @app.route('/zuhanoforint')
@@ -48,11 +49,13 @@ def dates():
 @app.route('/gc/admin', methods=['GET', 'POST'])
 def admin():
     if request.method == 'POST':
-        page_values["apple"] = int(request.form['apple_new'])
+        if page_values["apple"] != int(request.form['apple_new']):
+            page_values["apple"] = int(request.form['apple_new']) 
         page_values["banana"] = int(request.form['banana_new'])
         page_values["coconut"] = int(request.form['coconut_new'])
         page_values["dates"] = int(request.form['dates_new'])
-        return redirect('/gc/admin')
+        flash("Updated scores.")
+        #return redirect('/gc/admin')
     return render_template('admin.html', page_values=page_values)
 
 @app.route("/gc/maze")
