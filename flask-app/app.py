@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
+import json
 
 app = Flask(__name__)
 
@@ -11,6 +12,18 @@ page_values = {
     "coconut": 0,
     "dates": 0
 }
+
+def load_page_values():
+    try:
+        with open('player_score.json', 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {'apple': 0, 'banana': 0, 'coconut': 0, 'dates': 0}
+
+def save_page_values(values):
+    with open('player_score.json', 'w') as f:
+        json.dump(values, f)
+
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -34,28 +47,31 @@ def readme():
 
 @app.route('/gc/apple')
 def apple():
+    page_values = load_page_values()
     return render_template('apple.html', value=page_values["apple"])
 
 @app.route('/gc/banana')
 def banana():
+    page_values = load_page_values()
     return render_template('banana.html', value=page_values["banana"])
 
 @app.route('/gc/coconut')
 def coconut():
+    page_values = load_page_values()
     return render_template('coconut.html', value=page_values["coconut"])
 
 @app.route('/gc/dates')
 def dates():
+    page_values = load_page_values()
     return render_template('dates.html', value=page_values["dates"])
 
 @app.route('/gc/admin', methods=['GET', 'POST'])
 def admin():
+    page_values = load_page_values()
     if request.method == 'POST':
-        if page_values["apple"] != int(request.form['apple_new']):
-            page_values["apple"] = int(request.form['apple_new']) 
-        page_values["banana"] = int(request.form['banana_new'])
-        page_values["coconut"] = int(request.form['coconut_new'])
-        page_values["dates"] = int(request.form['dates_new'])
+        for key in ['apple', 'banana', 'coconut', 'dates']:
+            page_values[key] = int(request.form[f'{key}_new'])
+        save_page_values(page_values)
         flash("Updated scores.")
         return redirect('/gc/admin')
     return render_template('admin.html', page_values=page_values)
