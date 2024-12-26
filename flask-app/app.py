@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 
 app = Flask(__name__)
 
+app.config['SECRET_KEY'] = 'k8e0boe2cf5e6ii3b1772ge3b95a157f'
+
 # Initial variables to be displayed on subpages
 page_values = {
     "apple": 0,
@@ -55,7 +57,7 @@ def admin():
         page_values["coconut"] = int(request.form['coconut_new'])
         page_values["dates"] = int(request.form['dates_new'])
         flash("Updated scores.")
-        #return redirect('/gc/admin')
+        return redirect('/gc/admin')
     return render_template('admin.html', page_values=page_values)
 
 @app.route("/gc/maze")
