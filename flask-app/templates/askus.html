@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groupchat Voting</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f4ed;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            background: linear-gradient(135deg, #62bf84, #4baf73);
+            color: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .container h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .container h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+        }
+
+        .options button {
+            background: linear-gradient(135deg, #ffffff, #d4d4d4);
+            color: #333;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 14px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.3s, box-shadow 0.2s;
+        }
+
+        .options button:hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, #f0f0f0, #cccccc);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .vote-button {
+            background-color: #636e72;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.2s;
+        }
+
+        .vote-button:hover {
+            background-color: #555e62;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>VOTING</h1>
+        <h2>{{ question }}</h2>
+        <form method="POST">
+            <div class="options">
+                {% for option in options %}
+                <button type="submit" name="vote" value="{{ option }}">{{ option }}</button>
+                {% endfor %}
+            </div>
+        </form>
+    </div>
+</body>
+</html>
