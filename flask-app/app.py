@@ -33,7 +33,7 @@ def load_scores():
         with open('player_rating.json', 'r') as f:
             return json.load(f)
     except FileNotFoundError:
-        return {'Anna': 0, 'Herczi': 0, 'Geri': 0, 'Bálint': 0, 'Márk': 0, 'Koppány': 0, 'Hanna': 0}
+        return {'Bella': 0, 'Herczi': 0, 'Geri': 0, 'Bálint': 0, 'Márk': 0, 'Koppány': 0, 'Hanna': 0}
 
 def save_scores(values):
     with open('player_rating.json', 'w') as f:
