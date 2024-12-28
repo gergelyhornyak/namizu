@@ -1,5 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 import json
+import schedule
+import time
+from threading import Thread
 
 app = Flask(__name__)
 
@@ -22,6 +25,18 @@ def load_page_values():
 
 def save_page_values(values):
     with open('player_score.json', 'w') as f:
+        json.dump(values, f)
+
+
+def load_scores():
+    try:
+        with open('player_rating.json', 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {'Anna': 0, 'Herczi': 0, 'Geri': 0, 'Bálint': 0, 'Márk': 0, 'Koppány': 0, 'Hanna': 0}
+
+def save_scores(values):
+    with open('player_rating.json', 'w') as f:
         json.dump(values, f)
 
 
@@ -108,7 +123,55 @@ def loop3():
 def loop4():
     return render_template("loop4.html")
 
+@app.route("/askus", methods=['GET', 'POST'])
+def askus():
+    question = "Who would be most likely to keep calm in absolutely stressful situations?"
+    scores = load_scores()
+    options = scores.keys()
+    vote_count = 5
+    #options = ["Anna", "Herczi", "Geri", "Bálint", "Márk", "Koppány", "Hanna"]
+    if request.method == 'POST':
+        choice = request.form['vote']
+        scores[choice] += 1
+        save_scores(scores)
+        return redirect("/askus2")
+    
+    return render_template('askus.html', question=question,options=options, vote_count=vote_count)
+
+@app.route('/scores')
+def get_scores():
+    # Return player scores as a JSON object
+    return jsonify(load_scores())
+
+@app.route('/askus2')
+def askus_results():
+    return render_template('askus2.html')
+
+@app.route('/resetaskus')
+def reset_scores():
+    scores = load_scores()
+    zero_scores = {key: 0 for key in scores}
+    save_scores(zero_scores)
+    return redirect("/askus2")
+
+def zero_askus_score():
+    scores = load_scores()
+    zero_scores = {key: 0 for key in scores}
+    save_scores(zero_scores)
+    # change question
+
+schedule.every().day.at("18:00").do(zero_askus_score)
+
+# Function to run the scheduled tasks
+def run_scheduled_tasks():
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    # Start the scheduled task in the background
+    thread = Thread(target=run_scheduled_tasks)
+    thread.daemon = True
+    thread.start()
+    app.run(debug=False, use_reloader=False)
 
