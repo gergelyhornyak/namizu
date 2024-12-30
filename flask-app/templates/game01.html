@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kibaszos jatek</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <title>VetélkedőVetélkedőVetélkedő</title>
     <style>
         body {
             margin: 0;
@@ -99,38 +101,43 @@
             <div class="extra-info">szabadon értelmezhető</div>
         </div>
         <div class="slide slide-2">
-            Ki tud leggyorsabban<br>megtölteni egy poharat?
-            <div class="extra-info">lehet alkoholos ital is</div>
-        </div>
-        <div class="slide slide-3">
-            Ki tudja leggyorsabban<br>meginni az italát?
-            <div class="extra-info">lehet alkoholos ital is</div>
-        </div>
-        <div class="slide slide-4">
             Ki tudja legpontossabban<br>megmondani az időt?
             <div class="extra-info">óra - perc</div>
         </div>
+        <div class="slide slide-3">
+            Ki tud leggyorsabban<br>megtölteni egy poharat?
+            <div class="extra-info">lehet alkoholos ital is</div>
+        </div>
+        <div class="slide slide-4">
+            Ki képes a leghosszabb farkas-szem nézésre?
+        </div>
         <div class="slide slide-5">
-            Ki tudja a legélethűbb<br>rajzot készíteni Roziról?
-            <div class="extra-info">lehet Geriről is</div>
+            Ki tudja a legideálisabb<br>rajzot készíteni Geriről?
         </div>
         <div class="slide slide-6">
-            Ki tud a legtovább énekelni egy levegővel?
+            Ki tud a legtovább énekelni<br>egy levegővel?
             <div class="extra-info">lehet egy kitartott hang is</div>
         </div>
         <div class="slide slide-7">
             Kinek van a legördögibb nevetése?
         </div>
         <div class="slide slide-8">
-            Legjobb ujj-árnyék-játék<br>
-            <div style="font-size: 4rem;">
-                (shadow pupper with fingers).
-            </div>
-            <div class="extra-info">két kézzel is lehet</div>
+            Legjobb kéz-árnyék-játék előadó.
+            <div class="extra-info">két/négy kézzel is lehet</div>
         </div>
         <div class="slide slide-9">
-            Legjobb közös szefli ötlet / koncepció.
+            Ki tudja leggyorsabban meginni<br>a nemrég kitöltött italát?
+            <div class="extra-info">lehet alkoholos ital is</div>
+        </div>
+        <div class="slide slide-10">
+            Legjobb közös selfie ötlet / koncepció.
             <div class="extra-info">időzítőt használni ér</div>
+        </div>
+        <div class="slide slide-11">
+
+        </div>
+        <div class="slide slide-12">
+	    Vééééééége! <div style="font-size: 3rem;">&nbsp;&nbsp;&nbsp;*insert confetti*</div>
         </div>
     </div>
 
@@ -163,6 +170,20 @@
                 }
             }
         });
-    </script>
+
+    // Add an event listener for key presses
+    document.addEventListener('keydown', function(event) {
+      // Check if the "Up" arrow key (key code 38) is pressed
+      if (event.key === "ArrowUp") {
+        // Trigger confetti animation
+        confetti({
+          particleCount: 250,
+          spread: 150,
+          origin: { y: 0.6 },
+          gravity: 0.7 
+        });
+      }
+    });
+  </script>
 </body>
 </html>
