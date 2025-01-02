@@ -7,7 +7,7 @@
     <title>AskUs Voting</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: Arial, Helvetica, sans-serif;
             background-color: #f8f4ed;
             margin: 0;
             padding: 0;
@@ -46,6 +46,11 @@
             position:relative;
         }
 
+        .stats {
+            text-align: center;
+            padding: 8px;
+        }
+
         .voting h1 {
             font-size: 24px;
             margin-bottom: 10px;
@@ -63,14 +68,14 @@
         }
 
         .options button {
-            background: linear-gradient(135deg, #ffffff, #d4d4d4);
-            color: #333;
+            background: #FFFFF0;
+            color: #242223;
             border: 1px solid #ccc;
             border-radius: 10px;
             padding: 10px;
             font-size: 14px;
             text-align: center;
-            cursor: pointer;
+            cursor: pointer;    
             transition: transform 0.2s, background-color 0.3s, box-shadow 0.2s;
         }
 
@@ -107,8 +112,9 @@
     <div class="container">
             
         <div class="voting">
-            <h1>VOTING</h1>
+            <h1>Today's Poll</h1>
             <h2>{{ question }}</h2>
+            {% if not form_submitted %}
             <form method="POST">
                 <div class="options">
                     {% for option in options %}
@@ -116,11 +122,16 @@
                     {% endfor %}
                 </div>
             </form>
+            {% endif %}
+        </div>
+
+        {% if form_submitted %}
+        
+        <div class="stats">
+            {{ vote_count }} of {{ player_num }} answered
         </div>
         
-        {% if form_submitted %}
         <div class="results">
-            <h1>Player Scores</h1>
             <div class="chart-container">
                 <canvas id="scoreChart"></canvas>
             </div>
@@ -142,6 +153,7 @@
 
         // Create the chart using Chart.js
         const ctx = document.getElementById('scoreChart').getContext('2d');
+        Chart.defaults.font.family = "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
         // chart data
         const data = {
             labels: playerNames, // Player names as labels
@@ -205,7 +217,6 @@
                         max: 7, // Set max limit to highest score + some padding
                         ticks: {
                             font: {
-                                family: 'Arial', // Font family
                                 weight: 'bold',  // Font weight (bold)
                                 size: 14,        // Font size
                             }
@@ -224,7 +235,6 @@
                         beginAtZero: true,
                         ticks: {
                             font: {
-                                family: 'Arial', // Font family
                                 weight: 'bold',  // Font weight (bold)
                                 size: 14,        // Font size
                             }
