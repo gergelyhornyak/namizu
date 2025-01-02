@@ -181,9 +181,9 @@
                 const {ctx,data} = chart;
                 ctx.save();
                 chart.getDatasetMeta(0).data.forEach((dataPoint, index) => {
-                    ctx.textAlign = 'left';
+                    //ctx.textAlign = 'left';
                     ctx.textBaseline = 'middle';
-                    ctx.font = 'bold 12px sans-serif';
+                    ctx.font = 'bold 14px sans-serif';
                     ctx.fillStyle = 'black';
                     if(data.datasets[0].data[index] > 0) {
                         ctx.fillText(data.datasets[0].data[index],dataPoint.x+4, dataPoint.y);
@@ -197,6 +197,7 @@
             type: 'bar', // Horizontal bar chart
             data,
             options: {
+                skipNull: true,
                 indexAxis: 'y', // Set horizontal bars
                 responsive: true,
                 maintainAspectRatio: true,
