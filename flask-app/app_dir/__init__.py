@@ -5,7 +5,7 @@ import string
 
 def create_app():
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = ''.join(random.choices(string.ascii_letters + string.digits, k=32))
+    app.config['SECRET_KEY'] = "mpuPR4CrqCOiPsse"#''.join(random.choices(string.ascii_letters + string.digits, k=32))
 
     # Register blueprints
     app.register_blueprint(main_routes.bp)
