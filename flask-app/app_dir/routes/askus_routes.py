@@ -50,6 +50,7 @@ def main():
 def login():
     options = load_user_status()
     creds = load_user_creds()
+    session["user"] = "noone"
     if request.method == "POST":
         user = request.form["vote"]
         password = request.form["password"]
