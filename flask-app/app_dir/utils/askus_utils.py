@@ -12,6 +12,17 @@ def save_questions(questions):
     with open('questions_bank.json', 'w') as f:
         json.dump(questions, f)
 
+def load_user_status():
+    try:
+        with open('player_login.json', 'r') as f:
+            return json.load(f)
+    except Exception as e:
+        print(e)
+
+def save_player_stat(stat):
+    with open('player_login.json', 'w') as f:
+        json.dump(stat, f)
+
 def get_question():
     questions_bank = load_question()
     questions = {key: value for key, value in questions_bank.items() if value == 0}
@@ -45,6 +56,7 @@ def daily_reset():
     scores = load_scores() # load
     zero_scores = {key: 0 for key in scores} # change
     save_scores(zero_scores) # save
+    print("RESET SCORES")
 
     # change question
     questions_bank = load_question() # load
@@ -61,3 +73,9 @@ def daily_reset():
     unused_questions.update(used_questions)
     save_questions(unused_questions) # save
     print(f"LOG: today Q: {question}")
+
+    stats = load_user_status() # load
+    zero_stats = {key: 0 for key in stats} # change
+    save_player_stat(zero_stats)# save
+    print("RESET STATS")
+
