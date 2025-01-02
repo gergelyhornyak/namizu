@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Scores</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Player Scores</h1>
+        <div class="chart-container">
+            <canvas id="scoreChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // Fetch the player scores from the Flask app
+        fetch('/askus/scores')
+            .then(response => response.json())
+            .then(data => {
+                // Extract player names and scores from the fetched data
+                const playerNames = Object.keys(data);
+                const playerScores = Object.values(data);
+
+                // Create the chart using Chart.js
+                const ctx = document.getElementById('scoreChart').getContext('2d');
+                const scoreChart = new Chart(ctx, {
+                    type: 'bar', // Horizontal bar chart
+                    data: {
+                        labels: playerNames, // Player names as labels
+                        datasets: [{
+                            label: 'Scores',
+                            data: playerScores, // Player scores
+                            backgroundColor: 'rgba(75, 192, 192, 0.6)', // Bar color
+                            borderColor: 'rgba(75, 192, 192, 1)', // Border color
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y', // Set horizontal bars
+                        responsive: true,
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                max: 7, // Set max limit to highest score + some padding
+                                ticks: {
+                                    stepSize: 1 // Set the step size to 1 for more frequent grid lines
+                                }
+                            },
+                            y: {
+                                beginAtZero: true
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching scores:', error));
+    </script>
+</body>
+</html>

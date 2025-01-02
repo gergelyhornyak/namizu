@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js -->
+    <title>AskUs Voting</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f4ed;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .voting {
+            text-align: center;
+            background: linear-gradient(135deg, #27896d, #27896dda);
+            color: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            position:relative;
+            margin: 0 auto;
+        }
+
+        .results {
+            text-align: center;
+            background: linear-gradient(135deg, #f8f4ed, #f8f4edef);
+            color: black;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            position:relative;
+        }
+
+        .voting h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .voting h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+        }
+
+        .options button {
+            background: linear-gradient(135deg, #ffffff, #d4d4d4);
+            color: #333;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 14px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.3s, box-shadow 0.2s;
+        }
+
+        .options button:hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, #f0f0f0, #cccccc);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .vote-button {
+            background-color: #636e72;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.2s;
+        }
+
+        .vote-button:hover {
+            background-color: #555e62;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="raw-scores" style="display:none;">{{ results | tojson }}</div>
+    <div class="container">
+            
+        <div class="voting">
+            <h1>VOTING</h1>
+            <h2>{{ question }}</h2>
+            <form method="POST">
+                <div class="options">
+                    {% for option in options %}
+                    <button type="submit" name="vote" value="{{ option }}">{{ option }}</button>
+                    {% endfor %}
+                </div>
+            </form>
+        </div>
+        
+        {% if form_submitted %}
+        <div class="results">
+            <h1>Player Scores</h1>
+            <div class="chart-container">
+                <canvas id="scoreChart"></canvas>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+    
+
+    <script>
+        var rawScoresData = document.getElementById('raw-scores').innerText;
+        var scores = JSON.parse(rawScoresData);
+        const playerNames = Object.keys(scores);
+        const playerScores = Object.values(scores);
+        console.log("raw_scores",rawScoresData)
+        console.log("scores",scores)
+        console.log("pl_names",playerNames)
+        console.log("pl_scores",playerScores)
+
+        // Create the chart using Chart.js
+        const ctx = document.getElementById('scoreChart').getContext('2d');
+        const scoreChart = new Chart(ctx, {
+            type: 'bar', // Horizontal bar chart
+            data: {
+                labels: playerNames, // Player names as labels
+                datasets: [{
+                    label: 'Scores',
+                    data: playerScores, // Player scores
+                    backgroundColor: '#27896d', // Bar color
+                    borderWidth: 1,
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                indexAxis: 'y', // Set horizontal bars
+                responsive: true,
+                backgroundColor: '#27896d', // Grey background color for the chart
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: 7, // Set max limit to highest score + some padding
+                        ticks: {
+                            stepSize: 1, // Set the step size to 1 for more frequent grid lines
+                            font: {
+                                family: 'Arial', // Font family
+                                weight: 'bold',  // Font weight (bold)
+                                size: 14,        // Font size
+                                color: 'white'    // Font color (black)
+                            }
+                        }
+                    },
+                    y: {
+                        border: {
+                            display: false
+                        },
+                        grid: {
+                            color: '#dddddd'
+                        },
+                        beginAtZero: true,
+                        ticks: {
+                            font: {
+                                family: 'Arial', // Font family
+                                weight: 'bold',  // Font weight (bold)
+                                size: 14,        // Font size
+                                color: 'white'    // Font color (black)
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+            }
+        });
+            
+    </script>
+</body>
+</html>

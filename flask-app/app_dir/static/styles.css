@@ -1,0 +1,19 @@
+/* General scoreboard styling */
+.scoreboard {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+}
+
+.score-display {
+    font-family: 'Courier New', Courier, monospace; /* Digital scoreboard font */
+    font-size: 10rem; /* Large text size */
+    background-color: #333; /* Dark background to mimic a scoreboard */
+    color: #0f0; /* Bright green color to resemble LED text */
+    padding: 20px 40px; /* Space around the text */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Subtle shadow for depth */
+    text-align: center;
+    border: 2px solid #0f0; /* Outline matching the text color */
+}

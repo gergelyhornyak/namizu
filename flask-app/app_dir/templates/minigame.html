@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maze Game</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+        }
+
+        .slides {
+            display: flex;
+            flex-direction: row;
+            transition: transform 1s ease;
+            width: 600vw; /* Adjust for the number of slides */
+        }
+
+        .slide {
+            flex: 0 0 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background-image: url('../static/dungeon2.jpg');
+            background-position: center;
+            background-size: cover;
+        }
+
+        .maze-container {
+            position: relative;
+            width: 600px;
+            height: 600px;
+            background: #ddd;
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            grid-template-rows: repeat(10, 1fr);
+            gap: 2px;
+        }
+
+        .wall {
+            background: #2c3e50;
+        }
+
+        .player {
+            background: #e74c3c;
+            width: 100%;
+            height: 100%;
+        }
+        .goal {
+            background: #2ecc71;
+        }
+        .fakegoal {
+            background: #2ecc71;
+        }
+    </style>
+</head>
+<body>
+    <div class="slides" id="slides">
+        <div class="slide">
+            <div class="maze-container" id="maze1"></div>
+        </div>
+        <div class="slide">
+            <div class="maze-container" id="maze2"></div>
+        </div>
+        <div class="slide">
+            <div class="maze-container" id="maze3"></div>
+        </div>
+        <div class="slide">
+            <div class="maze-container" id="maze4"></div>
+        </div>
+        <div class="slide">
+            <div class="maze-container" id="maze5"></div>
+        </div>
+        <div class="slide">
+            <div class="maze-container" id="maze6"></div>
+        </div>
+    </div>
+
+    <script>
+        const slides = document.getElementById("slides");
+        // starting position: top-left corner
+        const mazes = [
+            [
+                "WWWGWWWWWW",
+                "W        W",
+                "W        W",
+                "W  WWWW  W",
+                "F  WWWW  W",
+                "W  WWWW  W",
+                "W  WWWW  F",
+                "W        W",
+                "W        W",
+                "WWWWWFWWWW",
+            ],
+            [
+                "WWWWWWFWWW",
+                "W   W    W",
+                "W        W",
+                "W   W    W",
+                "WWW WWW WW",
+                "W   W    F",
+                "F   W    W",
+                "W        W",
+                "W   W    W",
+                "WWWGWWWWWW",
+            ],
+            [
+                "WWWWWWWGWW",
+                "W     W  W",
+                "W WWWWWW W",
+                "W      W W",
+                "WWW      W",
+                "F W    W W",
+                "W      W F",
+                "W WWWWWW W",
+                "W  W     W",
+                "WWWWFWWWWW",
+            ],
+            [
+                "WWWWWFWWWW",
+                "W   W    W",
+                "WW WWWWW W",
+                "W      W W",
+                "W   WW W W",
+                "WWWWW    W",
+                "W      WWW",
+                "W WWWW W F",
+                "F    W   W",
+                "WWWWGWWWWW",
+            ],
+            [
+                "WWWWWWWGWW",
+                "W   W    W",
+                "W WWW WWWW",
+                "W   W    F",
+                "WWW WW WWW",
+                "F W W    W",
+                "W     WWWW",
+                "W WWWWW  W",
+                "W        W",
+                "WWWWFWWWWW",
+            ],
+            [
+                "WWWWWFWWWW",
+                "W  W     W",
+                "W  WWWWW W",
+                "W   W  W W",
+                "W   W  W W",
+                "WWW WWWW W",
+                "F W      F",
+                "W W WWWW W",
+                "W   W    W",
+                "WWWWWGWWWW",
+            ]
+
+        ];
+
+        let currentSlide = 0;
+        const totalSlides = slides.children.length;
+
+        // Function to render a maze
+        function renderMaze(maze, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = "";
+            maze.forEach((row, rowIndex) => {
+                row.split("").forEach((cell, colIndex) => {
+                    const div = document.createElement("div");
+                    if (cell === "W") div.classList.add("wall");
+                    if (cell === " ") div.classList.add("empty");
+                    if (cell === "G") div.classList.add("goal");
+                    if (cell === "F") div.classList.add("fakegoal");
+                    div.dataset.row = rowIndex;
+                    div.dataset.col = colIndex;
+                    container.appendChild(div);
+                });
+            });
+
+            // Place the player
+            const playerDiv = document.createElement("div");
+            playerDiv.classList.add("player");
+            container.children[11].appendChild(playerDiv); // Starting position
+        }
+
+        // Render all mazes
+        mazes.forEach((maze, index) => {
+            renderMaze(maze, `maze${index + 1}`);
+        });
+
+        let playerPosition = { row: 1, col: 1 }; // Initial position
+        let currentMaze = mazes[0];
+
+        function updatePlayerPosition(row, col) {
+            const container = document.getElementById(`maze${currentSlide + 1}`);
+            const newPosition = container.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+            if (!newPosition || newPosition.classList.contains("wall")) return;
+
+            const player = container.querySelector(".player");
+            player.remove();
+
+            if (newPosition.classList.contains("goal")) {
+                // Move to next slide
+                if (currentSlide < totalSlides - 1) {
+                    currentSlide++;
+                    playerPosition = { row: 1, col: 1 }; // Reset position
+                    slides.style.transform = `translateX(-${currentSlide * 100}vw)`;
+                    currentMaze = mazes[currentSlide];
+                } else {
+                    alert("You're Winner!");
+                    window.location.href = "/";
+                }
+                return;
+            }
+            if (newPosition.classList.contains("fakegoal")) {
+                // Lost
+                alert("You lost!");
+                window.location.href = "/";
+                return;
+            }
+
+            const newPlayerDiv = document.createElement("div");
+            newPlayerDiv.classList.add("player");
+            newPosition.appendChild(newPlayerDiv);
+            playerPosition = { row, col };
+        }
+
+        document.addEventListener("keydown", (event) => {
+            const { row, col } = playerPosition;
+            if (event.key === "ArrowUp") updatePlayerPosition(row - 1, col);
+            if (event.key === "ArrowDown") updatePlayerPosition(row + 1, col);
+            if (event.key === "ArrowLeft") updatePlayerPosition(row, col - 1);
+            if (event.key === "ArrowRight") updatePlayerPosition(row, col + 1);
+        });
+    </script>
+</body>
+</html>

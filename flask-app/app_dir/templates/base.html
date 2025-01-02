@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUIZ</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Verdana, sans-serif;
+            color: #ffffff;
+            text-align: center;
+        }
+
+        .banner {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: url('/static/images/banner-bg.jpg') no-repeat center center;
+            background-size: cover;
+            box-shadow: inset 0 0 0 2000px rgba(0, 0, 0, 0.3);
+        }
+
+        .banner h1 {
+            font-size: 6rem;
+            margin: 0;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .banner p {
+            font-size: 2rem;
+            margin: 10px 0 20px;
+            color: #fff;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .start-btn {
+            display: inline-block;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ff9a9e;
+            background-color: #ffffff;
+            border: none;
+            border-radius: 25px;
+            text-transform: uppercase;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.2s ease, background-color 0.3s ease;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.1);
+            background-color: #ffe4e6;
+        }
+
+        .start-btn:active {
+            transform: scale(0.95);
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <nav style="font-size: 2rem;">
+        <a href="{{ url_for('gamechanger.apple') }}">Apple 🍎</a>
+        &nbsp;&nbsp;&nbsp;
+        <a href="{{ url_for('gamechanger.banana') }}">Banana 🍌</a>
+        &nbsp;&nbsp;&nbsp;
+        <a href="{{ url_for('gamechanger.coconut') }}">Coconut 🥥</a>
+        &nbsp;&nbsp;&nbsp;
+        <a href="{{ url_for('gamechanger.dates') }}">Dates 🫘</a>
+    </nav>
+    
+    <div>
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
