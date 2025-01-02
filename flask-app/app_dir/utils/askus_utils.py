@@ -19,6 +19,14 @@ def load_user_status():
     except Exception as e:
         print(e)
 
+def load_user_creds():
+    try:
+        with open('player_creds.json', 'r') as f:
+            return json.load(f)
+    except Exception as e:
+        print(e)
+
+
 def save_player_stat(stat):
     with open('player_login.json', 'w') as f:
         json.dump(stat, f)
