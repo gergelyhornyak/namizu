@@ -1,0 +1,49 @@
+<html>
+    <head>
+        <style>
+            body {
+                font-family: Arial, Helvetica, sans-serif;
+                background-color: #f8f4ed;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                width: 100%;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+            }
+            body h1 {   
+                font-size: 60px;
+                margin-bottom: 10px;
+                text-align: center;
+            }
+            .options {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                gap: 10px;
+                }
+
+            .options button {
+                background: #FFFFF0;
+                color: #242223;
+                border: 1px solid #ccc;
+                border-radius: 10px;
+                padding: 10px;
+                font-size: 46px;
+                text-align: center;
+                cursor: pointer;    
+                transition: transform 0.2s, background-color 0.3s, box-shadow 0.2s;
+            }
+        </style>
+    </head>
+    <body>
+        <form method="POST">
+            <h1>LOGIN</h1>
+            <div class="options">
+                {% for option in options %}
+                <button type="submit" name="vote" value="{{ option }}">{{ option }}</button>
+                {% endfor %}
+            </div>
+        </form>
+    </body>
+</html>
