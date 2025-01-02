@@ -21,7 +21,6 @@
         .container {
             display: flex;
             flex-direction: column;
-            justify-content: center;
         }
 
         .voting {
@@ -104,6 +103,7 @@
 </head>
 <body>
     <div id="raw-scores" style="display:none;">{{ results | tojson }}</div>
+
     <div class="container">
             
         <div class="voting">
@@ -142,42 +142,84 @@
 
         // Create the chart using Chart.js
         const ctx = document.getElementById('scoreChart').getContext('2d');
-        const scoreChart = new Chart(ctx, {
+        // chart data
+        const data = {
+            labels: playerNames, // Player names as labels
+            datasets: [{
+                label: 'score',
+                data: playerScores, // Player scores
+                backgroundColor: '#27896d', // Bar color
+                borderWidth: 1,
+                borderRadius: 8
+            }]};
+        // topLabel plugin
+        const topLabels = {
+            id: 'topLabels',
+            afterDatasetsDraw(chart, args, pluginOptions) {
+                const {ctx, scales: {x,y}} = chart;
+                ctx.fillStyle = '#ffffff';
+                ctx.textAlign = 'center';
+                ctx.fillText('19',x.getPixelForValue(0), y.getPixelForValue(19))
+            }
+        };
+
+        const doubleLabels = {
+            id: 'doubleLabels',
+            afterDatasetsDraw(chart,args,plugins) {
+                const {ctx,data} = chart;
+                ctx.save();
+                chart.getDatasetMeta(0).data.forEach((dataPoint, index) => {
+                    ctx.textAlign = 'left';
+                    ctx.textBaseline = 'middle';
+                    ctx.font = 'bold 12px sans-serif';
+                    ctx.fillStyle = 'black';
+                    if(data.datasets[0].data[index] > 0) {
+                        ctx.fillText(data.datasets[0].data[index],dataPoint.x+4, dataPoint.y);
+                    }
+                })
+            }
+        }
+
+        // chart config
+        const config = {
             type: 'bar', // Horizontal bar chart
-            data: {
-                labels: playerNames, // Player names as labels
-                datasets: [{
-                    label: 'Scores',
-                    data: playerScores, // Player scores
-                    backgroundColor: '#27896d', // Bar color
-                    borderWidth: 1,
-                    borderRadius: 6
-                }]
-            },
+            data,
             options: {
                 indexAxis: 'y', // Set horizontal bars
                 responsive: true,
+                maintainAspectRatio: true,
                 backgroundColor: '#27896d', // Grey background color for the chart
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip:{
+                        enabled: false
+                    },
+                },
                 scales: {
                     x: {
+                        display: false,
+                        barPercentage: 1,
                         beginAtZero: true,
                         max: 7, // Set max limit to highest score + some padding
                         ticks: {
-                            stepSize: 1, // Set the step size to 1 for more frequent grid lines
                             font: {
                                 family: 'Arial', // Font family
                                 weight: 'bold',  // Font weight (bold)
                                 size: 14,        // Font size
-                                color: 'white'    // Font color (black)
                             }
-                        }
+                        },
+                        grid: {
+                            display:false
+                        },
                     },
                     y: {
                         border: {
                             display: false
                         },
                         grid: {
-                            color: '#dddddd'
+                            display:false
                         },
                         beginAtZero: true,
                         ticks: {
@@ -185,18 +227,17 @@
                                 family: 'Arial', // Font family
                                 weight: 'bold',  // Font weight (bold)
                                 size: 14,        // Font size
-                                color: 'white'    // Font color (black)
                             }
                         }
                     }
                 },
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-            }
-        });
+            },
+            plugins: [doubleLabels],
+        };
+        // render
+        const scoreChart = new Chart(
+            ctx, config
+        );
             
     </script>
 </body>
