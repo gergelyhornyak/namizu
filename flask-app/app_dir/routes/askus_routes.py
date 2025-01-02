@@ -17,13 +17,11 @@ def main():
     options = scores.keys()
     results = {}
     stats = load_user_status()
-    print(f"{stats = }")
     vote_count = sum(scores.values())
     player_count = len(scores)
     user = session["user"]
-    print(f"{user = }")
+    
     if request.method == 'GET':    
-        print(f"{stats[user] = }")
         if stats[user] == 2: # already voted
             submitted = True
         results = scores
@@ -39,7 +37,6 @@ def main():
             save_scores(scores)
             submitted = True
             stats[user] = 2 # submitted vote
-            print(f"new value of {stats[user] = }")
             save_player_stat(stats)
             results = scores
             vote_count = sum(scores.values())
@@ -51,12 +48,14 @@ def login():
     options = load_user_status()
     creds = load_user_creds()
     session["user"] = "noone"
+    session.modified = True
     if request.method == "POST":
         user = request.form["vote"]
         password = request.form["password"]
         if creds[user] == password:
             session["user"] = user
-            return redirect(url_for("askus.main"))
+            session.modified = True
+            return redirect(url_for("askus.main"),302)
         else:
             flash("Incorrect password. Please try again.", "error")
 
