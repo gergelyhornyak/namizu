@@ -1,5 +1,5 @@
-from flask import Blueprint, render_template, request, redirect, jsonify, url_for, session
-from app_dir.utils.askus_utils import load_question, load_scores, save_scores, get_question, save_questions, get_daily_question,load_user_status, save_player_stat
+from flask import Blueprint, render_template, request, redirect, jsonify, url_for, session, flash
+from app_dir.utils.askus_utils import load_question, load_scores, save_scores, save_questions, get_daily_question,load_user_status, save_player_stat, load_user_creds
 import random
 
 bp = Blueprint('askus', __name__, template_folder='templates')
@@ -49,12 +49,16 @@ def main():
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
     options = load_user_status()
+    creds = load_user_creds()
     if request.method == "POST":
-        choice = request.form['vote']
-        #options[choice] = 1 # logged in
-        #save_player_stat(options)
-        session["user"] = choice
-        return redirect(url_for("askus.main"))
+        user = request.form["vote"]
+        password = request.form["password"]
+        if creds[user] == password:
+            session["user"] = user
+            return redirect(url_for("askus.main"))
+        else:
+            flash("Incorrect password. Please try again.", "error")
+
     return render_template('askus_login.html',options=options)
 
 @bp.route('/reset')
