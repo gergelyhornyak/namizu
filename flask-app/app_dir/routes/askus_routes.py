@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, jsonify, url_for, session
 from app_dir.utils.askus_utils import load_question, load_scores, save_scores, get_question, save_questions, get_daily_question,load_user_status, save_player_stat
+import random
 
 bp = Blueprint('askus', __name__, template_folder='templates')
 
@@ -60,9 +61,14 @@ def login():
 def reset_scores():
     scores = load_scores()
     questions = load_question()
+    stats = load_user_status()
     zero_scores = {key: 0 for key in scores}
     zero_questions = {key: 0 for key in questions}
+    rnd_question = random.choice(list(zero_questions.items()))[0]
+    zero_questions[rnd_question] = 1
+    zero_stats = {key: 0 for key in stats}
     save_scores(zero_scores)
     save_questions(zero_questions)
+    save_player_stat(zero_stats)
     
-    return redirect(url_for('askus.main'))
+    return redirect(url_for('askus.index'))
