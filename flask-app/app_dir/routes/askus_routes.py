@@ -10,14 +10,22 @@ def main():
     scores = load_scores()
     options = scores.keys()
     results = {}
-    vote_count = 5
+    vote_count = sum(scores.values())
+    player_count = len(scores)
     if request.method == 'POST':
-        choice = request.form['vote']
-        scores[choice] += 1
-        save_scores(scores)
-        submitted = True
-        results = scores
-    return render_template('askus.html', question=question, options=options, vote_count=vote_count, results=results, form_submitted=submitted)
+        if vote_count == player_count:
+            results = scores
+            vote_count = sum(scores.values())
+            submitted = True
+        else:
+            choice = request.form['vote']
+            scores[choice] += 1
+            save_scores(scores)
+            submitted = True
+            results = scores
+            vote_count = sum(scores.values())
+
+    return render_template('askus.html', question=question, options=options, vote_count=vote_count, results=results, form_submitted=submitted, player_num=player_count)
 
 @bp.route('/scores')
 def scores():
