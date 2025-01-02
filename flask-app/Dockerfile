@@ -1,12 +1,12 @@
 FROM python:3.9-slim-bullseye
 
 # Set working directory
-WORKDIR /app
+WORKDIR /docker_app
 
 # Copy application files
-COPY . /app
+COPY . /docker_app
 
-RUN mkdir -p /app/logs
+RUN mkdir -p /docker_app/logs
 
 # Install dependencies
 RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
