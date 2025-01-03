@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Template with Menu Buttons</title>
+    <style>
+        /* Basic styling for the header and buttons */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        nav {
+            text-align: center;
+            background-color: #f8f4ed;
+        }
+
+        nav a {
+            color: rgb(0, 0, 0);
+            padding: 14px 20px;
+            text-decoration: none;
+            align-items: center;
+        }
+
+        nav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        .container {
+            padding: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+
+    <nav>
+        <a href="{{ url_for('askus.login') }}">
+            
+            <img src="{{ url_for('static', filename='main_menu.png') }}" class="image" width="10%" /></a>
+        <a href="#menu2">
+            <img src="{{ url_for('static', filename='calendar.png') }}" class="image" width="8%" /></a>
+    </nav>
+
+    <!-- Main content area -->
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+</body>
+</html>

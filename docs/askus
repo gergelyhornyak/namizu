@@ -2,3 +2,10 @@ questions:
 - 0: unused
 - 1: today's question
 - 2: used
+
+question types:
+- "Who is ..."
+- "What would XYZ do ..."
+- "Do you think XYZ would do ..."
+- "Would XYZ1 and XYZ2 work together ..."
+- "Would you rather do X or Y ..."
