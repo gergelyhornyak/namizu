@@ -9,3 +9,12 @@ question types:
 - "Do you think XYZ would do ..."
 - "Would XYZ1 and XYZ2 work together ..."
 - "Would you rather do X or Y ..."
+
+question format:
+
+"ID": {
+  "Q": "Do you think <A> would beat <B> in a drinking game?",
+  "A": ["Yes","No","Easily"],
+  "Status": 0,
+  "Type": 1
+}
