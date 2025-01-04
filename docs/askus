@@ -13,7 +13,7 @@ question types:
 question format:
 
 "ID1": {
-  "Q": "Do you think <A> would beat <B> in a drinking game?",
+  "Q": "Do you think {P} would beat {P} in a drinking game?",
   "A": ["Yes","No","Easily"],
   "Status": 0,
   "Type": 1
@@ -54,3 +54,14 @@ history file:
     }
   }
 }
+
+Big update prerequisite:
+- mysql setup,
+- question system agreement,
+- history?
+- chat?
+- profile pics?
+- percentage of voters?
+- anonym voting?
+- streak?
+- app? android vs iOS
