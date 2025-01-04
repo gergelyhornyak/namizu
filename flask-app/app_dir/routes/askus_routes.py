@@ -6,8 +6,7 @@ bp = Blueprint('askus', __name__, template_folder='templates')
 
 @bp.route("/")
 def index():
-    return redirect(url_for("askus.login"))
-
+    return render_template('askus_landing_page.html')
 
 @bp.route("/poll", methods=['GET', 'POST'])
 def main():
@@ -60,6 +59,15 @@ def login():
             flash("Incorrect password. Please try again.", "error")
 
     return render_template('askus_login.html',options=options)
+
+@bp.route('/append', methods=['GET', 'POST'])
+def append_q():
+    if request.method == "POST":
+        new_question = request.form["question"]
+        new_answers = request.form["answers"]
+        print(f"{new_question = }")
+        print(f"{new_answers = }")
+    return render_template('askus_new_question.html')
 
 @bp.route('/reset')
 def reset_scores():
