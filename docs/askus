@@ -12,9 +12,45 @@ question types:
 
 question format:
 
-"ID": {
+"ID1": {
   "Q": "Do you think <A> would beat <B> in a drinking game?",
   "A": ["Yes","No","Easily"],
   "Status": 0,
   "Type": 1
+}
+"ID2": {
+  "Q": "Who is the tallest?",
+  "A": "names"
+  "Status": 0,
+  "Type": 2
+}
+
+databases:
+- user_creds_db.json
+- user_state_db.json
+- user_scores_db.json
+- users_db.json
+- questions_bank.json
+- visit_count_db.json
+
+- users_db.json:
+
+{
+  "ID1": {
+    "name":"user01",
+    "passw": "1234",
+    "current_rating": 0,
+  }
+}
+
+history file:
+
+{
+  "date": {
+    "question": "Q",
+    "answers": {
+      "A1": 0,
+      "A2": 1
+    }
+  }
 }
