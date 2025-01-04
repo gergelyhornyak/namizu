@@ -1,3 +1,5 @@
 secret
 pyvenv
 __pycache__
+database/
+logfile.log
