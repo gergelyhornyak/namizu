@@ -1,6 +1,17 @@
 import json
 import random
 
+def load_visit_count():
+    try:
+        with open('visit_count.json', 'r') as f:
+            return json.load(f)
+    except Exception as e:
+        print(e)
+
+def save_visit_count(visits):
+    with open('visit_count.json', 'w') as f:
+        json.dump(visits, f)
+
 def load_question():
     try:
         with open('questions_bank.json', 'r') as f:

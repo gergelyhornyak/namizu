@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, jsonify, url_for, session, flash
-from app_dir.utils.askus_utils import load_question, load_scores, save_scores, save_questions, get_daily_question,load_user_status, save_player_stat, load_user_creds
+from app_dir.utils.askus_utils import load_question, load_scores, save_scores, save_questions, get_daily_question,load_user_status, save_player_stat, load_user_creds, load_visit_count, save_visit_count
 import random
 
 bp = Blueprint('askus', __name__, template_folder='templates')
@@ -49,6 +49,9 @@ def login():
     session["user"] = "noone"
     session.modified = True
     if request.method == "POST":
+        visit_count = load_visit_count()
+        visit_count["total"] += 1
+        save_visit_count(visit_count)
         user = request.form["vote"]
         password = request.form["password"]
         if creds[user] == password:
@@ -84,3 +87,9 @@ def reset_scores():
     save_player_stat(zero_stats)
     
     return redirect(url_for('askus.index'))
+
+@bp.route("/visits")
+def page_visits():
+    visits = load_visit_count()
+    visits = visits["total"]
+    return f"<p>naMizu has been visited {visits} times so far.</p>"
