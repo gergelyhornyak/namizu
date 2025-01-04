@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, jsonify, url_for, session, flash
-from app_dir.utils.askus_utils import load_question, load_scores, save_scores, save_questions, get_daily_question,load_user_status, save_player_stat, load_user_creds, load_visit_count, save_visit_count
+from app_dir.utils.askus_utils import load_question_bank, load_scores, save_scores, save_questions, get_daily_question,load_user_status, save_player_stat, load_user_creds, load_visit_count, save_visit_count
 import random
 
 bp = Blueprint('askus', __name__, template_folder='templates')
@@ -75,7 +75,7 @@ def append_q():
 @bp.route('/reset')
 def reset_scores():
     scores = load_scores()
-    questions = load_question()
+    questions = load_question_bank()
     stats = load_user_status()
     zero_scores = {key: 0 for key in scores}
     zero_questions = {key: 0 for key in questions}
