@@ -4,7 +4,7 @@ import logging
 
 def create_app():
     time_format = "%Y-%m-%d %H:%M:%S"
-    logging.basicConfig(filename='logfile.log', level=logging.DEBUG, format='[%(asctime)s] %(levelname)s %(name)s : %(message)s', datefmt=time_format)
+    logging.basicConfig(filename='database/logfile.log', level=logging.DEBUG, format='[%(asctime)s] %(levelname)s %(name)s : %(message)s', datefmt=time_format)
     app = Flask(__name__)
     with open("flask_secret","r") as f:
         stringg = f.readline()
