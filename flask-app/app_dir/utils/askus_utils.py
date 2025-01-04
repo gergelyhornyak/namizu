@@ -1,49 +1,70 @@
 import json
 import random
+from flask import current_app
+
+DATABASE_PATH = "database/"
+
+# loaders
 
 def load_visit_count():
     try:
-        with open('visit_count.json', 'r') as f:
+        with open('database/visit_count.json', 'r') as f:
+            current_app.logger.info("visit_count.json found and loaded")
             return json.load(f)
+    except FileNotFoundError:
+        current_app.logger.warning("visit_count.json not found, created and loaded")
+        return {'total': 0}
     except Exception as e:
-        print(e)
+        current_app.logger.error(f"{e}")
 
-def save_visit_count(visits):
-    with open('visit_count.json', 'w') as f:
-        json.dump(visits, f)
-
-def load_question():
+def load_question_bank():
     try:
-        with open('questions_bank.json', 'r') as f:
+        with open('database/questions_bank.json', 'r') as f:
             return json.load(f)
     except Exception as e:
         print(e)
-    
-def save_questions(questions):
-    with open('questions_bank.json', 'w') as f:
-        json.dump(questions, f)
 
 def load_user_status():
     try:
-        with open('player_login.json', 'r') as f:
+        with open('database/player_login.json', 'r') as f:
             return json.load(f)
     except Exception as e:
         print(e)
 
 def load_user_creds():
     try:
-        with open('player_creds.json', 'r') as f:
+        with open('database/player_creds.json', 'r') as f:
             return json.load(f)
     except Exception as e:
         print(e)
 
+def load_scores():
+    try:
+        with open('database/player_rating.json', 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {'Bella': 0, 'Herczi': 0, 'Geri': 0, 'Bálint': 0, 'Márk': 0, 'Koppány': 0, 'Hanna': 0}
+
+# savers
 
 def save_player_stat(stat):
-    with open('player_login.json', 'w') as f:
+    with open('database/player_login.json', 'w') as f:
         json.dump(stat, f)
 
+def save_visit_count(visits):
+    with open('database/visit_count.json', 'w') as f:
+        json.dump(visits, f)
+    
+def save_questions(questions):
+    with open('database/questions_bank.json', 'w') as f:
+        json.dump(questions, f)
+
+def save_scores(values):
+    with open('database/player_rating.json', 'w') as f:
+        json.dump(values, f)
+
 def get_question():
-    questions_bank = load_question()
+    questions_bank = load_question_bank()
     questions = {key: value for key, value in questions_bank.items() if value == 0}
     if len(questions) == 0:
         return "----- NO MORE QUESTIONS LEFT -----"
@@ -53,22 +74,11 @@ def get_question():
     return question
 
 def get_daily_question():
-    questions_bank = load_question()
+    questions_bank = load_question_bank()
     question = {key: value for key, value in questions_bank.items() if value == 1}
     if len(question) == 0:
         return "------ NO MORE QUESTIONS LEFT! ------"
     return list(question.keys())[0]
-
-def load_scores():
-    try:
-        with open('player_rating.json', 'r') as f:
-            return json.load(f)
-    except FileNotFoundError:
-        return {'Bella': 0, 'Herczi': 0, 'Geri': 0, 'Bálint': 0, 'Márk': 0, 'Koppány': 0, 'Hanna': 0}
-
-def save_scores(values):
-    with open('player_rating.json', 'w') as f:
-        json.dump(values, f)
 
 def daily_reset():
     # reset score
@@ -78,7 +88,7 @@ def daily_reset():
     print("RESET SCORES")
 
     # change question
-    questions_bank = load_question() # load
+    questions_bank = load_question_bank() # load
     # set yesterday's to be used
     used_questions = {key: value for key, value in questions_bank.items() if value == 2}
     ystd_question = {key: 2 for key, value in questions_bank.items() if value == 1}
@@ -98,3 +108,18 @@ def daily_reset():
     save_player_stat(zero_stats)# save
     print("RESET STATS")
 
+
+"""
+import re
+
+# Original text
+text = "Do you think {P} would beat {P} in a drinking game?"
+
+# Names to replace
+names = ["Mark", "Herczi"]
+
+# Replace placeholders sequentially
+result = re.sub(r"{P}", lambda _: names.pop(0), text)
+
+print(result)
+"""
