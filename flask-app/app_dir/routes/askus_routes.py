@@ -1,9 +1,9 @@
 from flask import Blueprint, render_template, request, redirect, jsonify, url_for, session, flash
 from app_dir.utils.askus_utils import load_question_bank, load_scores, save_scores, save_questions, get_daily_question,load_user_status, save_player_stat, load_user_creds, load_visit_count, save_visit_count, load_comments, save_comments
 import random
+import os
 from datetime import datetime
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 
 bp = Blueprint('askus', __name__, template_folder='templates')
@@ -91,12 +91,27 @@ def poll_snapshot():
     return render_template('poll_snapshot.html', question=question, options=options, 
                            vote_count=vote_count, results=results, player_num=player_count, comments=comments_packet, date=current_date)
 
+@bp.route("/emulate_calendar")
+def emulate_calendar():
+    # user can select date on calendar widget, 
+    #  then date is queried from history, 
+    #   then poll_snapshot is rendered with history data
+    return "<h1>Being developed ...</h1>"
+
 @bp.route("/calendar")
 def calendar():
-    return render_template('calendar.html')
+    # very neat approach, however not sustainable, 
+    # as too many screenshots are created: 200KB * 365 = 72MB
+    # also too long comments are not visible
+    directory = "app_dir/static/screenshots"
+    png_files = [file for file in os.listdir(directory) if file.endswith(".png")]
+    screenshots = png_files
+
+    return render_template('calendar.html', screenshots=screenshots)
 
 @bp.route("/ss")
 def screenShot():
+    return "OUT OF ORDER"
     mobile_emulation = {
         "deviceName": "Pixel 7"
     }
@@ -106,8 +121,8 @@ def screenShot():
     try:
         driver.get("http://127.0.0.1:5000/askus/snapshot")
         current_date = datetime.now().strftime("%d-%m-%Y")
-        driver.save_screenshot(f"{current_date}_shot.png")
-        print("screenshot saved")
+        driver.save_screenshot(f"app_dir/static/screenshots/{current_date}_shot.png")
+        print(f"{current_date}_shot.png saved.")
     finally:
         driver.quit()
     return redirect(url_for("askus.index"),302)
@@ -133,6 +148,7 @@ def login():
 
 @bp.route('/append', methods=['GET', 'POST'])
 def append_q():
+    return "ALMOST FINISHED"
     if request.method == "POST":
         new_question = request.form["question"]
         new_answers = request.form["answers"]
@@ -142,6 +158,7 @@ def append_q():
 
 @bp.route('/reset')
 def reset_scores():
+    return "ADMIN PERMISSION REQUIRED"
     scores = load_scores()
     questions = load_question_bank()
     stats = load_user_status()
