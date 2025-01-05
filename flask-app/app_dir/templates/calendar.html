@@ -42,25 +42,15 @@
     <!-- Swiper container -->
     <div class="swiper">
         <div class="swiper-wrapper">
-            <!-- Slides -->
+            <!-- Dynamically generate slides using a loop -->
+            {% for screenshot in screenshots %}
             <div class="swiper-slide">
-                <img src="{{url_for('static', filename='ss_01.png')}}" alt="Image 1" onclick="redirectToPage('page1.html')">
+                <img src="{{ url_for('static', filename='screenshots/' + screenshot) }}" alt="Screenshot {{ loop.index }}">
             </div>
-            <div class="swiper-slide">
-                <img src="{{url_for('static', filename='ss_02.png')}}" alt="Image 2" onclick="redirectToPage('page2.html')">
-            </div>
-            <div class="swiper-slide">
-                <iframe src="http://localhost/askus" height="800" title="Page3"></iframe>
-            </div>
-            <div class="swiper-slide">
-                <img src="image4.jpg" alt="Image 4" onclick="redirectToPage('page4.html')">
-            </div>
-            <div class="swiper-slide">
-                <img src="image4.jpg" alt="Image 4" onclick="redirectToPage('page4.html')">
-            </div>
+            {% endfor %}
         </div>
-        <!-- Pagination -->
-        <div class="swiper-pagination"></div>
+        <!-- Pagination 
+        <div class="swiper-pagination"></div>-->
     </div>
 
     <!-- Include Swiper.js -->
