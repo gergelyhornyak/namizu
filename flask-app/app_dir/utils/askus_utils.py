@@ -1,6 +1,9 @@
 import json
 import random
 from flask import current_app
+from datetime import datetime
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 
 DATABASE_PATH = "database/"
 
@@ -49,6 +52,14 @@ def load_user_creds():
     except Exception as e:
         print(e)
 
+def load_history():
+    try:
+        with open('database/history.json', 'r') as f:
+            return json.load(f)
+    except Exception as e:
+        print(e)
+
+
 def load_scores():
     try:
         with open('database/player_rating.json', 'r') as f:
@@ -78,6 +89,10 @@ def save_comments(comments):
     with open('database/comments.json', 'w') as f:
         json.dump(comments, f)
 
+def save_history(history_logs):
+    with open('database/history.json', 'w') as f:
+        json.dump(history_logs, f)
+
 def get_question():
     questions_bank = load_question_bank()
     questions = {key: value for key, value in questions_bank.items() if value == 0}
@@ -95,7 +110,48 @@ def get_daily_question():
         return "------ NO MORE QUESTIONS LEFT! ------"
     return list(question.keys())[0]
 
+def daily_routine():
+    # save history
+    question = get_daily_question()
+    scores = load_scores()
+    user_comments = load_comments()
+    comments_packet = []
+    current_date = datetime.now().strftime("%d-%m-%Y-%H-%M-%S")
+    for timestamp, comments in user_comments.items():
+        for usern, message in comments.items():
+            comments_packet.append({"name": usern, "message": message})
+
+    history_log = {
+        "question": question,
+        "answers": scores,
+        "comments":comments_packet}
+    
+    history = load_history()
+    try:
+        history[current_date] = history_log
+    except:
+        print("History log already exists for this date.")
+    save_history(history)
+
+    # take snapshot
+
+    mobile_emulation = {
+        "deviceName": "Pixel 7"
+    }
+    chrome_options = Options()
+    chrome_options.add_experimental_option("mobileEmulation", mobile_emulation)
+    driver = webdriver.Chrome(options=chrome_options)
+    try:
+        driver.get("http://127.0.0.1:5000/askus/snapshot")
+        current_date = datetime.now().strftime("%d-%m-%Y")
+        driver.save_screenshot(f"app_dir/static/screenshots/{current_date}_shot.png")
+        print(f"{current_date}_shot.png saved.")
+    finally:
+        driver.quit()
+    daily_reset()
+
 def daily_reset():
+
     # reset score
     scores = load_scores() # load
     zero_scores = {key: 0 for key in scores} # change
@@ -121,7 +177,7 @@ def daily_reset():
     stats = load_user_status() # load
     zero_stats = {key: 0 for key in stats} # change
     save_player_stat(zero_stats)# save
-    print("RESET STATS")
+    print("RESET USER STATS")
 
 
 """
