@@ -51,7 +51,8 @@ history file:
     "answers": {
       "A1": 0,
       "A2": 1
-    }
+    },
+    "comments":["Auth1:C1","Auth2:C2"]
   }
 }
 
