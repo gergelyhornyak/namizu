@@ -8,7 +8,7 @@ def create_app():
     app = Flask(__name__)
     with open("flask_secret","r") as f:
         stringg = f.readline()
-    app.config['SECRET_KEY'] = stringg#"mpuPR4CrqCOiPsse"#''.join(random.choices(string.ascii_letters + string.digits, k=32))
+    app.config['SECRET_KEY'] = stringg
     app.logger.debug("Secret key aquired")
     # Register blueprints
     app.register_blueprint(main_routes.bp)

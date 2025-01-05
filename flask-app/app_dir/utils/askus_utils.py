@@ -24,6 +24,17 @@ def load_question_bank():
     except Exception as e:
         print(e)
 
+def load_comments():
+    try:
+        with open('database/comments.json', 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {"04/01/2025 10:09:20":{
+            "Geri":"Hello there!"
+        }}
+    except Exception as e:
+        print(e)
+
 def load_user_status():
     try:
         with open('database/player_login.json', 'r') as f:
@@ -62,6 +73,10 @@ def save_questions(questions):
 def save_scores(values):
     with open('database/player_rating.json', 'w') as f:
         json.dump(values, f)
+
+def save_comments(comments):
+    with open('database/comments.json', 'w') as f:
+        json.dump(comments, f)
 
 def get_question():
     questions_bank = load_question_bank()

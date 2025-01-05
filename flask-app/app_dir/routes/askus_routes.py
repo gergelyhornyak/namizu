@@ -1,6 +1,10 @@
 from flask import Blueprint, render_template, request, redirect, jsonify, url_for, session, flash
-from app_dir.utils.askus_utils import load_question_bank, load_scores, save_scores, save_questions, get_daily_question,load_user_status, save_player_stat, load_user_creds, load_visit_count, save_visit_count
+from app_dir.utils.askus_utils import load_question_bank, load_scores, save_scores, save_questions, get_daily_question,load_user_status, save_player_stat, load_user_creds, load_visit_count, save_visit_count, load_comments, save_comments
 import random
+from datetime import datetime
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
 
 bp = Blueprint('askus', __name__, template_folder='templates')
 
@@ -10,7 +14,6 @@ def index():
 
 @bp.route("/poll", methods=['GET', 'POST'])
 def main():
-    submitted = False
     question = get_daily_question()
     scores = load_scores()
     options = scores.keys()
@@ -18,29 +21,96 @@ def main():
     stats = load_user_status()
     vote_count = sum(scores.values())
     player_count = len(scores)
+    vote_percentage = int(vote_count/player_count*100)
+    submitted = False # if user submitted the form
     user = session["user"]
+    user_comments = load_comments()
+    comments_packet = []
+    for timestamp, comments in user_comments.items():
+        for usern, message in comments.items():
+            comments_packet.append({"name": usern, "message": message})
     
     if request.method == 'GET':    
         if stats[user] == 2: # already voted
             submitted = True
         results = scores
         vote_count = sum(scores.values())
+        vote_percentage = int(vote_count/player_count*100)
     elif request.method == 'POST':
         if vote_count == player_count:
             results = scores
             vote_count = sum(scores.values())
+            vote_percentage = int(vote_count/player_count*100)
             submitted = True
         else:
-            choice = request.form['vote']
-            scores[choice] += 1
-            save_scores(scores)
+            if 'vote' in request.form:
+                choice = request.form['vote']
+                scores[choice] += 1
+                save_scores(scores)
+                submitted = True
+                stats[user] = 2 # submitted vote
+                save_player_stat(stats)
+                results = scores
+                vote_count = sum(scores.values())
+                vote_percentage = int(vote_count/player_count*100)
+        if 'comment' in request.form:
             submitted = True
-            stats[user] = 2 # submitted vote
-            save_player_stat(stats)
+            comment = request.form['comment']
+            user = session["user"]
             results = scores
             vote_count = sum(scores.values())
+            vote_percentage = int(vote_count/player_count*100)
+            current_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+            user_comments[current_date] = {
+                user: comment
+            }
+            save_comments(user_comments)
+            comments_packet = []
+            for timestamp, comments in user_comments.items():
+                for usern, message in comments.items():
+                    comments_packet.append({"name": usern, "message": message})
+            
+    return render_template('askus_main.html', question=question, options=options, 
+                           vote_count=vote_count, results=results, form_submitted=submitted, 
+                           player_num=player_count, comments=comments_packet)
 
-    return render_template('askus.html', question=question, options=options, vote_count=vote_count, results=results, form_submitted=submitted, player_num=player_count)
+@bp.route("/snapshot")
+def poll_snapshot():
+    question = get_daily_question()
+    scores = load_scores()
+    options = scores.keys()
+    results = scores
+    user_comments = load_comments()
+    comments_packet = []
+    vote_count = sum(scores.values())
+    player_count = len(scores)
+    current_date = datetime.now().strftime("%d-%m-%Y-%H-%M-%S")
+    for timestamp, comments in user_comments.items():
+        for usern, message in comments.items():
+            comments_packet.append({"name": usern, "message": message})
+    return render_template('poll_snapshot.html', question=question, options=options, 
+                           vote_count=vote_count, results=results, player_num=player_count, comments=comments_packet, date=current_date)
+
+@bp.route("/calendar")
+def calendar():
+    return render_template('calendar.html')
+
+@bp.route("/ss")
+def screenShot():
+    mobile_emulation = {
+        "deviceName": "Pixel 7"
+    }
+    chrome_options = Options()
+    chrome_options.add_experimental_option("mobileEmulation", mobile_emulation)
+    driver = webdriver.Chrome(options=chrome_options)
+    try:
+        driver.get("http://127.0.0.1:5000/askus/snapshot")
+        current_date = datetime.now().strftime("%d-%m-%Y")
+        driver.save_screenshot(f"{current_date}_shot.png")
+        print("screenshot saved")
+    finally:
+        driver.quit()
+    return redirect(url_for("askus.index"),302)
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -50,7 +120,7 @@ def login():
     session.modified = True
     if request.method == "POST":
         visit_count = load_visit_count()
-        visit_count["total"] += 1
+        visit_count["total"] += 1 # one more visitor
         save_visit_count(visit_count)
         user = request.form["vote"]
         password = request.form["password"]
@@ -58,8 +128,6 @@ def login():
             session["user"] = user
             session.modified = True
             return redirect(url_for("askus.main"),302)
-        else:
-            flash("Incorrect password. Please try again.", "error")
 
     return render_template('askus_login.html',options=options)
 
