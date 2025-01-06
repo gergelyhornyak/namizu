@@ -169,3 +169,11 @@ def page_visits():
     visits = load_visit_count()
     visits = visits["total"]
     return f"<p>naMizu has been visited {visits} times so far.</p>"
+
+@bp.route("/questions")
+def remaining_questions():
+    questions_bank = load_question_bank()
+    used_questions = {key: value for key, value in questions_bank.items() if value == 2}
+    len(questions_bank)
+    len(used_questions)
+    return f"<h2>There are {len(questions_bank)} questions in the bank.<br>{len(used_questions)} questions have been used already.<br>{int(len(used_questions)/len(questions_bank)*100)}% of questions used.</h2>"
