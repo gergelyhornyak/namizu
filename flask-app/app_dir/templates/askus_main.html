@@ -196,7 +196,7 @@
 
             {% if not form_submitted %}
             <form method="POST">
-                <div class="panel panel-default" style="background-color: #fae5c9;">
+                <div class="panel panel-default" style="background-color: #fae5c9;border-color: transparent;">
                     <div class="panel-body">
                         <div style="text-align: center;padding-bottom: 5%;font-weight: bold;font-size: large;">Choices</div>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px;">
@@ -230,7 +230,7 @@
                     <div class="panel-body" style="background-color: #3a5d6c;color: #3a5d6c;padding: 2%;">
                         <div class="chat-container">
                             {% if comments %}
-                            <div class="chat-header">Comments (PREVIEW)</div>
+                            <div class="chat-header">Comments</div>
                             
                             <div class="chat-messages" id="chatMessages">
                                 {% for comment in comments %}
@@ -252,7 +252,7 @@
                 
             {% endif %}
             
-            <div class="panel panel-default" style="margin-top: 0%;background-color: transparent;">
+            <div class="panel panel-default" style="margin-top: 0%;background-color: transparent;border-color: transparent;">
                 <div class="panel-body" style="text-align: center;">© 2025 naMizu™. Built with care for the community.</div>
             </div>
         </div>
@@ -320,9 +320,6 @@
                 indexAxis: 'y', // Set horizontal bars
                 responsive: true,
                 maintainAspectRatio: true,
-                layout: {
-                    padding: 20
-                },
                 plugins: {
                     legend: {
                         display: false

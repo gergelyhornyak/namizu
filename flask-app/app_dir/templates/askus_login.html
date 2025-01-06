@@ -1,9 +1,12 @@
-<html>
-    <head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
             body {
                 font-family: Arial, Helvetica, sans-serif;
-                background-color: #f8f4ed;
+                background-color: #3a5d6c;
                 margin: 0;
                 padding: 0;
                 display: flex;
@@ -13,7 +16,7 @@
                 height: 100vh;
             }
             body h1 {   
-                font-size: 60px;
+                font-size: 50px;
                 margin-bottom: 10px;
                 text-align: center;
             }
@@ -24,22 +27,17 @@
                 position: relative;
             }
 
-            .flashes-box {
-                position: fixed;
-                padding: 20px;
-            }
-
             .options button {
                 background: #FFFFF0;
                 color: #242223;
                 border: 1px solid #ccc;
                 border-radius: 10px;
                 padding: 10px;
-                font-size: 46px;
+                font-size: 38px;
                 text-align: center;
                 cursor: pointer;    
                 transition: transform 0.2s, background-color 0.3s, box-shadow 0.2s;
-                width: 240px;
+                width: 200px;
             }
 
             .input-container {
@@ -58,7 +56,7 @@
                 border: 1px solid #ccc;
                 border-radius: 10px;
                 padding: 10px;
-                font-size: 46px;
+                font-size: 38px;
                 text-align: center;
                 width: 200px;
                 box-sizing: border-box;
@@ -110,13 +108,14 @@
             }
         </script>
     </head>
-    <body>        
+    <body>   
         
+            
         <div class="options">
-            <h1 style="text-align:start;">LOGIN</h1>
+            
             <form method="POST">
                 {% for option in options %}
-                <div style="position: relative;">
+                <div style="position: relative;margin-bottom: 2%;">
                     <button type="button" onclick="showInputField(this)" name="vote" value="{{ option }}">{{ option }}</button>
                 </div>
                 {% endfor %}
