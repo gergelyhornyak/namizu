@@ -19,8 +19,8 @@
             left: 0;
             width: 100%;
             height: 60px;
-            background-color: #27896d; /* Dark background */
-            color: #fff; /* White text */
+            background-color: #3a5d6c; /* Dark background */
+            color: #fae5c9; /* White text */
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -66,35 +66,106 @@
             text-decoration: none;
             color: #fff;
         }
+        .chat-container {
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid #3a5d6c;
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background-color: #3a5d6c;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-header {
+            padding: 5px;
+            background-color: #3a5d6c;
+            color: #f7c49d;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            border-bottom: 1px solid #3a5d6c;
+            word-wrap: break-word;
+        }
+
+        .message {
+            margin-bottom: 10px;
+        }
+
+        .message .text {
+            background-color: #fae5c9;
+            color:#3a5d6c;
+            padding: 8px;
+            border-radius: 5px;
+            display: inline-block;
+            word-break: break-word;
+            font-weight: bold;
+        }
+
+        .chat-input {
+            display: flex;
+            border-top: 1px solid #3a5d6c;
+        }
+
+        .chat-input #chatInput {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 0;
+            outline: none;
+            font-size: 1em;
+        }
+
+        .chat-input #chatSubmit {
+            padding: 10px 15px;
+            background-color: #f5c199;
+            border: none;
+            color:  #3a5d6c;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1em;
+        }
 
     </style>
 </head>
-<body>
+<body style="background-color: #fae5c9;">
  
     <div class="container" style="padding: 0%;">
 
-        <div class="panel-group">
+        <div class="panel-group" style="margin-bottom: 0%;">
 
-            <div class="panel panel-default" style="padding: 1% 0% 1% 0%;border-color: ivory;margin-bottom: 14%;"> 
+            <div class="panel panel-default" style="padding: 1% 0% 1% 0%;border-color: #3a5d6c;margin-bottom: 11%;color: #fae5c9"> 
                 <div class="panel-body" style="text-align:center;padding: 0%;">
                     <!-- Navigation Bar -->
                     <nav class="navbar">
                         <!-- Left Side: Home Button -->
                         <div class="nav-left">
                             <a href="{{ url_for('askus.index') }}" class="nav-home">
-                                <img src="https://img.icons8.com/color/96/home--v1.png" alt="Home" class="nav-icon">  
+                                <div style="display: inline-block; background-color: #fae5c9; border-radius: 50%; padding: 8px;">
+                                    <img src="https://img.icons8.com/plasticine/100/home-page.png" alt="Home" class="nav-icon"> 
+                                </div>
                             </a>
                         </div>
 
                         <!-- Center: Title -->
-                        <div class="nav-title">
+                        <div class="nav-title" style="font-size: 26px;color: #f5c199;">
+                            <!-- text-shadow: -1.5px -1.5px 0 #000,1.5px -1.5px 0 #000,-1.5px 1.5px 0 #000,1.5px 1.5px 0 #000; -->
                             naMizu Poll
                         </div>
 
                         <!-- Right Side: Calendar Button -->
                         <div class="nav-right">
                             <a href="{{ url_for('askus.calendar') }}" class="nav-calendar">
-                                <img src="https://img.icons8.com/doodle/96/calendar--v2.png" alt="Calendar" class="nav-icon"> <!-- Replace with your calendar icon -->
+                                <div style="display: inline-block; background-color: #fae5c9; border-radius: 50%; padding: 8px;">
+                                    <img src="https://img.icons8.com/doodle/96/calendar--v2.png" alt="Calendar" class="nav-icon"> <!-- Replace with your calendar icon -->
+                                </div>
                             </a>
                         </div>
                     </nav>
@@ -102,34 +173,35 @@
             </div>
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
-                    <div class="panel panel-default" style="border-color: #27896d;">
-                        <div class="panel-body" style="background-color: #27896d;color: ivory;">
+                    <div class="panel panel-default" style="border-color: #3a5d6c;">
+                        <div class="panel-body" style="background-color: #3a5d6c;color: #f5c199;">
                             <div style="text-align: center;padding-bottom: 1%;font-weight: bold;font-size: large;">Notifications</div>
                             <ul>
                                 {% for message in messages %}
                                     <li>{{ message }}</li>
-                                {% endfor %}
-                            </ul>
+                                    {% endfor %}
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                {% endif %}
-            {% endwith %}
-
-            <div class="panel panel-default" style="border-color: #27896d;">
-            <div class="panel-body" style="background-color: #27896d;color: ivory;">
-                <div style="text-align: center;padding-bottom: 2%;font-weight: bold;font-size: large;">Daily Poll</div>
-                <div style="text-align: center; font-style: oblique;">{{ question }}</div>
+                    {% endif %}
+                {% endwith %}
+    
+                <div class="panel panel-default" style="border-color: #3a5d6c; border-bottom-left-radius: 20%; border-bottom-right-radius: 20%;">
+                <div class="panel-body" style="background-color: #3a5d6c;color: #f0f3f5;border-bottom-left-radius: 20%;border-bottom-right-radius: 20%">
+                <div style="text-align: center;padding-bottom: 2%;font-weight: bold;font-size: large;"></div>
+                <!-- <div style="text-align: center;padding-bottom: 2%;font-weight: bold;font-size: large;">Daily Poll</div> -->
+                <div style="text-align: center; font-style:italic;font-weight: bold; font-size: large;">{{ question }}</div>
             </div>
             </div>
 
             {% if not form_submitted %}
             <form method="POST">
-                <div class="panel panel-default" style="border-color: ivory;">
+                <div class="panel panel-default" style="background-color: #fae5c9;">
                     <div class="panel-body">
                         <div style="text-align: center;padding-bottom: 5%;font-weight: bold;font-size: large;">Choices</div>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px;">
                             {% for option in options %}
-                            <button type="submit" name="vote" value="{{ option }}" style="background-color: #27896d;color: ivory;border-radius: 10%/40%;border-color: #27896d;">{{ option }}</button>
+                            <button type="submit" name="vote" value="{{ option }}" style="background-color: #3a5d6c;color: #f0f3f5;border-radius: 10%/40%;border-color: #3a5d6c;">{{ option }}</button>
                             {% endfor %}
                         </div>
                     </div>
@@ -138,43 +210,49 @@
             {% endif %}
 
             {% if form_submitted %}
-            <div class="panel panel-default">
-                <div class="panel-body">
+            <div class="panel panel-default" style="background-color: transparent;border-color: transparent;">
+                <div class="panel-body" style="color: #3a5d6c;font-size: medium;font-weight: bold;">
                     <div style="text-align: center;">{{ vote_count }} of {{ player_num }} people have voted so far</div>
                 </div>
             </div>
 
-            <div class="panel panel-default">
-                <div class="panel-body">
+            <div class="panel panel-default" style="background-color: transparent;border-color: transparent;">
+                <div class="panel-body" style="padding: 1% 2% 1% 2%;">
                     <div id="raw-scores" style="display:none;">{{ results | tojson }}</div>
-                    <canvas id="scoreChart"></canvas>
+                    
+                        <canvas id="scoreChart" style="height: 400px;color:#3a5d6c;"></canvas>
+                    
                 </div>
             </div>
             
-                {% if comments %}
-                <div class="panel panel-default" style="border-color: #27896d;">
-                    <div class="panel-body" style="background-color: #27896d;color: ivory;">
-                        <div style="text-align: center;font-size: large;font-weight: bold;">Comments (PREVIEW)</div>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(90%, 1fr));">
-                            {% for comment in comments %}
-                            <p style="padding: 1%; border: 2px solid ivory;border-radius: 3%/40%;color: ivory;"><strong>{{ comment["name"] }}</strong>: {{ comment["message"] }}</p>
-                            {% endfor %}
+                
+                <div class="panel panel-default" style="border-color: #3a5d6c;">
+                    <div class="panel-body" style="background-color: #3a5d6c;color: #3a5d6c;padding: 2%;">
+                        <div class="chat-container">
+                            {% if comments %}
+                            <div class="chat-header">Comments (PREVIEW)</div>
+                            
+                            <div class="chat-messages" id="chatMessages">
+                                {% for comment in comments %}
+                                <div class="message">
+                                    <div class="text">{{ comment["name"] }}: {{ comment["message"] }}</div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <form method="POST">
+                                <div class="chat-input">
+                                    <input type="text" id="chatInput" name="comment" placeholder="Type a message..." >
+                                    <input type="submit" id="chatSubmit" value="Submit">
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
-                {% endif %}
-            <form method="POST">
-                <div class="panel panel-default">
-                    <div class="panel-body" style="text-align: center;">
-                        <label for="comment">Enter comment:</label>
-                        <input type="text" id="comment" name="comment" placeholder="Hello there" style="border-color: ivory;border-radius: 5%/15%;">
-                        <input type="submit" value="Submit" style="border-color: ivory;border-radius: 20%/40%;background-color: #27896d;color: ivory;font-weight: bold;">
-                    </div>
-                </div>
-            </form>
+                
             {% endif %}
             
-            <div class="panel panel-default" style="border-color: ivory;">
+            <div class="panel panel-default" style="margin-top: 0%;background-color: transparent;">
                 <div class="panel-body" style="text-align: center;">© 2025 naMizu™. Built with care for the community.</div>
             </div>
         </div>
@@ -194,13 +272,14 @@
         // Create the chart using Chart.js
         const ctx = document.getElementById('scoreChart').getContext('2d');
         Chart.defaults.font.family = "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
+        Chart.defaults.color = "#3a5d6c";
         // chart data
         const data = {
             labels: playerNames, // Player names as labels
             datasets: [{
                 label: 'score',
                 data: playerScores, // Player scores
-                backgroundColor: '#27896d', // Bar color
+                backgroundColor: '#3a5d6c', // Bar color
                 borderWidth: 1,
                 borderRadius: 8
             }]};
@@ -209,7 +288,7 @@
             id: 'topLabels',
             afterDatasetsDraw(chart, args, pluginOptions) {
                 const {ctx, scales: {x,y}} = chart;
-                ctx.fillStyle = '#ffffff';
+                ctx.fillStyle = '#3a5d6c';
                 ctx.textAlign = 'center';
                 ctx.fillText('19',x.getPixelForValue(0), y.getPixelForValue(19))
             }
@@ -224,7 +303,7 @@
                     //ctx.textAlign = 'left';
                     ctx.textBaseline = 'middle';
                     ctx.font = 'bold 14px sans-serif';
-                    ctx.fillStyle = 'black';
+                    ctx.fillStyle = '3a5d6c';
                     if(data.datasets[0].data[index] > 0) {
                         ctx.fillText(data.datasets[0].data[index],dataPoint.x+4, dataPoint.y);
                     }
@@ -241,7 +320,9 @@
                 indexAxis: 'y', // Set horizontal bars
                 responsive: true,
                 maintainAspectRatio: true,
-                backgroundColor: '#27896d', // Grey background color for the chart
+                layout: {
+                    padding: 20
+                },
                 plugins: {
                     legend: {
                         display: false
@@ -253,9 +334,12 @@
                 scales: {
                     x: {
                         display: false,
+                        borderWidth: 0,
                         barPercentage: 1,
+                        categoryPercentage: 1,
+                        borderRadius: 0,
                         beginAtZero: true,
-                        max: 7, // Set max limit to highest score + some padding
+                        max: 8, // Set max limit to highest score + some padding
                         ticks: {
                             font: {
                                 weight: 'bold',  // Font weight (bold)
