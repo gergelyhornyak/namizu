@@ -56,7 +56,7 @@
 
         button {
             background-color: #3a5d6c;
-            color: #f4c5a1;
+            color: #f2d2ba;
             border: none;
             padding: 10px 20px;
             font-size: 20px;
@@ -96,7 +96,11 @@
             <p style="padding-top: 4%;">This date hasn't been archived yet.</p>
             <p>Go back and let's make history together!</p>
             <button onclick="window.history.back()">Go Back</button>
+            <a href="{{ url_for('askus.index') }}" >
+                <button>Home</button>
+            </a>
         </div>
     </div>
+
 </body>
 </html>
