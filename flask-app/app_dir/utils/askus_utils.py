@@ -133,24 +133,7 @@ def daily_routine():
         print("History log already exists for this date.")
     save_history(history)
 
-    # take snapshot
-
-    mobile_emulation = {
-        "deviceName": "Pixel 7"
-    }
-    chrome_options = Options()
-    chrome_options.add_experimental_option("mobileEmulation", mobile_emulation)
-    driver = webdriver.Chrome(options=chrome_options)
-    try:
-        driver.get("http://127.0.0.1:5000/askus/snapshot")
-        current_date = datetime.now().strftime("%d-%m-%Y")
-        driver.save_screenshot(f"app_dir/static/screenshots/{current_date}_shot.png")
-        print(f"{current_date}_shot.png saved.")
-    finally:
-        driver.quit()
-    daily_reset()
-
-def daily_reset():
+    # RESET
 
     # reset score
     scores = load_scores() # load
@@ -178,6 +161,13 @@ def daily_reset():
     zero_stats = {key: 0 for key in stats} # change
     save_player_stat(zero_stats)# save
     print("RESET USER STATS")
+
+    # reset comments
+
+    comments = {"04/01/2025 10:09:20":{
+            "Geri":"First \ud83d\ude01"
+        }}
+    save_comments(comments) # reset comments
 
 
 """
