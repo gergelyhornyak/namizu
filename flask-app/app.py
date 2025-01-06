@@ -1,7 +1,7 @@
 from app_dir import create_app
 from apscheduler.triggers.cron import CronTrigger
 from apscheduler.schedulers.background import BackgroundScheduler
-from app_dir.utils.askus_utils import daily_reset, daily_routine
+from app_dir.utils.askus_utils import daily_routine
 
 app = create_app()
 
