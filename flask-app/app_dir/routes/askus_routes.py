@@ -103,29 +103,8 @@ def calendar():
     # very neat approach, however not sustainable, 
     # as too many screenshots are created: 200KB * 365 = 72MB
     # also too long comments are not visible
-    directory = "app_dir/static/screenshots"
-    png_files = [file for file in os.listdir(directory) if file.endswith(".png")]
-    screenshots = png_files
-
-    return render_template('calendar.html', screenshots=screenshots)
-
-@bp.route("/ss")
-def screenShot():
-    return "OUT OF ORDER"
-    mobile_emulation = {
-        "deviceName": "Pixel 7"
-    }
-    chrome_options = Options()
-    chrome_options.add_experimental_option("mobileEmulation", mobile_emulation)
-    driver = webdriver.Chrome(options=chrome_options)
-    try:
-        driver.get("http://127.0.0.1:5000/askus/snapshot")
-        current_date = datetime.now().strftime("%d-%m-%Y")
-        driver.save_screenshot(f"app_dir/static/screenshots/{current_date}_shot.png")
-        print(f"{current_date}_shot.png saved.")
-    finally:
-        driver.quit()
-    return redirect(url_for("askus.index"),302)
+    return "<h1>Being developed ...</h1>"
+    return render_template('calendar.html')
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
