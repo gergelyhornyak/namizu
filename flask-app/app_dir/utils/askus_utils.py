@@ -56,6 +56,8 @@ def load_history():
     try:
         with open('database/history.json', 'r') as f:
             return json.load(f)
+    except FileNotFoundError:
+        return {}
     except Exception as e:
         print(e)
 
@@ -127,10 +129,12 @@ def daily_routine():
         "comments":comments_packet}
     
     history = load_history()
+    
     try:
         history[current_date] = history_log
     except:
         print("History log already exists for this date.")
+    
     save_history(history)
 
     # RESET
@@ -168,6 +172,7 @@ def daily_routine():
             "Geri":"First \ud83d\ude01"
         }}
     save_comments(comments) # reset comments
+
 
 
 """
