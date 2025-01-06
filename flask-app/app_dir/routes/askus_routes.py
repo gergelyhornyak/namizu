@@ -99,7 +99,7 @@ def calendar():
     # very neat approach, however not sustainable, 
     # as too many screenshots are created: 200KB * 365 = 72MB
     # also too long comments are not visible
-    return render_template('calendar_demo.html')
+    return render_template('calendar.html')
 
 @bp.get("/history/<target_date>")
 def show_history(target_date):
@@ -135,7 +135,7 @@ def login():
             session.modified = True
             return redirect(url_for("askus.main"),302)
 
-    return render_template('askus_login_new.html',options=options)
+    return render_template('askus_login.html',options=options)
 
 @bp.route('/append', methods=['GET', 'POST'])
 def append_q():
