@@ -1,5 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, jsonify, url_for, session, flash
-from app_dir.utils.askus_utils import load_question_bank, load_scores, save_scores, save_questions, get_daily_question,load_user_status, save_player_stat, load_user_creds, load_visit_count, save_visit_count, load_comments, save_comments
+from app_dir.utils.askus_utils import load_question_bank, load_scores, save_scores, save_questions 
+from app_dir.utils.askus_utils import get_daily_question,load_user_status, save_player_stat
+from app_dir.utils.askus_utils import load_user_creds, load_visit_count, save_visit_count
+from app_dir.utils.askus_utils import load_comments, save_comments, load_history
 import random
 import os
 from datetime import datetime
@@ -91,20 +94,29 @@ def poll_snapshot():
     return render_template('poll_snapshot.html', question=question, options=options, 
                            vote_count=vote_count, results=results, player_num=player_count, comments=comments_packet, date=current_date)
 
-@bp.route("/emulate_calendar")
-def emulate_calendar():
-    # user can select date on calendar widget, 
-    #  then date is queried from history, 
-    #   then poll_snapshot is rendered with history data
-    return "<h1>Being developed ...</h1>"
-
 @bp.route("/calendar")
 def calendar():
     # very neat approach, however not sustainable, 
     # as too many screenshots are created: 200KB * 365 = 72MB
     # also too long comments are not visible
-    return "<h1>Being developed ...</h1>"
-    return render_template('calendar.html')
+    return render_template('calendar_demo.html')
+
+@bp.get("/history/<target_date>")
+def show_history(target_date):
+    history = load_history()
+    date_obj = datetime.strptime(target_date, "%Y-%m-%d")
+    target_date_uk_format = date_obj.strftime("%d-%m-%Y")
+    if target_date_uk_format in history:
+        history_log = history[target_date_uk_format]
+        vote_count = sum(history_log["answers"].values())
+        player_count = len(history_log["answers"])
+        comments_packet = history_log["comments"]
+    else:
+        return render_template('missing_history_log.html')
+        
+    return render_template('askus_wayback_machine.html',question=history_log["question"], 
+                           results=history_log["answers"], vote_count=vote_count, 
+                           player_num=player_count, comments=comments_packet, date=target_date_uk_format)
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -123,7 +135,7 @@ def login():
             session.modified = True
             return redirect(url_for("askus.main"),302)
 
-    return render_template('askus_login.html',options=options)
+    return render_template('askus_login_new.html',options=options)
 
 @bp.route('/append', methods=['GET', 'POST'])
 def append_q():
