@@ -12,7 +12,7 @@ def create_app():
     app.logger.debug("Secret key aquired")
     # Register blueprints
     app.register_blueprint(main_routes.bp)
-    app.register_blueprint(askus_routes.bp, url_prefix="/askus")
+    app.register_blueprint(askus_routes.bp, url_prefix="/namizu")
     app.register_blueprint(gamechanger_routes.bp, url_prefix="/gamechanger")
 
     return app
