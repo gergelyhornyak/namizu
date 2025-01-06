@@ -1,7 +1,7 @@
 import json
 import random
 from flask import current_app
-from datetime import datetime
+from datetime import datetime, timedelta
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
@@ -118,7 +118,8 @@ def daily_routine():
     scores = load_scores()
     user_comments = load_comments()
     comments_packet = []
-    current_date = datetime.now().strftime("%d-%m-%Y-%H-%M-%S")
+    yesterday = datetime.now() - timedelta(days=1)
+    yesterday_date = yesterday.strftime("%d-%m-%Y")
     for timestamp, comments in user_comments.items():
         for usern, message in comments.items():
             comments_packet.append({"name": usern, "message": message})
@@ -131,7 +132,7 @@ def daily_routine():
     history = load_history()
     
     try:
-        history[current_date] = history_log
+        history[yesterday_date] = history_log
     except:
         print("History log already exists for this date.")
     
