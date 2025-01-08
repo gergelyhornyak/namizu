@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>naMizu</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #fff;
+            background-color: #f8d6bc;
+        }
+        header {
+            background-color: #3a5d6c;
+            color: #fae5c9;
+            text-align: center;
+            padding: 1rem 0;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        header p {
+            font-size: 1.2rem;
+            margin: 0.5rem 0;
+        }
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 1rem auto;
+            padding: 1rem;
+            max-width: 1200px;
+        }
+        .feature-card {
+            background: #3a5d6c;
+            border: 1px solid #3a5d6c;
+            border-radius: 8px;
+            margin: 1rem;
+            padding: 0% 2% 2% 2%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            max-width: 300px;
+            text-align: center;
+        }
+        .feature-card h3 {
+            color: #fae5c9;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .feature-card p {
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        .cta {
+            text-align: center;
+            margin: 2rem;
+        }
+        .cta a {
+            background-color: #3a5d6c;
+            color: #fae5c9;
+            text-decoration: none;
+            font-size: 2rem;
+            font-weight: bolder;
+            padding: 0.8rem 2rem;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .cta a:visited{
+            color:#fae5c9;
+        }
+        footer {
+            text-align: center;
+            padding: 1rem;
+            background: #333;
+            color: white;
+            margin-top: 2rem;
+        }
+        footer p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Welcome to naMizu!</h1>
+    <p>Heated polls in the groupchat</p>
+</header>
+
+<section class="features">
+    <div class="feature-card">
+        <h3>Open Source</h3>
+        <p style="margin-bottom: 0%;">Explore the code, contribute, or fork your own version. naMizu is fully open source!</p>
+        <a href="https://github.com/gregoryhornyak/gamechanger">Check out the Github repo!</a>
+    </div>
+    <div class="feature-card">
+        <h3>Ad-Free</h3>
+        <p>Enjoy a clean and distraction-free experience with no ads cluttering your polls.</p>
+    </div>
+    <div class="feature-card">
+        <h3>No Micro-Transactions</h3>
+        <p>No hidden costs, no premium features. naMizu is 100% free for friends.</p>
+    </div>
+</section>
+
+<div class="cta">
+    <a href="{{ url_for('namizu.login') }}">Get Started</a>
+</div>
+
+<footer>
+    <p>&copy; 2025 naMizu&#8482;. Built with care for the community.</p>
+</footer>
+
+</body>
+</html>
