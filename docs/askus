@@ -4,12 +4,13 @@ questions:
 - 2: used
 
 question types:
-- "Who is ..."
-- "What would XYZ do ..."
-- "Do you think XYZ would do ..."
-- "Would XYZ1 and XYZ2 work together ..."
-- "Would you rather do X or Y ..."
-
+- "Who is ...": names
+- "What would XYZ do ...": options
+- "Do you think XYZ would do ...": yes/no/probably
+- "Would XYZ1 and XYZ2 work together ...": yes/no/probably
+- "Would you rather do X or Y ...": options
+- "Pick all who would do X.": names / options
+  
 question format:
 
 "ID1": {
