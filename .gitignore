@@ -3,3 +3,4 @@ pyvenv
 __pycache__
 database/
 screenshots/
+flask_secret
