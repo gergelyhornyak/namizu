@@ -5,82 +5,124 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>naMizu</title>
     <style>
+        /* General Styles */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            color: #fff;
-            background-color: #f8d6bc;
+            color: #333;
+            background-color: #f4f4f9;
         }
+
+        /* Header Styling */
         header {
-            background-color: #3a5d6c;
-            color: #fae5c9;
+            background: linear-gradient(135deg, #4a90e2, #283e58);
+            color: #fff;
             text-align: center;
-            padding: 1rem 0;
+            padding: 5% 2%;
         }
         header h1 {
             margin: 0;
-            font-size: 2.5rem;
+            font-size: 2.8rem;
+            letter-spacing: 2px;
         }
         header p {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             margin: 0.5rem 0;
+            opacity: 0.9;
         }
+
+        /* Features Section */
         .features {
-            display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            margin: 1rem auto;
-            padding: 1rem;
+            gap: 1.5rem;
+            padding: 0 1rem;
             max-width: 1200px;
         }
+
+        /* Feature Card Styling */
         .feature-card {
-            background: #3a5d6c;
-            border: 1px solid #3a5d6c;
-            border-radius: 8px;
-            margin: 1rem;
-            padding: 0% 2% 2% 2%;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            flex: 1;
-            max-width: 300px;
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 2%;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
             text-align: center;
+            flex: 1;
+            max-width: 320px;
+            transition: transform 0.3s, box-shadow 0.3s;
         }
         .feature-card h3 {
-            color: #fae5c9;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
+            color: #4a90e2;
+            font-size: 1.8rem;
+            margin-bottom: 2%;
+            margin-top: 2%;
         }
         .feature-card p {
             font-size: 1rem;
-            line-height: 1.5;
+            line-height: 1.6;
+            color: #555;
         }
-        .cta {
-            text-align: center;
-            margin: 2rem;
-        }
-        .cta a {
-            background-color: #3a5d6c;
-            color: #fae5c9;
+        .feature-card a {
+            display: inline-block;
+            margin-top: 1%;
             text-decoration: none;
-            font-size: 2rem;
-            font-weight: bolder;
-            padding: 0.8rem 2rem;
-            border-radius: 5px;
+            font-weight: bold;
+            color: #ffffff;
+            background: #4a90e2;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
             transition: background-color 0.3s;
         }
-        .cta a:visited{
-            color:#fae5c9;
+
+        /* Call-to-Action (CTA) Button */
+        .cta {
+            text-align: center;
+            margin: 5%;
         }
+        .cta a {
+            display: inline-block;
+            background: #283e58;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 3rem;
+            font-weight: bold;
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Footer Styling */
         footer {
             text-align: center;
-            padding: 1rem;
-            background: #333;
-            color: white;
-            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #283e58;
+            color: #ffffff;
+            margin-top: 2%;
         }
         footer p {
             margin: 0;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+        }
+
+        /* Mobile View Compatibility */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            header p {
+                font-size: 1.1rem;
+            }
+            .features {
+                padding: 0 0.5rem;
+            }
+            .feature-card {
+                max-width: 100%;
+            }
+            .cta a {
+                font-size: 1.5rem;
+                padding: 0.5rem 1.2rem;
+            }
         }
     </style>
 </head>
@@ -92,23 +134,28 @@
 </header>
 
 <section class="features">
+    <div class="feature-card" style="border-color: #e96737;border-width:6px;">
+        <h3>Do you wanna add new questions?</h3>
+        <p style="margin: 1% 0%;">Create your own questions using the <a href="{{ url_for('namizu.editor') }}">naMizu Question Editor</a></p>
+    </div>
     <div class="feature-card">
         <h3>Open Source</h3>
-        <p style="margin-bottom: 0%;">Explore the code, contribute, or fork your own version. naMizu is fully open source!</p>
+        <p style="margin: 1% 0%;">Explore the code, contribute or leave a suggestion. naMizu is fully open source!</p>
         <a href="https://github.com/gregoryhornyak/gamechanger">Check out the Github repo!</a>
     </div>
     <div class="feature-card">
         <h3>Ad-Free</h3>
-        <p>Enjoy a clean and distraction-free experience with no ads cluttering your polls.</p>
+        <p style="margin: 1% 0%;">Enjoy a clean and distraction-free experience with no ads cluttering your day.</p>
     </div>
     <div class="feature-card">
         <h3>No Micro-Transactions</h3>
-        <p>No hidden costs, no premium features. naMizu is 100% free for friends.</p>
+        <p style="margin: 1% 0%;">No hidden costs, no premium features. naMizu is 100% free for friends.</p>
     </div>
+    
 </section>
 
 <div class="cta">
-    <a href="{{ url_for('namizu.login') }}">Get Started</a>
+    <a href="{{ url_for('namizu.login') }}">Visit naMizu Poll</a>
 </div>
 
 <footer>
