@@ -1,5 +1,5 @@
 from flask import Flask
-from .routes import main_routes, askus_routes, gamechanger_routes
+from .routes import main_routes, namizu_routes, gamechanger_routes
 import logging
 
 def create_app():
@@ -12,7 +12,7 @@ def create_app():
     app.logger.debug("Secret key aquired")
     # Register blueprints
     app.register_blueprint(main_routes.bp)
-    app.register_blueprint(askus_routes.bp, url_prefix="/namizu")
+    app.register_blueprint(namizu_routes.bp, url_prefix="/namizu")
     app.register_blueprint(gamechanger_routes.bp, url_prefix="/gamechanger")
 
     return app
