@@ -3,6 +3,7 @@ from app_dir.utils.namizu_utils import save_comments, save_daily_poll, save_hist
 from app_dir.utils.namizu_utils import load_user_creds, load_user_login, load_user_votes, load_visit_count
 from app_dir.utils.namizu_utils import load_today_poll, load_comments, load_question_bank, load_history
 from app_dir.utils.namizu_utils import get_daily_question, get_new_question_id, get_vote_count, get_daily_results,get_comments_packet, get_user_names
+from app_dir.utils.namizu_utils import daily_routine
 from datetime import datetime
 import random
 import json
@@ -144,7 +145,7 @@ def login():
 
 @bp.route("/snapshot")
 def poll_snapshot():
-    return f"<h1>DEPRECATED</h1>"
+    return "<h1>RESTRICTED COMMAND</h1>"
     question = get_daily_question()
     scores = load_scores()
     options = scores.keys()
@@ -269,14 +270,11 @@ def editor():
             qid = get_new_question_id()
             qid = "Q"+str(qid)
             new_question_body = {
-                
                 "Type": q_type,
                 "Question": question,
                 "Answers": answers,
                 "Status": 0
-                
             }
-            
             temp_q[qid] = new_question_body
             with open("database/temp_q.json","w") as f:
                 json.dump(temp_q, f)
@@ -296,7 +294,6 @@ def editor():
         flash("Submitted successfully")
     return render_template('namizu_new_question.html', question=question, raw_question=raw_question, 
                            options=options, raw_options=raw_options, form_submitted=submitted, multichoice=multichoice)
-
 
 @bp.route("/admin")
 def namizu_admin():
@@ -326,3 +323,9 @@ def namizu_admin():
     <h2>{used_questions} questions have been used already.</h2>
     <h2>{int(used_questions/len(questions_bank)*100)}% of questions used.</h2>"""
     return page_html
+
+@bp.route("/reset")
+def admin_reset():
+    return "<h1>RESTRICTED COMMAND</h1>"
+    daily_routine()
+    return "<h1>ADMIN RESET FINISHED</h1>"
