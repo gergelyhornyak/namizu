@@ -59,8 +59,6 @@ def load_user_db():
     try:
         with open('database/user_db.json', 'r') as f:
             return json.load(f)
-    except FileNotFoundError:
-        return {}
     except Exception as e:
         print(e)
 
@@ -101,8 +99,8 @@ def load_today_poll():
         return {
             "Q1": {
                 "Type": 0,
-                "Q": "Most likely to give the best advice for a friend in bad mood?",
-                "A": {
+                "Question": "Most likely to give the best advice for a friend in bad mood?",
+                "Answers": {
                     "Bálint":0,
                     "Bella":0,
                     "Geri":0,
@@ -119,8 +117,6 @@ def load_history():
     try:
         with open('database/history.json', 'r') as f:
             return json.load(f)
-    except FileNotFoundError:
-        return {}
     except Exception as e:
         print(e)
 
@@ -134,22 +130,24 @@ def save_users_vote(stat):
     user_db = load_user_db()
     user_db_copy = {}
     for uid, details in user_db.items():
-        for name, voted in stat.items():
-            if details["name"] == name:
+        for id, name_voted in stat.items():
+            if details["name"] == name_voted['name']:
                 details_copy = details
-                details_copy["voted"] = voted
+                details_copy["voted"] = name_voted['voted']
                 user_db_copy[uid] = details_copy
+    
     save_user_db(user_db_copy)
 
 def save_users_login(login):
     user_db = load_user_db()
     user_db_copy = {}
     for uid, details in user_db.items():
-        for name, login in login.items():
-            if details["name"] == name:
+        for id, name_login in login.items():
+            if details["name"] == name_login["name"]:
                 details_copy = details
-                details_copy["loggedin"] = login
+                details_copy["loggedin"] = name_login["loggedin"]
                 user_db_copy[uid] = details_copy
+    
     save_user_db(user_db_copy)
 
 def save_visit_count(visits):
@@ -158,7 +156,7 @@ def save_visit_count(visits):
     
 def save_questions(questions):
     with open('database/questions_bank.json', 'w') as f:
-        json.dump(questions, f)
+        json.dump(questions, f, indent=4)
 
 def save_daily_poll(daily_poll):
     with open('database/today_poll.json', 'w') as f:
@@ -289,9 +287,11 @@ def daily_routine():
             used_questions[qid] = details
 
     ystd_question = {}
+    ystd_question_id = ""
     for qid, details in questions_bank.items():
         if details["Status"] == 1:
             ystd_question[qid] = details
+            ystd_question_id = qid
 
     unused_questions = {}
     unused_question_ids = []
@@ -300,18 +300,19 @@ def daily_routine():
             unused_questions[qid] = details
             unused_question_ids.append(qid)
 
-    ystd_question["Status"] = 2
+    ystd_question[ystd_question_id]["Status"] = 2
     
     # select question randomly
     new_question_id = random.choice(unused_question_ids)
     # change
     unused_questions[new_question_id]["Status"] = 1 # set for today's Q
+    print(f"New question: {unused_questions[new_question_id]['Question']}")
     all_questions = {}
     # update
     all_questions.update(unused_questions)
     all_questions.update(ystd_question)
     all_questions.update(used_questions)
-    save_questions(unused_questions) # save
+    save_questions(all_questions) # save
 
     set_daily_question() # cache after save
 

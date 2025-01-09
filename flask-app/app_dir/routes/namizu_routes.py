@@ -57,7 +57,13 @@ def main():
 
                 save_daily_poll(daily_poll)
                 vote_stats[user] = 1 # submitted vote
-                save_users_vote(vote_stats)
+                vote_stat = load_user_votes()
+                new_vote_stats = vote_stat.copy()
+                for uid, details in vote_stat.items():
+                    for name,vote in vote_stats.items():
+                        if details["name"] == name:
+                            new_vote_stats[uid]["voted"] = vote
+                save_users_vote(new_vote_stats)
                 submitted = True
             else:    
                 choice = request.form['vote']
@@ -65,7 +71,13 @@ def main():
 
                 save_daily_poll(daily_poll)
                 vote_stats[user] = 1 # submitted vote
-                save_users_vote(vote_stats)
+                vote_stat = load_user_votes()
+                new_vote_stats = vote_stat.copy()
+                for uid, details in vote_stat.items():
+                    for name,vote in vote_stats.items():
+                        if details["name"] == name:
+                            new_vote_stats[uid]["voted"] = vote
+                save_users_vote(new_vote_stats)
                 submitted = True
 
         if 'comment' in request.form:
