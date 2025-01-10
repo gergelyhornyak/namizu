@@ -14,7 +14,12 @@ bp = Blueprint('namizu', __name__, template_folder='templates')
 
 @bp.route("/")
 def index():
-    return render_template('/namizu/landing_page.html')
+    alreadyLoggedIn = False
+    userName = ""
+    if "user" in session:
+        userName = session["user"]
+        alreadyLoggedIn = True
+    return render_template('/namizu/landing_page.html', userName=userName, alreadyLoggedIn=alreadyLoggedIn)
 
 @bp.route("/poll", methods=['GET', 'POST'])
 def main():
@@ -127,14 +132,19 @@ def show_history(target_date):
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
     creds = load_user_creds()
+    logins = load_user_login()
     options = list(creds.keys())
-    session["user"] = "noone"
-    session.modified = True
     streaks_all = load_user_streak()
     streaks = {}
     for uid,details in streaks_all.items():
         if details["streak"] > 0:
             streaks[details["name"]] = details["streak"]
+
+    if "user" in session:
+        visit_count = load_visit_count()
+        visit_count["total"] += 1 # one more visitor
+        save_visit_count(visit_count)
+        return redirect(url_for("namizu.main"),302)
 
     if request.method == "POST":
         visit_count = load_visit_count()
@@ -145,10 +155,20 @@ def login():
         if creds[user] == password:
             session["user"] = user
             session.modified = True
+            for uid,details in logins.items():
+                if details["name"] == user:
+                    logins[uid]["loggedin"] = 1
+                    break
+            save_users_login(logins)
+
             return redirect(url_for("namizu.main"),302)
 
     return render_template('namizu/login.html',options=options, streak=streaks)
 
+@bp.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for("namizu.index"),302)
 
 @bp.route('/editor', methods=['GET', 'POST'])
 def editor():
