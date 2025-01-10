@@ -192,19 +192,27 @@
                     <div class="container_q">
                         <form method="post">
                             <label for="question" class="form-label">Question</label>
+                            {% if not form_submitted %}
                             <p style="font-weight: bolder;font-size: small;">If multiple choices, then please select "Multi-choice"</p>
-
+                            {% endif %}
                             <div class="form-checkbox-group">
                                 <label class="form-label">Multi-choice:</label>
                                 <div class="checkbox-option">
                                     <input type="checkbox" id="single_answer" name="question_type" value="multichoice">
                                 </div>
                             </div>
-
+                            {% if not form_submitted %}
+                            <p style="font-weight: bolder;font-size: small;">For any random name, use "{P}"</p>
+                            {% endif %}
                             <textarea name="question" class="form-input" placeholder="Enter your question here"></textarea><br>
                             <label for="answers" class="form-label">Answers</label>
-                            <p style="font-weight: bolder;font-size:small;">If options, then comma separated and max. 6 options,</p>
+                            {% if not form_submitted %}
+                            <p style="font-weight: bolder;font-size:medium;">If options, then please</p>
+                            <p style="font-weight: bolder;font-size:small;">1) put comma between options</p>
+                            <p style="font-weight: bolder;font-size:small;">2) max. 5 words per each option</p>
+                            <p style="font-weight: bolder;font-size:small;">3) max. 6 options</p>
                             <p style="font-weight: bolder;font-size: small;">if names, then please type in "names"</p>
+                            {% endif %}
                             <textarea name="answers" class="form-input" placeholder="Enter the answer(s) here"></textarea><br>
                             
                             <input type="submit" id="submit_form" class="form-button" value="Submit">
