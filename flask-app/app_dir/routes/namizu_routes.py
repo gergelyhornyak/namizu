@@ -141,18 +141,15 @@ def login():
             streaks[details["name"]] = details["streak"]
 
     if "user" in session:
-        visit_count = load_visit_count()
-        visit_count["total"] += 1 # one more visitor
-        save_visit_count(visit_count)
         return redirect(url_for("namizu.main"),302)
 
     if request.method == "POST":
-        visit_count = load_visit_count()
-        visit_count["total"] += 1 # one more visitor
-        save_visit_count(visit_count)
         user = request.form["vote"]
         password = request.form["password"]
         if creds[user] == password:
+            visit_count = load_visit_count()
+            visit_count["total"] += 1 # one more visitor
+            save_visit_count(visit_count)
             session["user"] = user
             session.modified = True
             for uid,details in logins.items():
@@ -343,6 +340,8 @@ def questions_list():
         temp_question["Question"] = q_body["Question"]
         temp_question["Answers"] = q_body["Answers"]
         questions.append(temp_question)
+
+    questions.append(temp_question)
 
     return render_template('namizu/questions_list.html', questions=questions) 
 
