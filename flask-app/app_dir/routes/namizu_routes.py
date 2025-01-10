@@ -96,6 +96,7 @@ def main():
             }
             save_comments(user_comments)
             comments_packet = get_comments_packet()
+            return redirect(url_for('namizu.main'))
     
     daily_poll = get_daily_question()
     question = daily_poll["Question"]
