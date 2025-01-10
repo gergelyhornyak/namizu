@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>naMizu</title>
+  <link rel="icon" href="https://img.icons8.com/nolan/64/slime-rancher.png">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js -->
+  <style>
+
+        /* Navigation Bar Styling */
+        .navbar {
+            box-sizing: border-box;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background-color: #27896d; /* Dark background */
+            color: #fff; /* White text */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        /* Left Section (Home Button) */
+        .nav-left {
+            flex: 1; /* Pushes the content to the left */
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-home {
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .nav-icon {
+            width: 30px;
+            height: 30px;
+        }
+
+        /* Center Section (Title) */
+        .nav-title {
+            flex: 2; /* Centers the title */
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* Right Section (Calendar Button) */
+        .nav-right {
+            flex: 1; /* Pushes the content to the right */
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .nav-calendar {
+            text-decoration: none;
+            color: #fff;
+        }
+
+    </style>
+</head>
+<body>
+ 
+    <div class="container" style="padding: 0%;">
+
+        <div class="panel-group">
+
+
+            <div class="panel panel-default" style="border-color: #27896d;">
+            <div class="panel-body" style="background-color: #27896d;color: ivory;">
+                <div style="text-align: center;padding-bottom: 2%;font-weight: bold;font-size: large;">Daily Poll ({{ date }})</div>
+                <div style="text-align: center; font-style: oblique; font-size: medium;">{{ question }}</div>
+            </div>
+            </div>
+
+            
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div style="text-align: center;">{{ vote_count }} of {{ player_num }} people have voted so far</div>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="raw-scores" style="display:none;">{{ results | tojson }}</div>
+                    <canvas id="scoreChart"></canvas>
+                </div>
+            </div>
+            
+                
+                <div class="panel panel-default" style="border-color: #27896d;">
+                    <div class="panel-body" style="background-color: #27896d;color: ivory;">
+                        <div style="text-align: center;font-size: large;font-weight: bold;">Comments (PREVIEW)</div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(90%, 1fr));">
+                            {% for comment in comments %}
+                            <p style="padding: 1%; border: 2px solid ivory;border-radius: 3%/40%;color: ivory;"><strong>{{ comment["name"] }}</strong>: {{ comment["message"] }}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+            
+            <div class="panel panel-default" style="border-color: ivory;">
+                <div class="panel-body" style="text-align: center;">© 2025 naMizu™ {{ date }}</div>
+            </div>
+        </div>
+    </div>
+
+    
+    <script>
+        var rawScoresData = document.getElementById('raw-scores').innerText;
+        var scores = JSON.parse(rawScoresData);
+        const playerNames = Object.keys(scores);
+        const playerScores = Object.values(scores);
+        console.log("raw_scores",rawScoresData)
+        console.log("scores",scores)
+        console.log("pl_names",playerNames)
+        console.log("pl_scores",playerScores)
+
+        // Create the chart using Chart.js
+        const ctx = document.getElementById('scoreChart').getContext('2d');
+        Chart.defaults.font.family = "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
+        // chart data
+        const data = {
+            labels: playerNames, // Player names as labels
+            datasets: [{
+                label: 'score',
+                data: playerScores, // Player scores
+                backgroundColor: '#27896d', // Bar color
+                borderWidth: 1,
+                borderRadius: 8
+            }]};
+        // topLabel plugin
+        const topLabels = {
+            id: 'topLabels',
+            afterDatasetsDraw(chart, args, pluginOptions) {
+                const {ctx, scales: {x,y}} = chart;
+                ctx.fillStyle = '#ffffff';
+                ctx.textAlign = 'center';
+                ctx.fillText('19',x.getPixelForValue(0), y.getPixelForValue(19))
+            }
+        };
+
+        const doubleLabels = {
+            id: 'doubleLabels',
+            afterDatasetsDraw(chart,args,plugins) {
+                const {ctx,data} = chart;
+                ctx.save();
+                chart.getDatasetMeta(0).data.forEach((dataPoint, index) => {
+                    //ctx.textAlign = 'left';
+                    ctx.textBaseline = 'middle';
+                    ctx.font = 'bold 14px sans-serif';
+                    ctx.fillStyle = 'black';
+                    if(data.datasets[0].data[index] > 0) {
+                        ctx.fillText(data.datasets[0].data[index],dataPoint.x+4, dataPoint.y);
+                    }
+                })
+            }
+        }
+
+        // chart config
+        const config = {
+            type: 'bar', // Horizontal bar chart
+            data,
+            options: {
+                skipNull: true,
+                indexAxis: 'y', // Set horizontal bars
+                responsive: true,
+                maintainAspectRatio: true,
+                backgroundColor: '#27896d', // Grey background color for the chart
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip:{
+                        enabled: false
+                    },
+                },
+                scales: {
+                    x: {
+                        display: false,
+                        barPercentage: 1,
+                        beginAtZero: true,
+                        max: 7, // Set max limit to highest score + some padding
+                        ticks: {
+                            font: {
+                                weight: 'bold',  // Font weight (bold)
+                                size: 14,        // Font size
+                            }
+                        },
+                        grid: {
+                            display:false
+                        },
+                    },
+                    y: {
+                        border: {
+                            display: false
+                        },
+                        grid: {
+                            display:false
+                        },
+                        beginAtZero: true,
+                        ticks: {
+                            font: {
+                                weight: 'bold',  // Font weight (bold)
+                                size: 14,        // Font size
+                            }
+                        }
+                    }
+                },
+            },
+            plugins: [doubleLabels],
+        };
+        // render
+        const scoreChart = new Chart(
+            ctx, config
+        );
+            
+    </script>
+
+</body>
+</html>

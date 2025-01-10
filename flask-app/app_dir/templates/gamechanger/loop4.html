@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAME</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: Verdana, sans-serif;
+            background: #ffffff;
+        }
+
+        .slides {
+            display: flex;
+            flex-direction: row;
+            transition: transform 0.5s ease;
+            width: 1200vw; /* Adjust based on the number of slides */
+        }
+
+        .slide {
+            flex: 0 0 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            color: #000000;
+        }
+
+        .slide-1 {
+            background-color: #ffffff;
+        }
+
+        .slide-2 {
+            background-color: #ffffff;
+        }
+
+        .slide-3 {
+            background-color: #ffffff;
+            background-image: url('../static/ikea_pillowcase.png')
+        }
+        .slide-4 {
+            background-color: #5C6772;
+            
+        }
+        .slide-5 {
+            background-color: #ffffff;
+        }
+        .slide-6 {
+            background-color: #ffffff;
+        }
+        .slide-7 {
+            background-color: #ffffff;
+        }
+        .slide-8 {
+            background-color: #ffffff;
+        }
+        .slide-9 {
+            background-color: #ffffff;
+        }
+        .slide-10 {
+            background-color: #ffffff;
+        }
+        .slide-11 {
+            background-color: #ffffff;
+        }
+        .slide-12 {
+            background-color: #ffffff;
+        }
+        audio {
+            margin-top: 20px;
+        }
+        .audio-container {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .play-button {
+            width: 60px;
+            height: 60px;
+            background-color: #fff;
+            border: 2px solid #e74c3c;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s;
+        }
+
+        .play-button:active {
+            transform: scale(0.95);
+        }
+
+        .play-icon {
+            width: 0;
+            height: 0;
+            border-left: 15px solid #e74c3c;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+        }
+
+        .pause-icon {
+            display: flex;
+            justify-content: space-between;
+            width: 15px;
+            height: 20px;
+        }
+
+        .pause-icon div {
+            width: 5px;
+            height: 20px;
+            background-color: #e74c3c;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="slides" id="slides">
+        <div class="slide slide-1">Hogy hívták az első női űrhajóst?</div>
+        <div class="slide slide-2">Mi Türkmenisztán fővárosa?</div>
+        <div class="slide slide-3"><span style="background-color: white;">&nbsp;Mi a neve ennek az IKEA párnahuzatnak?&nbsp;</span></div>
+        <div class="slide slide-4"><span style="background-color: white;">&nbsp;Milyen szín látható?&nbsp;</span></div>
+        <div class="slide slide-5"><a href="{{ url_for('maze') }}">Maze Minigame</a></div>
+        <div class="slide slide-6">Z = Y / 3</div>
+        <div class="slide slide-7">Mondj egy&nbsp;<b>másik</b>&nbsp;Tom Hanks filmet!</div>
+        <div class="slide slide-8">Pont / Penna / Papír?</div>
+        <div class="slide slide-9">Tippeld meg Budapest lakosságát!</div>
+        <div class="slide slide-9">Kérek egy szívárványt!</div>
+        <div class="slide slide-10">Slide 10</div>
+        <div class="slide slide-11">Slide 11</div>
+        <div class="slide slide-12">Ütemezett Hasizom Teszt &nbsp;
+            <div class="audio-container">
+                <div class="play-button" id="playButton">
+                    <div class="play-icon" id="playIcon"></div>
+                </div>
+                <audio id="audioPlayer" src="/static/audio/rovid_felules.mp3"></audio>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const slides = document.getElementById("slides");
+        let currentSlide = 0;
+
+        const totalSlides = slides.children.length;
+
+        const playButton = document.getElementById("playButton");
+        const playIcon = document.getElementById("playIcon");
+        const audioPlayer = document.getElementById("audioPlayer");
+
+        function updateSlide() {
+            slides.style.transform = `translateX(-${currentSlide * 100}vw)`;
+        }
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "ArrowRight") {
+                if (currentSlide < totalSlides - 1) {
+                    currentSlide++;
+                    updateSlide();
+                }
+            } else if (event.key === "ArrowLeft") {
+                if (currentSlide > 0) {
+                    currentSlide--;
+                    updateSlide();
+                }
+            }
+        });
+
+
+        playButton.addEventListener("click", () => {
+            if (audioPlayer.paused) {
+                audioPlayer.play();
+                playIcon.className = "pause-icon";
+                playIcon.innerHTML = '<div></div><div></div>';
+            } else {
+                audioPlayer.pause();
+                playIcon.className = "play-icon";
+                playIcon.innerHTML = "";
+            }
+        });
+    </script>
+</body>
+</html>

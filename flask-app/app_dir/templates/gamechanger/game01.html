@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <title>VetélkedőVetélkedőVetélkedő</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: Verdana, sans-serif;
+            background: #ffffff;
+        }
+
+        .slides {
+            display: flex;
+            flex-direction: row;
+            transition: transform 0.5s ease;
+            width: 1200vw; /* Adjust based on the number of slides */
+        }
+
+        .slide {
+            flex: 0 0 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8rem;
+            color: #eeeedd;
+            position: relative;
+            background-color: #15152a;
+            text-align: center;
+        }
+
+        .slide-1 {
+            background-color: #15152a;
+        }
+
+        .slide-2 {
+            background-color: #15152a;
+        }
+
+        .slide-3 {
+            background-color: #15152a;
+        }
+        .slide-4 {
+            background-color: #15152a;
+        }
+        .slide-5 {
+            background-color: #15152a;
+        }
+        .slide-6 {
+            background-color: #15152a;
+        }
+        .slide-7 {
+            background-color: #15152a;
+        }
+        .slide-8 {
+            background-color: #15152a;
+        }
+        .slide-9 {
+            background-color: #15152a;
+        }
+        .slide-10 {
+            background-color: #15152a;
+        }
+        .slide-11 {
+            background-color: #15152a;
+        }
+        .slide-12 {
+            background-color: #15152a;
+        }
+
+        .extra-info {
+            position: absolute;
+            bottom: -50%;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 20px;
+            font-size: 3rem;
+            font-style: italic;
+            text-align: center;
+            transition: bottom 0.5s ease;
+        }
+
+        .extra-info.revealed {
+            bottom: 0;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="slides" id="slides">
+        <div class="slide slide-1">
+            Ki tud legnagyobbat<br>dobni a dobókockákkal?
+            <div class="extra-info">szabadon értelmezhető</div>
+        </div>
+        <div class="slide slide-2">
+            Ki tudja legpontossabban<br>megmondani az időt?
+            <div class="extra-info">óra - perc</div>
+        </div>
+        <div class="slide slide-3">
+            Ki tud leggyorsabban<br>megtölteni egy poharat?
+            <div class="extra-info">lehet alkoholos ital is</div>
+        </div>
+        <div class="slide slide-4">
+            Ki képes a leghosszabb farkas-szem nézésre?
+        </div>
+        <div class="slide slide-5">
+            Ki tudja a legideálisabb<br>rajzot készíteni Geriről?
+        </div>
+        <div class="slide slide-6">
+            Ki tud a legtovább énekelni<br>egy levegővel?
+            <div class="extra-info">lehet egy kitartott hang is</div>
+        </div>
+        <div class="slide slide-7">
+            Kinek van a legördögibb nevetése?
+        </div>
+        <div class="slide slide-8">
+            Legjobb kéz-árnyék-játék előadó.
+            <div class="extra-info">két/négy kézzel is lehet</div>
+        </div>
+        <div class="slide slide-9">
+            Ki tudja leggyorsabban meginni<br>a nemrég kitöltött italát?
+            <div class="extra-info">lehet alkoholos ital is</div>
+        </div>
+        <div class="slide slide-10">
+            Legjobb közös selfie ötlet / koncepció.
+            <div class="extra-info">időzítőt használni ér</div>
+        </div>
+        <div class="slide slide-11">
+
+        </div>
+        <div class="slide slide-12">
+	    Vééééééége! <div style="font-size: 3rem;">&nbsp;&nbsp;&nbsp;*insert confetti*</div>
+        </div>
+    </div>
+
+    <script>
+        const slides = document.getElementById("slides");
+        let currentSlide = 0;
+
+        const totalSlides = slides.children.length;
+
+        function updateSlide() {
+            slides.style.transform = `translateX(-${currentSlide * 100}vw)`;
+        }
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "ArrowRight") {
+                if (currentSlide < totalSlides - 1) {
+                    currentSlide++;
+                    updateSlide();
+                }
+            } else if (event.key === "ArrowLeft") {
+                if (currentSlide > 0) {
+                    currentSlide--;
+                    updateSlide();
+                }
+            } else if (event.key === "ArrowDown") {
+                const currentSlideElement = slides.children[currentSlide];
+                const extraInfo = currentSlideElement.querySelector(".extra-info");
+                if (extraInfo) {
+                    extraInfo.classList.toggle("revealed");
+                }
+            }
+        });
+
+    // Add an event listener for key presses
+    document.addEventListener('keydown', function(event) {
+      // Check if the "Up" arrow key (key code 38) is pressed
+      if (event.key === "ArrowUp") {
+        // Trigger confetti animation
+        confetti({
+          particleCount: 250,
+          spread: 150,
+          origin: { y: 0.6 },
+          gravity: 0.7 
+        });
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>500 Internal Server Error</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f8ff;
+            color: #333;
+            text-align: center;
+            padding: 50px;
+        }
+        h1 {
+            font-size: 100px;
+            color: #ff6347;
+        }
+        p {
+            font-size: 24px;
+            margin: 20px;
+        }
+        .emoji {
+            font-size: 50px;
+        }
+        a {
+            text-decoration: none;
+            color: #4CAF50;
+            font-size: 20px;
+        }
+        .container {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Oops, 500!</h1>
+    <p>Looks like something messed up somewhere in the server! <span class="emoji">🛸</span></p>
+    <p>We couldn't find the page you're looking for. Maybe it flew away on a rocket ship?</p>
+    <div class="container">
+        <img src="https://geek.design/wp-content/uploads/2019/01/404_Pages.png" alt="Lost in Space" width="400" height="300">
+    </div>
+    <p>Don't worry, you can <a href="{{ url_for('home') }}">go back home</a> or explore something new!</p>
+    <p>If you need help, try shouting at the internet: "404, why are you doing this to me?" <span class="emoji">🤷‍♂️</span></p>
+</body>
+</html>
