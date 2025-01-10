@@ -354,5 +354,3 @@ def daily_routine():
             "GameMaster":"Let the poll begin!"
         }}
     save_comments(comments) # reset comments
-
-daily_routine()
