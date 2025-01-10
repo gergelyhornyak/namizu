@@ -16,7 +16,7 @@
 
         /* Header Styling */
         header {
-            background: linear-gradient(135deg, #4a90e2, #283e58);
+            background: linear-gradient(135deg, #283e58, #4a90e2);
             color: #fff;
             text-align: center;
             padding: 5% 2%;
@@ -30,6 +30,12 @@
             font-size: 1.3rem;
             margin: 0.5rem 0;
             opacity: 0.9;
+        }
+        header a:active{
+            color: white; /* Optional: Change color when the link is active (clicked) */
+        }
+        header a:visited {
+            color: white; /* Ensure it stays white even after being clicked */
         }
 
         /* Features Section */
@@ -130,7 +136,11 @@
 
 <header>
     <h1>Welcome to naMizu!</h1>
+    {% if not alreadyLoggedIn %}
     <p>Heated polls in the groupchat</p>
+    {% elif alreadyLoggedIn %}
+    <p>Logged in as {{ userName }}. Wanna <a href="{{ url_for('namizu.logout') }}" style="text-decoration: none;color: white;font-weight: bold;">logout?</a></p>
+    {% endif %}
 </header>
 
 <section class="features">
