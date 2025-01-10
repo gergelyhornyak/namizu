@@ -336,6 +336,7 @@ def questions_list():
         temp_question["QID"] = qid
         temp_question["Question"] = q_body["Question"]
         temp_question["Answers"] = q_body["Answers"]
+        temp_question["Status"] = q_body["Status"]
         questions.append(temp_question)
 
 
