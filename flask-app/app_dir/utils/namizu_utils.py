@@ -1,6 +1,5 @@
 import json
 import random
-from flask import current_app
 from datetime import datetime, timedelta
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -12,13 +11,11 @@ DATABASE_PATH = "database/"
 def load_visit_count():
     try:
         with open('database/visit_count.json', 'r') as f:
-            current_app.logger.info("visit_count.json found and loaded")
             return json.load(f)
     except FileNotFoundError:
-        current_app.logger.warning("visit_count.json not found, created and loaded")
         return {'total': 0}
     except Exception as e:
-        current_app.logger.error(f"{e}")
+        print(f"{e}")
 
 def load_question_bank():
     try:
@@ -286,6 +283,19 @@ def daily_routine():
     
     save_history(history)
 
+    # before reset login, change streak according to logins
+    streaks = load_user_streak()
+    user_loginn = load_user_login()
+    
+    for uid, details in user_loginn.items():
+        if details["loggedin"] == 1:
+            streaks[uid]["streak"] += 1
+        elif details["loggedin"] == 0:
+            streaks[uid]["streak"] = 0
+            
+
+    save_users_streak(streaks)
+
     # RESET
 
     # reset votes and login
@@ -301,7 +311,6 @@ def daily_routine():
         reset_login[uid]["loggedin"] = 0
     save_users_vote(reset_votes)
     save_users_login(reset_login)
-    print("RESET VOTES AND LOGIN")
 
     # change question
     questions_bank = load_question_bank() # load
@@ -330,7 +339,6 @@ def daily_routine():
     new_question_id = random.choice(unused_question_ids)
     # change
     unused_questions[new_question_id]["Status"] = 1 # set for today's Q
-    print(f"New question: {unused_questions[new_question_id]['Question']}")
     all_questions = {}
     # update
     all_questions.update(unused_questions)
@@ -346,3 +354,5 @@ def daily_routine():
             "GameMaster":"Let the poll begin!"
         }}
     save_comments(comments) # reset comments
+
+daily_routine()

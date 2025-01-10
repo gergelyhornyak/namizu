@@ -9,7 +9,6 @@ scheduler = BackgroundScheduler()
 
 def job():
     daily_routine()
-    print(f"LOG: daily routine: backup, save, reset")
 
 scheduler.add_job(
     func=job,
