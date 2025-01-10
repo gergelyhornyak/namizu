@@ -9,8 +9,9 @@ def create_app():
     with open("flask_secret","r") as f:
         stringg = f.readline()
     app.config['SECRET_KEY'] = stringg
-    app.config['PERMANENT_SESSION_LIFETIME'] = 86400
     app.logger.debug("Secret key aquired")
+    app.config['PERMANENT_SESSION_LIFETIME'] = 86400
+    app.logger.debug("Session lifetime set to 24hrs")
     # Register blueprints
     app.register_blueprint(main_routes.bp)
     app.register_blueprint(namizu_routes.bp, url_prefix="/namizu")
