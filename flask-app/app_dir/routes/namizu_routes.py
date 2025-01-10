@@ -338,7 +338,6 @@ def questions_list():
         temp_question["Answers"] = q_body["Answers"]
         questions.append(temp_question)
 
-    questions.append(temp_question)
 
     return render_template('namizu/questions_list.html', questions=questions) 
 
