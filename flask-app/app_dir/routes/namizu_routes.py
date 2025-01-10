@@ -289,8 +289,6 @@ def editor():
     if do_restart:
         submitted = False
     if do_accept:
-        flash("Submitted successfully in DEMO mode (not saved)")
-        """
         try:
             with open("database/temp_q.json","r") as f:
                 temp_q = json.load(f)
@@ -300,7 +298,6 @@ def editor():
             save_new_question(k,v)
             break
         flash("Submitted successfully")
-        """
     # add final check before submit question:
     # if exact question, exact type and exact answers exist, then do_restart
     return render_template('namizu/editor.html', question=question, raw_question=raw_question, 
