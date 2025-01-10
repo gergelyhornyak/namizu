@@ -286,6 +286,7 @@ def editor():
             with open("database/temp_q.json","w") as f:
                 json.dump(temp_q, f, indent=4)
             submitted = True
+            
 
     if do_restart:
         submitted = False
@@ -299,6 +300,7 @@ def editor():
             save_new_question(k,v)
             break
         flash("Submitted successfully")
+        return redirect(url_for('namizu.editor'))
     # add final check before submit question:
     # if exact question, exact type and exact answers exist, then do_restart
     return render_template('namizu/editor.html', question=question, raw_question=raw_question, 
