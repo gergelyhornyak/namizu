@@ -86,6 +86,18 @@ def load_user_login():
         user_login[key]["loggedin"] = value["loggedin"]
     return user_login
 
+def load_user_streak():
+    """
+    return {UID:{ name:NAME,streak:4 },...}
+    """
+    user_db = load_user_db()
+    user_streak = {}
+    for key, value in user_db.items():
+        user_streak[key] = {}
+        user_streak[key]["name"] = value["name"]
+        user_streak[key]["streak"] = value["streak"]
+    return user_streak
+
 def load_user_creds():
     user_db = load_user_db()
     user_creds = {value["name"]:value["passw"] for key, value in user_db.items()}
@@ -146,6 +158,18 @@ def save_users_login(login):
             if details["name"] == name_login["name"]:
                 details_copy = details
                 details_copy["loggedin"] = name_login["loggedin"]
+                user_db_copy[uid] = details_copy
+    
+    save_user_db(user_db_copy)
+
+def save_users_streak(streak):
+    user_db = load_user_db()
+    user_db_copy = {}
+    for uid, details in user_db.items():
+        for id, name_login in streak.items():
+            if details["name"] == name_login["name"]:
+                details_copy = details
+                details_copy["streak"] = name_login["streak"]
                 user_db_copy[uid] = details_copy
     
     save_user_db(user_db_copy)
