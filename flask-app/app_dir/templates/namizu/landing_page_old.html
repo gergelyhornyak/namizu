@@ -10,14 +10,14 @@
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            color: #3a5d6c;
-            background-color: #fae5c9;
+            color: #333;
+            background-color: #f4f4f9;
         }
 
         /* Header Styling */
         header {
-            background: linear-gradient(135deg, #3a5d6c, #1d2e36);
-            color: #ffffff;
+            background: linear-gradient(135deg, #283e58, #4a90e2);
+            color: #fff;
             text-align: center;
             padding: 5% 2%;
         }
@@ -31,13 +31,11 @@
             margin: 0.5rem 0;
             opacity: 0.9;
         }
-        header a {
-            color: #ffffff;
-            font-weight: bold;
-            text-decoration: none;
+        header a:active{
+            color: white; /* Optional: Change color when the link is active (clicked) */
         }
-        header a:hover {
-            text-decoration: underline;
+        header a:visited {
+            color: white; /* Ensure it stays white even after being clicked */
         }
 
         /* Features Section */
@@ -47,24 +45,22 @@
             gap: 1.5rem;
             padding: 0 1rem;
             max-width: 1200px;
-            
         }
 
         /* Feature Card Styling */
         .feature-card {
             background: #ffffff;
-            border: 4px solid #f7c49d;
+            border: 1px solid #e0e0e0;
             border-radius: 12px;
             padding: 2%;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
             text-align: center;
             flex: 1;
             max-width: 320px;
-            margin: 1.5%;
+            transition: transform 0.3s, box-shadow 0.3s;
         }
-        
         .feature-card h3 {
-            color: #3a5d6c;
+            color: #4a90e2;
             font-size: 1.8rem;
             margin-bottom: 2%;
             margin-top: 2%;
@@ -80,12 +76,11 @@
             text-decoration: none;
             font-weight: bold;
             color: #ffffff;
-            background: #3a5d6c;
+            background: #4a90e2;
             padding: 0.6rem 1.2rem;
             border-radius: 6px;
             transition: background-color 0.3s;
         }
-        
 
         /* Call-to-Action (CTA) Button */
         .cta {
@@ -94,12 +89,11 @@
         }
         .cta a {
             display: inline-block;
-            background: #3a5d6c;
+            background: #283e58;
             color: #ffffff;
             text-decoration: none;
             font-size: 3rem;
             font-weight: bold;
-            padding: 0.8rem 1.5rem;
             border-radius: 8px;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
         }
@@ -108,7 +102,7 @@
         footer {
             text-align: center;
             padding: 1.5rem;
-            background: #3a5d6c;
+            background: #283e58;
             color: #ffffff;
             margin-top: 2%;
         }
@@ -145,14 +139,14 @@
     {% if not alreadyLoggedIn %}
     <p>Heated polls in the groupchat</p>
     {% elif alreadyLoggedIn %}
-    <p>Logged in as {{ userName }}. Wanna <a href="{{ url_for('namizu.logout') }}">logout?</a></p>
+    <p>Logged in as {{ userName }}. Wanna <a href="{{ url_for('namizu.logout') }}" style="text-decoration: none;color: white;font-weight: bold;">logout?</a></p>
     {% endif %}
 </header>
 
 <section class="features">
-    <div class="feature-card" style="border-color: #f7c49d;">
-        <h3 style="text-decoration:underline;">Do you wanna add new questions?</h3>
-        <p style="margin: 1% 0%;">Create your own questions using the <a href="{{ url_for('namizu.editor') }}">naMizu Editor</a></p>
+    <div class="feature-card" style="border-color: #e96737;border-width:6px;">
+        <h3>Do you wanna add new questions?</h3>
+        <p style="margin: 1% 0%;">Create your own questions using the <a href="{{ url_for('namizu.editor') }}">naMizu Question Editor</a></p>
     </div>
     <div class="feature-card">
         <h3>Open Source</h3>
@@ -167,6 +161,7 @@
         <h3>No Micro-Transactions</h3>
         <p style="margin: 1% 0%;">No hidden costs, no premium features. naMizu is 100% free for friends.</p>
     </div>
+    
 </section>
 
 <div class="cta">
