@@ -283,7 +283,7 @@ def editor():
             }
             temp_q[qid] = new_question_body
             with open("database/temp_q.json","w") as f:
-                json.dump(temp_q, f)
+                json.dump(temp_q, f, indent=4)
             submitted = True
 
     if do_restart:

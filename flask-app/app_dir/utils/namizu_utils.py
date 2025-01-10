@@ -173,7 +173,7 @@ def save_users_streak(streak):
 
 def save_visit_count(visits):
     with open('database/visit_count.json', 'w') as f:
-        json.dump(visits, f)
+        json.dump(visits, f, indent=4)
     
 def save_questions(questions):
     with open('database/questions_bank.json', 'w') as f:
@@ -181,15 +181,15 @@ def save_questions(questions):
 
 def save_daily_poll(daily_poll):
     with open('database/today_poll.json', 'w') as f:
-        json.dump(daily_poll, f)
+        json.dump(daily_poll, f, indent=4)
 
 def save_comments(comments):
     with open('database/comments.json', 'w') as f:
-        json.dump(comments, f)
+        json.dump(comments, f, indent=4)
 
 def save_history(history_logs):
     with open('database/history.json', 'w') as f:
-        json.dump(history_logs, f)
+        json.dump(history_logs, f, indent=4)
 
 def save_new_question(qid,q):
     questions_bank = load_question_bank()
