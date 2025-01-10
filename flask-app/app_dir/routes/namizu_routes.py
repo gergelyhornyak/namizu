@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, jsonify, url_for, session, flash, get_flashed_messages
 from app_dir.utils.namizu_utils import save_comments, save_daily_poll, save_history, save_users_login, save_users_vote, save_visit_count, save_new_question
 from app_dir.utils.namizu_utils import load_user_creds, load_user_login, load_user_votes, load_visit_count
-from app_dir.utils.namizu_utils import load_today_poll, load_comments, load_question_bank, load_history
+from app_dir.utils.namizu_utils import load_today_poll, load_comments, load_question_bank, load_history, load_user_streak
 from app_dir.utils.namizu_utils import get_daily_question, get_new_question_id, get_vote_count, get_daily_results,get_comments_packet, get_user_names
 from app_dir.utils.namizu_utils import daily_routine
 from datetime import datetime
@@ -14,7 +14,7 @@ bp = Blueprint('namizu', __name__, template_folder='templates')
 
 @bp.route("/")
 def index():
-    return render_template('namizu_landing_page.html')
+    return render_template('/namizu/landing_page.html')
 
 @bp.route("/poll", methods=['GET', 'POST'])
 def main():
@@ -99,13 +99,13 @@ def main():
     results = daily_poll["Answers"]
     vote_stat = load_user_votes()
     vote_count = get_vote_count()
-    return render_template('namizu_main.html', question=question, question_type=question_type,
+    return render_template('namizu/main.html', question=question, question_type=question_type,
                            options=options, results=results, form_submitted=submitted,
                            player_num=7, vote_count=vote_count, comments=comments_packet)
 
 @bp.route("/calendar")
 def calendar():
-    return render_template('calendar.html')
+    return render_template('namizu/calendar.html')
 
 @bp.get("/history/<target_date>")
 def show_history(target_date):
@@ -118,9 +118,9 @@ def show_history(target_date):
         player_count = len(history_log["Answers"])
         comments_packet = history_log["Comments"]
     else:
-        return render_template('missing_history_log.html')
+        return render_template('namizu/missing_history_log.html')
         
-    return render_template('namizu_wayback_machine.html',question=history_log["Question"], 
+    return render_template('namizu/wayback_machine.html',question=history_log["Question"], 
                            results=history_log["Answers"], vote_count=vote_count, 
                            player_num=player_count, comments=comments_packet, date=target_date_uk_format)
 
@@ -130,6 +130,12 @@ def login():
     options = list(creds.keys())
     session["user"] = "noone"
     session.modified = True
+    streaks_all = load_user_streak()
+    streaks = {}
+    for uid,details in streaks_all.items():
+        if details["streak"] > 0:
+            streaks[details["name"]] = details["streak"]
+
     if request.method == "POST":
         visit_count = load_visit_count()
         visit_count["total"] += 1 # one more visitor
@@ -141,33 +147,16 @@ def login():
             session.modified = True
             return redirect(url_for("namizu.main"),302)
 
-    return render_template('namizu_login.html',options=options)
+    return render_template('namizu/login.html',options=options, streak=streaks)
 
-@bp.route("/snapshot")
-def poll_snapshot():
-    return "<h1>RESTRICTED COMMAND</h1>"
-    question = get_daily_question()
-    scores = load_scores()
-    options = scores.keys()
-    results = scores
-    user_comments = load_comments()
-    comments_packet = []
-    vote_count = sum(scores.values())
-    player_count = len(scores)
-    current_date = datetime.now().strftime("%d-%m-%Y-%H-%M-%S")
-    for timestamp, comments in user_comments.items():
-        for usern, message in comments.items():
-            comments_packet.append({"name": usern, "message": message})
-    return render_template('poll_snapshot.html', question=question, options=options, 
-                           vote_count=vote_count, results=results, player_num=player_count, comments=comments_packet, date=current_date)
 
 @bp.route('/editor', methods=['GET', 'POST'])
 def editor():
     # define variables
     question = "Do you think Geri would jump out of an airplane?"
-    raw_question = "Do you think {P} would jump out of an airplane?" # goes into form
+    raw_question = "Type here..." # goes into form
     options = ["Yes","No"]
-    raw_options = ','.join(options) # goes into form
+    raw_options = "Type here..." #','.join(options) # goes into form
     qid = 0
     new_question_body = {}
     temp_q = {}
@@ -225,7 +214,11 @@ def editor():
                 question = new_question
             # if nothing in question -> names / options
             
-            if new_answers != "names": # options
+            if new_answers == "names" or new_answers == '"names"': # names as options
+                options = get_user_names()
+                if variable:
+                    var_w_names = True
+            else: # options
                 options = new_answers.split(",")
                 if len(options) > 6 or len(options) < 1: # too long or empty
                     # restart
@@ -239,10 +232,6 @@ def editor():
                     var_w_options = True
                 if "Yes" in options:
                     yes_or_no = True
-            else: # render names
-                options = get_user_names()
-                if variable:
-                    var_w_names = True
 
             """
             Q: Variable / No variable
@@ -295,7 +284,9 @@ def editor():
             break
         flash("Submitted successfully")
         """
-    return render_template('namizu_new_question.html', question=question, raw_question=raw_question, 
+    # add final check before submit question:
+    # if exact question, exact type and exact answers exist, then do_restart
+    return render_template('namizu/editor.html', question=question, raw_question=raw_question, 
                            options=options, raw_options=raw_options, form_submitted=submitted, multichoice=multichoice)
 
 @bp.route("/admin")
@@ -318,14 +309,22 @@ def namizu_admin():
         if details["Status"] == 2:
             used_questions += 1
 
-    page_html = f"""
-    <h1>ADMIN INFO</h1>
-    <h2>naMizu has been visited {visits} times so far.<h2>
-    <h2>{loginers} have logged in today so far.<h2>
-    <h2>There are {len(questions_bank)} questions in the bank.</h2>
-    <h2>{used_questions} questions have been used already.</h2>
-    <h2>{int(used_questions/len(questions_bank)*100)}% of questions used.</h2>"""
-    return page_html
+    return render_template('namizu/admin.html', visits=visits, loginers=loginers,used_questions=used_questions,
+                           num_of_questions=len(questions_bank))
+
+@bp.route("/admin/questions")
+def questions_list():
+    questions_bank = load_question_bank()
+    questions = []
+    
+    for qid,q_body in questions_bank.items():
+        temp_question = {}  
+        temp_question["QID"] = qid
+        temp_question["Question"] = q_body["Question"]
+        temp_question["Answers"] = q_body["Answers"]
+        questions.append(temp_question)
+
+    return render_template('namizu/questions_list.html', questions=questions) 
 
 @bp.route("/reset")
 def admin_reset():
