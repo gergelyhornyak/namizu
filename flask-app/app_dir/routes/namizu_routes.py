@@ -102,10 +102,17 @@ def main():
     question = daily_poll["Question"]
     question_type = daily_poll["Type"]
     options = list(daily_poll["Answers"].keys())
-    results = daily_poll["Answers"]
+    results_raw = daily_poll["Answers"]
+    results = []
     vote_stat = load_user_votes()
     vote_count = get_vote_count()
-    return render_template('namizu/main.html', question=question, question_type=question_type,
+    for k,v in results_raw.items():
+        results_temp = {}
+        results_temp["label"] = k
+        results_temp["value"] = v
+        results_temp["width"] = int(v/7*100)
+        results.append(results_temp)
+    return render_template('namizu/main2.html', question=question, question_type=question_type,
                            options=options, results=results, form_submitted=submitted,
                            player_num=7, vote_count=vote_count, comments=comments_packet)
 
@@ -200,6 +207,7 @@ def editor():
         do_restart = False
         submitted = False
     if request.method == "POST":
+        print(f"{request.form = }")
         if "resp" in request.form:
             choice = request.form["resp"]
             if choice == "restart":
@@ -305,6 +313,8 @@ def editor():
     # if exact question, exact type and exact answers exist, then do_restart
     return render_template('namizu/editor.html', question=question, raw_question=raw_question, 
                            options=options, raw_options=raw_options, form_submitted=submitted, multichoice=multichoice)
+    # move to editor3 form 
+
 
 @bp.route("/admin")
 def namizu_admin():
