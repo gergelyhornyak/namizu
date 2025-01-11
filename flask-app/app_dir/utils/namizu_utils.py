@@ -350,7 +350,5 @@ def daily_routine():
 
     # reset comments
 
-    comments = {"04/01/2025 10:09:20":{
-            "GameMaster":"Let the poll begin!"
-        }}
+    comments = {}
     save_comments(comments) # reset comments
