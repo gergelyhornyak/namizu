@@ -133,7 +133,7 @@ def load_history():
 
 def save_user_db(user_db):
     with open('database/user_db.json', 'w') as f:
-        json.dump(user_db, f)
+        json.dump(user_db, f,indent=4)
 
 def save_users_vote(stat):
     user_db = load_user_db()
@@ -194,6 +194,8 @@ def save_history(history_logs):
 def save_new_question(qid,q):
     questions_bank = load_question_bank()
     questions_bank[qid] = q
+    if q["Question"]=="":
+        return 0
     with open('database/questions_bank.json', 'w') as f:
         json.dump(questions_bank, f, indent=4)
 
@@ -221,6 +223,9 @@ def get_vote_count():
         return vote_count
 
 def get_user_names():
+    """
+    list(name01,name02)
+    """
     users = load_user_login()
     usernames = []
     for value in users.values():
