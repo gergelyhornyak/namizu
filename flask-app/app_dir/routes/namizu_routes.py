@@ -337,6 +337,11 @@ def editor():
     
 @bp.route("/admin")
 def namizu_admin():
+    if "user" in session:
+        if session["user"] != "Geri":
+            return redirect(url_for('namizu.index'))
+    else:
+        return redirect(url_for('namizu.index'))
     visits = load_visit_count()
     visits = visits["total"]
     questions_bank = load_question_bank()
@@ -360,6 +365,11 @@ def namizu_admin():
 
 @bp.route("/admin/questions")
 def questions_list():
+    if "user" in session:
+        if session["user"] != "Geri":
+            return redirect(url_for('namizu.index'))
+    else:
+        return redirect(url_for('namizu.index'))
     questions_bank = load_question_bank()
     questions = []
     
