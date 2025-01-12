@@ -12,6 +12,18 @@ import re
 
 bp = Blueprint('namizu', __name__, template_folder='templates')
 
+@bp.errorhandler(404)
+def page_not_found404(e):
+    return render_template('namizu/404.html'), 404
+
+@bp.errorhandler(500)
+def page_not_found500(e):
+    return render_template('namizu/500.html'), 500
+
+@bp.errorhandler(400)
+def page_not_found400(e):
+    return render_template('namizu/400.html'), 400
+
 @bp.route("/")
 def index():
     alreadyLoggedIn = False
@@ -223,7 +235,7 @@ def editor():
         pass
     
     if request.method == "POST":
-        
+
         question = request.form["question"]
         if "{" in question and "}" in question:
             variable_in_question = True
