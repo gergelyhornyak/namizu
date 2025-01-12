@@ -1,98 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>naMizu Editor</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .container_q {
-            max-width: 400px;
-            margin: 0 auto;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        /* Panel Styling */
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>naMizu Editor</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <style>
+    /* Global Styles */
+    body {
+      font-family:'Courier New', Courier, monospace;
+      padding: 20px;
+      font-size: 18px;
+      line-height: 1.6;
+      background-color: #fae5c9; /* Soft beige background */
+      color: #3a5d6c; /* Dark teal text */
+    }
 
-        /* Form Container */
-        .container_q {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
+    h1 {
+      font-size: 24px;
+      text-align: center;
+      color: #3a5d6c; /* Dark teal */
+      margin-bottom: 20px;
+    }
 
-        /* Labels */
-        .form-label {
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 5px;
-            display: block;
-        }
+    label {
+      font-size: 18px;
+      color: #3a5d6c; /* Dark teal */
+    }
 
-        /* Textarea Input */
-        .form-input {
-            width: 100%;
-            height: 60px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 1.5rem;
-            color: #555;
-            outline: none;
-            transition: border-color 0.3s;
-            resize: none;
-        }
+    textarea, input[type="text"], button {
+      font-size: 18px;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
 
-        /* Submit Button */
-        .form-button {
-            padding: 2% 4%;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 2rem;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
-        }
+    textarea, input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 2px;
+      border: 1px solid #3a5d6c; /* Dark teal border */
+      background-color: #ffffff; /* White input background */
+      color: #3a5d6c; /* Dark teal text */
+    }
 
-        .checkbox-option {
-            display: flex;
-            align-items: center; /* Ensures checkbox and labels are aligned */
-            
-        }
-        .form-checkbox-group {
-            display: flex;
-            flex-direction:row;
-            gap: 0.5rem;
-        }
-        input[type="checkbox"] {
-            transform: scale(1.5); /* Scales the checkbox to make it bigger */
-            margin: 0% 2% 6% 6%;
-        }
-        .checkboxx {
-            background-color: #3a5d6c;
-            color: #f0f3f5;
-            border-radius: 10%/40%;
-            border-color: #3a5d6c;
-            padding: 2%;
-            margin: 1%;
-        }
-        .checkboxx_label {
-            text-align: center;
-        }
-                /* Navigation Bar Styling */
-                .navbar {
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #3a5d6c; /* Dark teal button */
+      color: #ffffff; /* White button text */
+      cursor: pointer;
+      
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .answers {
+      margin-top: 10px;
+    }
+
+    .answer-input {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .answer-input input {
+      flex: 1;
+      margin-right: 10px;
+    }
+
+    .preview {
+      margin-top: 10px;
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid #3a5d6c; /* Dark teal border */
+      border-radius: 8px;
+      background-color: #ffffff; /* White background */
+      color: #3a5d6c; /* Dark teal text */
+      text-align: center;
+    }
+
+    .preview h2 {
+      font-size: 24px;
+      color: #3a5d6c; /* Dark teal text */
+      margin-bottom: 20px;
+    }
+
+    .preview .answers-button {
+      border: 1px solid #3a5d6c;
+      margin: 5px;
+      cursor: pointer;
+      padding: 4px 12px;
+      border-radius: 5px;
+      background-color: #3a5d6c; /* Dark teal button */
+      color: #ffffff; /* White button text */   
+    }
+
+
+    .tutorial {
+      background: #ffffff; /* White tutorial background */
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #3a5d6c; /* Dark teal border */
+      margin-top: 20px;
+      font-size: 16px;
+    }
+
+    .tutorial h3 {
+      margin-top: 0;
+      font-size: 20px;
+      color: #3a5d6c; /* Dark teal heading */
+    }
+
+    .tutorial p, .tutorial ul {
+      margin: 10px 0;
+      color: #3a5d6c; /* Dark teal text */
+    }
+
+    .tutorial ul {
+      padding-left: 20px;
+    }
+
+    /* Navigation Bar Styling */
+    .navbar {
             box-sizing: border-box;
             position: fixed;
             top: 0;
@@ -107,216 +140,367 @@
             padding: 0 20px;
             box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
             z-index: 1000;
-        }
+    }
 
-        /* Left Section (Home Button) */
-        .nav-left {
-            flex: 1; /* Pushes the content to the left */
-            display: flex;
-            align-items: center;
-        }
+    /* Left Section (Home Button) */
+    .nav-left {
+        flex: 1; /* Pushes the content to the left */
+        display: flex;
+        align-items: center;
+    }
 
-        .nav-home {
-            text-decoration: none;
-            color: #fff;
-        }
+    .nav-home {
+        text-decoration: none;
+        color: #fff;
+    }
 
-        .nav-icon {
-            width: 30px;
-            height: 30px;
-        }
+    .nav-icon {
+        width: 30px;
+        height: 30px;
+    }
 
-        /* Center Section (Title) */
-        .nav-title {
-            flex: 2; /* Centers the title */
-            text-align: center;
-            font-size: 20px;
-            font-weight: bold;
-        }
+    /* Center Section (Title) */
+    .nav-title {
+        flex: 2; /* Centers the title */
+        text-align: center;
+        font-size: 2rem;
+        font-weight: bold;
+    }
 
-        /* Right Section (Calendar Button) */
-        .nav-right {
-            flex: 1; /* Pushes the content to the right */
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-        }
+    /* Right Section (Calendar Button) */
+    .nav-right {
+        flex: 1; /* Pushes the content to the right */
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+    }
 
-    </style>
+    .nav-calendar {
+        text-decoration: none;
+        color: #fff;
+    }
+
+    /* From Uiverse.io by Ghost-aft */ 
+    .radio-input input {
+      display: none;
+    }
+
+    .radio-input {
+      --container_width: 300px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      border-radius: 10px;
+      background-color: #fff;
+      color: #000000;
+      width: var(--container_width);
+      overflow: hidden;
+      border: 1px solid rgba(53, 52, 52, 0.226);
+    }
+
+    .radio-input label {
+      width: 100%;
+      padding: 10px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1;
+      margin-bottom: 0%;
+      border: 1px solid #3a5d6c; /* Dark teal border */
+    }
+
+    .selection {
+      display: none;
+      position: absolute;
+      height: 100%;
+      width: calc(var(--container_width) / 2);
+      z-index: 0;
+      left: 0;
+      top: 0;
+      transition: 0.15s ease;
+    }
+
+    .radio-input label:has(input:checked) {
+      color: #fff;
+    }
+
+    .radio-input label:has(input:checked) ~ .selection {
+      background-color: #3a5d6c;
+      display: inline-block;
+    }
+
+    .radio-input label:nth-child(1):has(input:checked) ~ .selection {
+      transform: translateX(calc(var(--container_width) * 0 / 2));
+    }
+
+    .radio-input label:nth-child(2):has(input:checked) ~ .selection {
+      transform: translateX(calc(var(--container_width) * 1 / 2));
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+      h1 {
+        font-size: 22px;
+      }
+      label {
+        font-size: 14px;
+      }
+      textarea, input[type="text"] {
+        font-size: 16px;
+        padding: 8px;
+      }
+      button {
+        font-size: 16px;
+        padding: 8px 15px;
+        margin-bottom: 3%;
+      }
+      .answers-button {
+        font-size: 16px;
+        padding: 8px 15px;
+        margin-bottom: 3%;
+      }
+      .tutorial {
+        font-size: 14px;
+      }
+    }
+  
+    /* Basic styling for the popup */
+    #flash-popup {
+      display: none;
+      position: fixed;
+      top: 20%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 10px;
+      background-color: #f6caa9; /* Dark teal */
+      color: #000;
+      border-radius: 8px;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      text-align: center;
+      font-size: larger;
+    
+    }
+
+    #flash-popup button {
+      margin-top: 10px;
+      padding: 8px 15px;
+      background-color: #3a5d6c; /* Light orange */
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: medium;
+    }
+    #overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent black */
+      z-index: 1000;
+      backdrop-filter: blur(4px);
+    }
+  </style>
 </head>
 <body>
-    <div class="container" style="padding: 0%;">
-        <div class="panel-group" style="margin-bottom: 0%;">
-
-            <div class="panel panel-default" style="padding: 1% 0% 1% 0%;border-color: #3a5d6c;margin-bottom: 11%;color: #fae5c9"> 
-                <div class="panel-body" style="text-align:center;padding: 0%;">
-                    <!-- Navigation Bar -->
-                    <nav class="navbar">
-                        <!-- Left Side: Home Button -->
-                        <div class="nav-left">
-                            <a href="{{ url_for('namizu.index') }}" class="nav-home">
-                                <div style="display: inline-block; background-color: #fae5c9; border-radius: 50%; padding: 8px;">
-                                    <img src="https://img.icons8.com/plasticine/100/home-page.png" alt="Home" class="nav-icon"> 
-                                </div>
-                            </a>
-                        </div>
-
-                        <!-- Center: Title -->
-                        <div class="nav-title" style="font-size: 26px;color: #f5c199;">
-                            <!-- text-shadow: -1.5px -1.5px 0 #000,1.5px -1.5px 0 #000,-1.5px 1.5px 0 #000,1.5px 1.5px 0 #000; -->
-                            naMizu Editor
-                        </div>
-
-                    </nav>
+    <nav class="navbar">
+        <!-- Left Side: Home Button -->
+        <div class="nav-left">
+            <a href="{{ url_for('namizu.index') }}" class="nav-home">
+                <div style="display: inline-block; background-color: #fae5c9; border-radius: 50%; padding: 8px;">
+                    <img src="https://img.icons8.com/plasticine/100/home-page.png" alt="Home" class="nav-icon"> 
                 </div>
-            </div>
-
-            {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                <div class="panel panel-default" id="div_flash" >
-                    <div class="panel-body" style="padding: 1%;">
-                        <div style="text-align: center;padding-bottom: 1%;font-weight: bold;font-size: large;">Notifications</div>
-                        <button onclick="removeFlash()" style="float: right;">CLEAR</button>
-                        <ul>
-                            {% for message in messages %}
-                                <li>{{ message }}</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-                {% endif %}
-            {% endwith %}
-
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <div class="container_q">
-                        <form method="post">
-                            <label for="question" class="form-label">Question</label>
-                            {% if not form_submitted %}
-                            <p style="font-weight: bolder;font-size: small;">If multiple choices, then please select "Multi-choice"</p>
-                            {% endif %}
-                            <div class="form-checkbox-group">
-                                <label class="form-label">Multi-choice:</label>
-                                <div class="checkbox-option">
-                                    <input type="checkbox" id="single_answer" name="question_type" value="multichoice">
-                                </div>
-                            </div>
-                            {% if not form_submitted %}
-                            <p style="font-weight: bolder;font-size: small;">For any random name, use "{P}"</p>
-                            {% endif %}
-                            <textarea name="question" class="form-input" placeholder="Enter your question here"></textarea><br>
-                            <label for="answers" class="form-label">Answers</label>
-                            {% if not form_submitted %}
-                            <p style="font-weight: bolder;font-size:medium;">If options, then please</p>
-                            <p style="font-weight: bolder;font-size:small;">1) put comma between options</p>
-                            <p style="font-weight: bolder;font-size:small;">2) max. 5 words per each option</p>
-                            <p style="font-weight: bolder;font-size:small;">3) max. 6 options</p>
-                            <p style="font-weight: bolder;font-size: small;">if names, then please type in "names"</p>
-                            {% endif %}
-                            <textarea name="answers" class="form-input" placeholder="Enter the answer(s) here"></textarea><br>
-                            
-                            <input type="submit" id="submit_form" class="form-button" value="Submit">
-                        </form>
-                    </div>
-                </div>
-            </div>
-            
-            {% if not form_submitted %}
-            <div class="panel panel-default">
-                <div class="panel-body" >
-                    <div style="text-align: center;padding-bottom: 2%;font-size:medium;">
-                        <strong>Example 1:</strong> <br>
-                        Q: Who would {P} pick as their "First Mate" (No2 after Captain)?
-                        <br>
-                        A: names
-                    </div>
-                    <div style="text-align: center;padding-bottom: 2%;font-size: medium;">
-                        <strong>Example 2:</strong> <br>
-                        Q: Why would {P} and {P} set sail?
-                        <br>
-                        A: Boredom,Looking for gold,Being cellmates,Gone crazy
-                    </div>
-                    <div style="text-align: center;padding-bottom: 2%;font-size: medium;">
-                        <strong>Example 3:</strong> <br>
-                        Q: Do you think {P} could eat a whole jar of peanut butter?
-                        <br>
-                        A: Yes,No,Maybe
-                    </div>
-                    <div style="text-align: center;padding-bottom: 2%;font-size: medium;">
-                        <strong>Example 4:</strong> <br>
-                        Q: Pick all, who would enjoy a weekend on a deserted island.
-                        <br>
-                        A: names
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-
-            {% if form_submitted %}
-
-            <div class="panel panel-default">
-                <div class="panel-body" >
-                    <div style="text-align: center;padding-bottom: 2%;font-weight: bold;font-size: large;">Example Poll</div>
-                </div>
-            </div>
-
-            <div class="panel panel-default" style="border-color: #3a5d6c; border-bottom-left-radius: 20%; border-bottom-right-radius: 20%;">
-                <div class="panel-body" style="background-color: #3a5d6c;color: #f0f3f5;border-bottom-left-radius: 20%;border-bottom-right-radius: 20%">
-                    <div style="text-align: center;padding-bottom: 2%;font-weight: bold;font-size: large;"></div>
-                    <!-- <div style="text-align: center;padding-bottom: 2%;font-weight: bold;font-size: large;">Daily Poll</div> -->
-                    <div style="text-align: center; font-style:italic;font-weight: bold; font-size: large;">{{ question }}</div>
-                </div>
-            </div>
-            {% if not multichoice %}
-            <div class="panel panel-default" style="background-color: #fae5c9;border-color: transparent;">
-                <div class="panel-body">
-                    <div style="text-align: center;padding-bottom: 5%;font-weight: bold;font-size: large;">Choices</div>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px;">
-                        {% for option in options %}
-                        <button type="submit" name="vote" value="{{ option }}" style="background-color: #3a5d6c;color: #f0f3f5;border-radius: 10%/40%;border-color: #3a5d6c;">{{ option }}</button>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            {% elif multichoice %}
-            <div class="panel panel-default" style="background-color: #fae5c9;border-color: transparent;">
-                <div class="panel-body">
-                    <div style="text-align: center;padding-bottom: 5%;font-weight: bold;font-size: large;">Choices</div>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px;">
-                        {% for option in options %}
-                        <label class="checkboxx" style="background-color: #3a5d6c;">
-                            <input class="checkboxx_input" type="checkbox" name="dummy1" style="display: none;" value="{{ option }}" onchange="isChecked(this,'')"/>
-                            <div class="checkboxx_label">{{ option }}</div>
-                        </label>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-
-            <form method="post">
-                <div class="panel panel-default" style="background-color: #fae5c9;border-color: transparent;">
-                    <div class="panel-body">
-                        <div style="text-align: center;padding-bottom: 5%;font-weight: bold;font-size: large;">Do you like what you see?</div>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px;">
-                            <button type="submit" name="resp" value="accept" style="padding: 4%; background-color: #3a5d6c;color: #f0f3f5;border-radius: 10%/40%;border-color: #3a5d6c;">ACCEPT</button>
-                            <button type="submit" name="resp" value="restart" style="padding: 4%; background-color: #3a5d6c;color: #f0f3f5;border-radius: 10%/40%;border-color: #3a5d6c;">RESTART</button>
-                        </div>
-                    </div>
-                </div>
-            </form>
-            {% endif %}
+            </a>
         </div>
-    </div>
-    <script>
-        function isChecked(elem) {
-        elem.parentNode.style.backgroundColor = (elem.checked) ? ' #556b2f' : '#3a5d6c';
-        }
-        function removeFlash() {
-        const element = document.getElementById('div_flash');
-        element.remove();
-        }
-    </script>
 
+        <!-- Center: Title -->
+        <div class="nav-title" style="color: #f5c199;">
+            naMizu Editor
+        </div>
+
+        <!-- Right Side: Calendar Button -->
+        <div class="nav-right">
+            
+            
+        </div>
+    </nav>
+
+    <div id="overlay"></div>
+    <!-- Flash Popup -->
+    <div id="flash-popup">
+        <p id="flash-message"></p>
+        <button onclick="closeFlashPopup()">Close</button>
+    </div>
+
+  <form id="question-form" method="POST">
+    <div class="form-group" style="margin: 15% 0% 1% 0%;">
+      <label for="question" style="font-size: 16px;">Question:</label>
+      <textarea id="question" name="question" placeholder="Type your question here..." rows="2" maxlength="120"></textarea>
+    </div>
+    
+    <div class="form-group" style="margin-bottom: 2%;"> 
+      <label style="font-size: 16px;">Answer Selection Type:</label>
+      <div class="radio-input">
+      <label>
+          <input type="radio" name="radio-selection" id="value-1" value="single" />
+          <span>Single-Choice</span>
+      </label>
+      <label>
+          <input type="radio" name="radio-selection" id="value-2" value="multiple" />
+          <span>Multi-Choice</span>
+        </label>
+        <span class="selection"></span>
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-bottom: 2%;"> 
+      <label style="font-size: 16px;">Answer Options Type:</label>
+      <div class="radio-input">
+      <label>
+          <input type="radio" name="radio-options" id="value-3" value="names" />
+          <span>Names</span>
+      </label>
+      <label>
+          <input type="radio" name="radio-options" id="value-4" value="options" />
+          <span>Custom Options</span>
+        </label>
+        <span class="selection"></span>
+      </div>
+    </div>
+    
+    <div class="form-group answers" id="answers" style="display: none;">
+      <label style="font-size: 16px;">Answers:</label>
+      <div class="answer-input">
+        <input type="text" class="answer" name="answer-1" placeholder="Type an answer..." maxlength="64">
+        <button type="button" class="add-answer">+</button>
+      </div>
+    </div>
+
+    <button type="button" id="toggle-preview">Preview</button>
+    <button type="button" id="toggle-tutorial">Show Tutorial</button>
+
+    
+
+    <div class="tutorial" id="tutorial" style="display: none;">
+      <h3>Question Editor Tutorial</h3>
+      <p><strong>Single choice</strong> means others can only select one choice at a time, <br>while <strong>Multiple choice</strong> allows multiple options to be selected within one poll.</p>
+      <p>Select <strong>Names</strong> if you want the answers to be your names, <br>and select <strong>Custom Options</strong> if you want to provide custom options by yourself; for instance "Eat a pie, Drink lemonade, Find apples on trees"</p>
+      <p>If you want to introduce a random person in the question,<br>insert a <strong>{P}</strong> as a placeholder. For example "What would cause {P} to enter the Marathon?"</p>
+      <p>Questions should not exceed 30 words (120 chars).</p>
+      <p>Each answer should be below 16 words (64 chars).</p>
+      <p>All inputs support non-English letters, emojis and links.</p>
+      <p>Technically there are 8 types of polls you can create.</p>
+    </div>
+
+    <div class="preview" id="preview">
+      <h2 id="preview-question">[ Poll Preview ]</h2>
+      <div id="preview-answers"></div>
+    </div>
+
+    <div style="text-align: center;">
+      <button type="submit" name="submit" value="submit">Submit New Poll</button>
+    </div>
+  </form>
+
+  <script>
+    const answersDiv = document.getElementById('answers');
+    const previewDiv = document.getElementById('preview');
+    const previewQuestion = document.getElementById('preview-question');
+    const previewAnswers = document.getElementById('preview-answers');
+    const tutorialDiv = document.getElementById('tutorial');
+    const toggleTutorialButton = document.getElementById('toggle-tutorial');
+    const radioOptions = document.querySelectorAll('input[name="radio-options"]');
+    const answersFormGroup = document.getElementById('answers');
+
+    // Add event listeners to the radio buttons
+    radioOptions.forEach((radio) => {
+      radio.addEventListener('change', () => {
+        if (radio.value === 'options') {
+          answersFormGroup.style.display = 'block'; // Show answers form group
+        } else if (radio.value === 'names') {
+          answersFormGroup.style.display = 'none'; // Hide answers form group
+        }
+      });
+    });
+
+    // Show/hide tutorial
+    toggleTutorialButton.addEventListener('click', () => {
+      const isVisible = tutorialDiv.style.display === 'block';
+      tutorialDiv.style.display = isVisible ? 'none' : 'block';
+      toggleTutorialButton.textContent = isVisible ? 'Show Tutorial' : 'Hide Tutorial';
+    });
+
+    let answerCounter = 2; // Initialize counter for answer input fields
+
+    // Add answer input dynamically
+    answersDiv.addEventListener('click', (e) => {
+      if (e.target.classList.contains('add-answer')) {
+        answerCounter++;
+        const newAnswerDiv = document.createElement('div');
+        newAnswerDiv.classList.add('answer-input');
+        newAnswerDiv.innerHTML = `
+          <input type="text" class="answer" name="answer-${answerCounter}" placeholder="Type an answer..." maxlength="64">
+          <button type="button" class="delete-answer">-</button>
+        `;
+        answersDiv.appendChild(newAnswerDiv);
+      } else if (e.target.classList.contains('delete-answer')) {
+        e.target.parentElement.remove();
+        if (answerCounter > 1) {
+          answerCounter--;
+        }
+      }
+    });
+
+    // Handle preview
+    const namesList = {{ namesList | tojson }};
+    document.getElementById('toggle-preview').addEventListener('click', () => {
+      const selectedOption = document.querySelector('input[name="radio-options"]:checked').value;
+      const question = document.getElementById('question').value;
+      let answers = [];
+      if (selectedOption == 'options') {
+          answers = Array.from(document.querySelectorAll('.answer'))
+          .map(input => input.value)
+          .filter(Boolean);
+      } else if (selectedOption == 'names') {
+          answers = namesList;
+      }
+
+      previewQuestion.textContent = question;
+      previewAnswers.innerHTML = answers.map(answer => `<button class="answers-button" disabled>${answer}</button>`).join('');
+      previewDiv.style.display = 'block';
+    });
+    
+    // JavaScript to handle the flash popup
+    function showFlashPopup(message) {
+      const popup = document.getElementById('flash-popup');
+      const messageElement = document.getElementById('flash-message');
+      const overlay = document.getElementById('overlay');
+
+      messageElement.textContent = message; // Set the flash message
+      popup.style.display = 'block'; // Show the popup
+      overlay.style.display = 'block'; // Show the overlay
+    }
+
+    function closeFlashPopup() {
+      const popup = document.getElementById('flash-popup');
+      const overlay = document.getElementById('overlay');
+
+      popup.style.display = 'none'; // Hide the popup
+      overlay.style.display = 'none'; // Hide the overlay
+    }
+
+    // Get the flash message from Flask (if any)
+    const flashMessage = {{ get_flashed_messages()|tojson|safe }};
+    if (flashMessage.length > 0) {
+      showFlashPopup(flashMessage[0]); // Show the first flash message
+    }
+  </script>
 </body>
 </html>
