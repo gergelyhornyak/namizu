@@ -31,6 +31,7 @@ def main():
     vote_stat = load_user_votes()
     answers_ser_num = {}
     counter = 1
+    is_poll_multichoice = False
     for key, value in daily_poll["Answers"].items():
         answers_ser_num[counter] = {"key":key,"value":value}
         counter+=1
@@ -54,7 +55,8 @@ def main():
         if vote_count == 7: # all voted
             submitted = True
         if 'vote' in request.form and not submitted:
-            if question_type == 3: # multichoice
+            if "M" in question_type: # multichoice
+                is_poll_multichoice = True
                 for opt in range(len(options)):
                     if str(opt+1) in request.form:
                         answers_ser_num[opt+1]["value"] += 1
@@ -112,7 +114,7 @@ def main():
         results_temp["value"] = v
         results_temp["width"] = int(v/7*100)
         results.append(results_temp)
-    return render_template('namizu/main2.html', question=question, question_type=question_type,
+    return render_template('namizu/main.html', question=question, multichoice=is_poll_multichoice,
                            options=options, results=results, form_submitted=submitted,
                            player_num=7, vote_count=vote_count, comments=comments_packet)
 
@@ -177,145 +179,150 @@ def logout():
 
 @bp.route('/editor', methods=['GET', 'POST'])
 def editor():
+    session.pop('_flashes', None)
     # define variables
-    question = "Do you think Geri would jump out of an airplane?"
-    raw_question = "Type here..." # goes into form
-    options = ["Yes","No"]
-    raw_options = "Type here..." #','.join(options) # goes into form
+    question = ""
+    answers = []
+    options = []
     qid = 0
     new_question_body = {}
     temp_q = {}
-    submitted = False
+    names = get_user_names()
+    submitPoll = False
     do_restart = False
-    do_accept = False
+    select_mode = ""
+    option_mode = ""
 
-    multichoice = False
-    variable = False
-    var_w_names = False
-    var_w_options = False
-    no_var_w_names = False
+    ### V / D
+    variable_in_question = False 
+    multichoice = False #
+    names_as_options = False
     yes_or_no = False
+
     # question types:
-    # 0: No variables, names
-    # 1: Variable(s), yes or no OR options
-    # 2: Variable(s), names
-    # 3: Multiselect (No variables), names
-    q_type = 0 # default type
+
+    # Variable in question: V
+    # No variable in question: D
+
+    # Single choice: S
+    # Multichoice: M
+
+    # Names as options: N
+    #   put X at the end
+    # Custom options as options: C
+    #   Yes or no answers: Y
+    #   Open-ended answers: O
+
+    # type example: DMNX
+
+    #* restart if M and CY in type
+
+    poll_type = ""
 
     if request.method == "GET":
-        do_accept = False
-        do_restart = False
-        submitted = False
+        pass
+    
     if request.method == "POST":
-        print(f"{request.form = }")
-        if "resp" in request.form:
-            choice = request.form["resp"]
-            if choice == "restart":
-                do_restart = True
-                flash("Session restarted by user")
-            else:
-                do_accept = True
+        
+        question = request.form["question"]
+        if "{" in question and "}" in question:
+            variable_in_question = True
+        select_mode = request.form['radio-selection']
+        if select_mode == "multiple":
+            multichoice = True
+        option_mode = request.form['radio-options']
+        if option_mode == "names":
+            names_as_options = True
+        answers = []   
+        if names_as_options:
+            answers = names
         else:
-            new_question = request.form["question"]
-            new_answers = request.form["answers"]
+            for key, val in request.form.items():
+                if key.startswith("answer"):
+                    answers.append(val)
+        if not names_as_options:
+            if "yes" in [a.lower() for a in answers] or "no" in [a.lower() for a in answers]:
+                yes_or_no = True
+
+        poll_type = ""
+        poll_type += "V" if variable_in_question else "D"
+        poll_type += "M" if multichoice else "S"
+        poll_type += "N" if names_as_options else "C"
+        if not names_as_options:
+            if yes_or_no:
+                poll_type += "Y"
+            else:
+                poll_type += "O"
+        else:
+            poll_type += "X" # names, therefore yes or no is irrelevant
+
+        #return f"<h1>Poll type: {poll_type}</h1><p>{question}</p><p>{select_mode}</p><p>{option_mode}</p><p>{', '.join(answers)}</p>"
             
-            if "question_type" in request.form:
-                multichoice = True if request.form["question_type"] == "multichoice" else False
-            # categories:
-            # if {P} in question -> regex
-            # if nothing special in question -> read in raw
-            # if {A} in question -> regex
-            if "{" in new_question: # type 1 or 2
-                variable = True
-                text = new_question
-                number_of_variables = text.count("{")
-                # Names to replace
-                names = get_user_names()
-                selected_names = random.sample(names, number_of_variables)
-                # Replace placeholders sequentially
-                result = re.sub(r"{P}", lambda _: selected_names.pop(0), text)
-                question = result
+        if variable_in_question:
                 
-            else: # type 0 or 3
-                question = new_question
-            # if nothing in question -> names / options
+            text = question
+            number_of_variables = text.count("{")
+                # Names to replace
+            selected_names = random.sample(names, number_of_variables)
+                # Replace placeholders sequentially
+            result = re.sub(r"{P}", lambda _: selected_names.pop(0), text)
+            question = result           
             
-            if new_answers == "names" or new_answers == '"names"': # names as options
-                options = get_user_names()
-                if variable:
-                    var_w_names = True
-            else: # options
-                options = new_answers.split(",")
-                if len(options) > 6 or len(options) < 1: # too long or empty
-                    # restart
-                    do_restart = True
-                    flash("Too many / too few options provided. Session restarted")
-                for option in options:
-                    if option == "":
-                        do_restart = True
-                        flash("Some options are empty. Session restarted")
-                if variable:
-                    var_w_options = True
-                if "Yes" in options:
-                    yes_or_no = True
-
+        if not names_as_options:
+            options = answers
             """
-            Q: Variable / No variable
-            A: Names / Options / YesOrNo
-
-            + Multichoice: Names / Options
-            """
-
-            if multichoice and yes_or_no:
+            if len(options) > 6 or len(options) < 1: # too long or empty
+                # restart
                 do_restart = True
-                flash("Cannot be YesOrNo and Multichoice at the same time")
+                flash("Too many / too few options provided. Session restarted")
+            """
+            for option in options:
+                if option == "":
+                    do_restart = True
+                    flash("Some options are empty. Session restarted")
 
-            if not multichoice and (no_var_w_names):
-                q_type = 0
-            if not multichoice and var_w_options:
-                q_type = 1
-            if not multichoice and var_w_names:
-                q_type = 2
-            if multichoice and not yes_or_no:
-                q_type = 3            
+        if multichoice and yes_or_no:
+            do_restart = True
+            flash("Cannot be YesOrNo and Multichoice at the same time. Session restarted")
 
-            answers = {}
-            for i in options:
-                answers[i] = 0
-            qid = get_new_question_id()
-            qid = "Q"+str(qid)
-            new_question_body = {
-                "Type": q_type,
-                "Question": question,
-                "Answers": answers,
-                "Status": 0
-            }
-            temp_q[qid] = new_question_body
-            with open("database/temp_q.json","w") as f:
-                json.dump(temp_q, f, indent=4)
-            submitted = True
-            
+        if question == "":
+            do_restart = True
+            flash("No question included. Session restarted")
+        if not answers:
+            do_restart = True
+            flash("No answers included. Session restarted")
+        
+        answers = {key:0 for key in answers}
 
-    if do_restart:
-        submitted = False
-    if do_accept:
-        try:
-            with open("database/temp_q.json","r") as f:
-                temp_q = json.load(f)
-        except FileNotFoundError:
-            temp_q = {}
+        submitPoll = True
+        qid = get_new_question_id()
+        qid = "Q"+str(qid)
+        new_question_body = {
+            "Type": poll_type,
+            "Question": question,
+            "Answers": answers,
+            "Status": 0
+        }
+        temp_q[qid] = new_question_body
+
+    # add final check before submit question:
+    # if exact question, exact type and exact answers exist, then do_restart
+
+    questions_bank = load_question_bank()
+    for details in questions_bank.values():
+        if details["Question"] == question and details["Answers"] == answers and details["Type"] == poll_type:
+            do_restart = True
+            flash("Poll already exists. Session restarted.")
+            break
+    
+    if not do_restart and submitPoll:
         for k,v in temp_q.items():
             save_new_question(k,v)
             break
-        flash("Submitted successfully")
-        return redirect(url_for('namizu.editor'))
-    # add final check before submit question:
-    # if exact question, exact type and exact answers exist, then do_restart
-    return render_template('namizu/editor.html', question=question, raw_question=raw_question, 
-                           options=options, raw_options=raw_options, form_submitted=submitted, multichoice=multichoice)
-    # move to editor3 form 
+        flash("Submitted successfully.")
 
-
+    return render_template('namizu/editor.html', namesList=names)
+    
 @bp.route("/admin")
 def namizu_admin():
     visits = load_visit_count()
@@ -351,7 +358,6 @@ def questions_list():
         temp_question["Answers"] = q_body["Answers"]
         temp_question["Status"] = q_body["Status"]
         questions.append(temp_question)
-
 
     return render_template('namizu/questions_list.html', questions=questions) 
 
