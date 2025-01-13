@@ -317,14 +317,18 @@
                     <div class="panel-body">
                         <div style="text-align: center;padding-bottom: 5%;font-weight: bold;font-size: large;">Choices</div>
                         
-                            {% if multichoice %}
-                                {% for option in options %}
-                                <label class="checkboxx" style="background-color: #3a5d6c;">
-                                    <input class="checkboxx_input" type="checkbox" name="{{ loop.index }}" style="display: none;" value="{{ option }}" onchange="isChecked(this,'')"/>
-                                    <div class="checkboxx_label">{{ option }}</div>
-                                </label>
-                                {% endfor %}
-                            {% elif not multichoice %}
+                            {% if is_poll_multichoice %}
+                                <div class="preview" id="preview">
+                                    <div id="preview-answers">
+                                        {% for option in options %}
+                                        <label class="checkboxx" style="background-color: #3a5d6c;">
+                                            <input class="checkboxx_input" type="checkbox" name="{{ loop.index }}" style="display: none;" value="{{ option }}" onchange="isChecked(this,'')"/>
+                                            <div class="checkboxx_label">{{ option }}</div>
+                                        </label>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% elif not is_poll_multichoice %}
                                 <div class="preview" id="preview">
                                     <div id="preview-answers">
                                         {% for option in options %}
@@ -339,7 +343,7 @@
 
                 <div class="panel panel-default" style="background-color: #fae5c9;border-color: transparent;">
                     <div class="panel-body" style="text-align: center;">
-                        {% if multichoice %}
+                        {% if is_poll_multichoice %}
                             <button type="submit" name="vote" value="submit" style="background-color: #3a5d6c;color: #f0f3f5;border-radius: 10%/40%;border-color: #3a5d6c;padding: 1% 6% 1% 6%;font-size: large;">Submit</button>
                         {% endif %}
                     </div>
@@ -406,6 +410,11 @@
             </div>
         </div>
     </div>
+    <script>
+        function isChecked(elem) {
+        elem.parentNode.style.backgroundColor = (elem.checked) ? ' #556b2f' : '#3a5d6c';
+        }
+    </script>
 
 </body>
 </html>
