@@ -57,18 +57,23 @@ def main():
     submitted = False # if user submitted the form
     user = session["user"]
     comments_packet = get_comments_packet()
-    
+
+    if "M" in question_type: # multichoice
+        is_poll_multichoice = True
+
+    if vote_stats[user] == 1: # already voted
+        submitted = True
+
+    #print(f"{question = }\n{question_type = }\n{options = }\n{answers_ser_num = }\n{vote_stats = }\n{is_poll_multichoice = }")
+
+
     if request.method == 'GET':    
-        if vote_stats[user] == 1: # already voted
-            submitted = True
+        pass        
     elif request.method == 'POST':
-        if vote_stats[user] == 1: # already voted
-            submitted = True
         if vote_count == 7: # all voted
             submitted = True
         if 'vote' in request.form and not submitted:
-            if "M" in question_type: # multichoice
-                is_poll_multichoice = True
+            if is_poll_multichoice:
                 for opt in range(len(options)):
                     if str(opt+1) in request.form:
                         answers_ser_num[opt+1]["value"] += 1
@@ -112,10 +117,6 @@ def main():
             comments_packet = get_comments_packet()
             return redirect(url_for('namizu.main'))
     
-    daily_poll = get_daily_question()
-    question = daily_poll["Question"]
-    question_type = daily_poll["Type"]
-    options = list(daily_poll["Answers"].keys())
     results_raw = daily_poll["Answers"]
     results = []
     vote_stat = load_user_votes()
@@ -126,7 +127,8 @@ def main():
         results_temp["value"] = v
         results_temp["width"] = int(v/7*100)
         results.append(results_temp)
-    return render_template('namizu/main.html', question=question, multichoice=is_poll_multichoice,
+    #print(f"{submitted = }\n{results = }")
+    return render_template('namizu/main.html', question=question, is_poll_multichoice=is_poll_multichoice,
                            options=options, results=results, form_submitted=submitted,
                            player_num=7, vote_count=vote_count, comments=comments_packet)
 
