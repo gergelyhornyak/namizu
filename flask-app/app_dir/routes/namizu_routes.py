@@ -390,6 +390,10 @@ def questions_list():
 
 @bp.route("/reset")
 def admin_reset():
-    return "<h1>RESTRICTED COMMAND</h1>"
+    if "user" in session:
+        if session["user"] != "Geri":
+            return redirect(url_for('namizu.index'))
+    else:
+        return redirect(url_for('namizu.index'))
     daily_routine()
-    return "<h1>ADMIN RESET FINISHED</h1>"
+    return redirect(url_for('namizu.index'))
