@@ -141,19 +141,37 @@ def calendar():
 
 @bp.get("/history/<target_date>")
 def show_history(target_date):
+    is_poll_multichoice = False
+    results = []
+    comments_packet = []
+    vote_count = 0
+    player_count = 7
     history = load_history()
     date_obj = datetime.strptime(target_date, "%Y-%m-%d")
     target_date_uk_format = date_obj.strftime("%d-%m-%Y")
     if target_date_uk_format in history:
         history_log = history[target_date_uk_format]
-        vote_count = sum(history_log["Answers"].values())
-        player_count = len(history_log["Answers"])
+
+        results_raw = history_log["Answers"]
+        
+        
+        for v in history_log["Voted"].values():
+            vote_count += v["voted"]
+        for k,v in results_raw.items():
+            results_temp = {}
+            results_temp["label"] = k
+            results_temp["value"] = v
+            results_temp["width"] = int(v/7*100)
+            results.append(results_temp)
+        if "M" in history_log["Type"]: # multichoice
+            is_poll_multichoice = True
+        
         comments_packet = history_log["Comments"]
     else:
         return render_template('namizu/missing_history_log.html')
         
-    return render_template('namizu/wayback_machine.html',question=history_log["Question"], 
-                           results=history_log["Answers"], vote_count=vote_count, 
+    return render_template('namizu/wayback_machine2.html',question=history_log["Question"], 
+                           results=results, vote_count=vote_count, 
                            player_num=player_count, comments=comments_packet, date=target_date_uk_format)
 
 @bp.route('/login', methods=['GET', 'POST'])
