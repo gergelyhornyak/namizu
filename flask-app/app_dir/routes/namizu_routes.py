@@ -154,9 +154,11 @@ def show_history(target_date):
 
         results_raw = history_log["Answers"]
         
-        
-        for v in history_log["Voted"].values():
-            vote_count += v["voted"]
+        if "Voted" in history_log:
+            for v in history_log["Voted"].values():
+                vote_count += v["voted"]
+        else:
+            vote_count = sum(history_log["Answers"].values())
         for k,v in results_raw.items():
             results_temp = {}
             results_temp["label"] = k
