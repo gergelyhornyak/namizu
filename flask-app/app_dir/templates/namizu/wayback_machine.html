@@ -6,10 +6,91 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js -->
   <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #3a5d6c; /* Dark teal button */
+            color: #ffffff; /* White button text */
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #chart-container {
+            width: 90%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-left: 2%;
+        }
+
+        .bar-wrapper {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4px;
+        }
+
+        .bar {
+            position: relative;
+            background-color: #bf4222;
+            border-radius: 20px;
+            border-top-left-radius: 0%;
+            border-bottom-left-radius: 0%;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            flex-wrap: wrap;
+            word-wrap: break-word;
+            padding: 1% 0%;
+        }
+
+        .bar .value {
+            color: #fff;
+            font-weight: bold;
+            font-size: medium;
+            white-space: normal;
+            overflow-wrap: break-word;
+            padding-left: 10px;
+            padding-right: 10px;
+            max-width: 100%;
+            text-align: right;
+            align-self: flex-end; /* Align value to the bottom right */
+            display: inline-block;
+        }
+
+        .bar .label {
+            font-size: 16px;
+            font-weight: normal;
+            text-align: left;
+            color: #333;
+            padding-left: 10px;
+            width: 100%; /* Ensure label spans the full width */
+        }
+
+        /* Optional: Style for bar container to ensure it wraps neatly */
+        .bar-wrapper .label {
+            font-weight: bold;
+        }
+
+        
 
         /* Navigation Bar Styling */
         .navbar {
@@ -132,6 +213,55 @@
             cursor: pointer;
             font-size: 1em;
         }
+        input[type="checkbox"] {
+            transform: scale(1.5); /* Scales the checkbox to make it bigger */
+            margin: 0% 2% 6% 6%;
+        }
+        .checkboxx {
+            background-color: #3a5d6c;
+            color: #f0f3f5;
+            border-radius: 10%/40%;
+            border-color: #3a5d6c;
+            padding: 2%;
+            margin: 1%;
+        }
+        .checkboxx_label {
+            text-align: center;
+        }
+        .preview {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #3a5d6c; /* Dark teal border */
+        border-radius: 8px;
+        background-color: #ffffff; /* White background */
+        color: #3a5d6c; /* Dark teal text */
+        text-align: center;
+        }
+
+        .preview h2 {
+        font-size: 24px;
+        color: #3a5d6c; /* Dark teal text */
+        margin-bottom: 20px;
+        }
+
+        .preview .answers-button {
+        border: 1px solid #3a5d6c;
+        margin: 5px;
+        cursor: pointer;
+        padding: 10px 20px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease; 
+        }
+        .label {
+            background-color: #3a5d6c;
+            color: white;
+            border-radius: 5px;
+            padding: 2%;
+            font-size: medium;
+            white-space: wrap;
+            text-align:left;
+        }
 
     </style>
 </head>
@@ -158,6 +288,7 @@
                         <div class="nav-title" style="font-size: 26px;color: #f5c199;">
                             <!-- text-shadow: -1.5px -1.5px 0 #000,1.5px -1.5px 0 #000,-1.5px 1.5px 0 #000,1.5px 1.5px 0 #000; -->
                             naMizu Poll
+                            <p style="font-size: medium;margin-bottom: 0%;">{{ date }}</p>
                         </div>
 
                         <!-- Right Side: Calendar Button -->
@@ -171,27 +302,35 @@
                     </nav>
                 </div>
             </div>
-    
-                <div class="panel panel-default" style="border-color: #3a5d6c; border-bottom-left-radius: 20%; border-bottom-right-radius: 20%;">
-                <div class="panel-body" style="background-color: #3a5d6c;color: #f0f3f5;border-bottom-left-radius: 20%;border-bottom-right-radius: 20%">
-                <div style="text-align: center;padding-bottom: 2%;font-weight: bold;font-size: large;"></div>
-                <!-- <div style="text-align: center;padding-bottom: 2%;font-weight: bold;font-size: large;">Daily Poll</div> -->
-                <div style="text-align: center; font-style:italic;font-weight: bold; font-size: large;">{{ question }}</div>
-            </div>
-            </div>
 
+            <div class="panel panel-default" style="border-color: #3a5d6c; border-bottom-left-radius: 20%; border-bottom-right-radius: 20%;">
+                <div class="panel-body" style="background-color: #3a5d6c;color: #f0f3f5;border-bottom-left-radius: 20%;border-bottom-right-radius: 20%">
+                    <div style="text-align: center;padding-bottom: 2%;font-weight: bold;font-size: large;"></div>
+                    <!-- <div style="text-align: center;padding-bottom: 2%;font-weight: bold;font-size: large;">Daily Poll</div> -->
+                    <div style="text-align: center; font-style:italic;font-weight: bold; font-size: large;">{{ question }}</div>
+                </div>
+            </div>
+                   
             <div class="panel panel-default" style="background-color: transparent;border-color: transparent;">
                 <div class="panel-body" style="color: #3a5d6c;font-size: medium;font-weight: bold;">
-                    <div style="text-align: center;">{{ vote_count }} of {{ player_num }} people have voted</div>
+                    <div style="text-align: center;">{{ vote_count }} of {{ player_num }} people have voted so far</div>
                 </div>
             </div>
 
             <div class="panel panel-default" style="background-color: transparent;border-color: transparent;">
-                <div class="panel-body" style="padding: 1% 2% 1% 2%;">
-                    <div id="raw-scores" style="display:none;">{{ results | tojson }}</div>
-                    
-                        <canvas id="scoreChart" style="height: 400px;color:#3a5d6c;"></canvas>
-                    
+                <div class="panel-body" style="padding: 1% 2% 4% 2%;">
+                    <div id="chart-container">
+                        {% for option in results %}
+                        {% if option['value'] %}
+                        <div class="bar-wrapper">
+                            <div class="label">{{ option["label"] }}</div>
+                            <div class="bar" style="width: {{ option['width'] }}%;">
+                                <span class="value" >{{ option['value'] }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
             
@@ -210,130 +349,27 @@
                                 {% endfor %}
                             </div>
                             {% endif %}
+                            <form method="POST">
+                                <div class="chat-input">
+                                    <input type="text" id="chatInput" name="comment" placeholder="Type a message..." >
+                                    <input type="submit" id="chatSubmit" value="Submit">
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
                 
+            
             
             <div class="panel panel-default" style="margin-top: 0%;background-color: transparent;border-color: transparent;">
                 <div class="panel-body" style="text-align: center;">© 2025 naMizu™. Built with care for the community.</div>
             </div>
         </div>
     </div>
-
-    
     <script>
-        var rawScoresData = document.getElementById('raw-scores').innerText;
-        var scores = JSON.parse(rawScoresData);
-        const playerNames = Object.keys(scores);
-        const playerScores = Object.values(scores);
-        console.log("raw_scores",rawScoresData)
-        console.log("scores",scores)
-        console.log("pl_names",playerNames)
-        console.log("pl_scores",playerScores)
-
-        // Create the chart using Chart.js
-        const ctx = document.getElementById('scoreChart').getContext('2d');
-        Chart.defaults.font.family = "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
-        Chart.defaults.color = "#3a5d6c";
-        // chart data
-        const data = {
-            labels: playerNames, // Player names as labels
-            datasets: [{
-                label: 'score',
-                data: playerScores, // Player scores
-                backgroundColor: '#3a5d6c', // Bar color
-                borderWidth: 1,
-                borderRadius: 8
-            }]};
-        // topLabel plugin
-        const topLabels = {
-            id: 'topLabels',
-            afterDatasetsDraw(chart, args, pluginOptions) {
-                const {ctx, scales: {x,y}} = chart;
-                ctx.fillStyle = '#3a5d6c';
-                ctx.textAlign = 'center';
-                ctx.fillText('19',x.getPixelForValue(0), y.getPixelForValue(19))
-            }
-        };
-
-        const doubleLabels = {
-            id: 'doubleLabels',
-            afterDatasetsDraw(chart,args,plugins) {
-                const {ctx,data} = chart;
-                ctx.save();
-                chart.getDatasetMeta(0).data.forEach((dataPoint, index) => {
-                    //ctx.textAlign = 'left';
-                    ctx.textBaseline = 'middle';
-                    ctx.font = 'bold 14px sans-serif';
-                    ctx.fillStyle = '3a5d6c';
-                    if(data.datasets[0].data[index] > 0) {
-                        ctx.fillText(data.datasets[0].data[index],dataPoint.x+4, dataPoint.y);
-                    }
-                })
-            }
+        function isChecked(elem) {
+        elem.parentNode.style.backgroundColor = (elem.checked) ? ' #556b2f' : '#3a5d6c';
         }
-
-        // chart config
-        const config = {
-            type: 'bar', // Horizontal bar chart
-            data,
-            options: {
-                skipNull: true,
-                indexAxis: 'y', // Set horizontal bars
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip:{
-                        enabled: false
-                    },
-                },
-                scales: {
-                    x: {
-                        display: false,
-                        borderWidth: 0,
-                        barPercentage: 1,
-                        categoryPercentage: 1,
-                        borderRadius: 0,
-                        beginAtZero: true,
-                        max: 8, // Set max limit to highest score + some padding
-                        ticks: {
-                            font: {
-                                weight: 'bold',  // Font weight (bold)
-                                size: 14,        // Font size
-                            }
-                        },
-                        grid: {
-                            display:false
-                        },
-                    },
-                    y: {
-                        border: {
-                            display: false
-                        },
-                        grid: {
-                            display:false
-                        },
-                        beginAtZero: true,
-                        ticks: {
-                            font: {
-                                weight: 'bold',  // Font weight (bold)
-                                size: 14,        // Font size
-                            }
-                        }
-                    }
-                },
-            },
-            plugins: [doubleLabels],
-        };
-        // render
-        const scoreChart = new Chart(
-            ctx, config
-        );
-            
     </script>
 
 </body>

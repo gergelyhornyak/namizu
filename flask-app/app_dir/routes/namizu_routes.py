@@ -170,7 +170,7 @@ def show_history(target_date):
     else:
         return render_template('namizu/missing_history_log.html')
         
-    return render_template('namizu/wayback_machine2.html',question=history_log["Question"], 
+    return render_template('namizu/wayback_machine.html',question=history_log["Question"], 
                            results=results, vote_count=vote_count, 
                            player_num=player_count, comments=comments_packet, date=target_date_uk_format)
 
