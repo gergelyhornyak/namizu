@@ -43,6 +43,7 @@ def main():
     vote_stat = load_user_votes()
     answers_ser_num = {}
     counter = 1
+    user = ""
     is_poll_multichoice = False
     for key, value in daily_poll["Answers"].items():
         answers_ser_num[counter] = {"key":key,"value":value}
@@ -55,7 +56,8 @@ def main():
 
     vote_count = get_vote_count()
     submitted = False # if user submitted the form
-    user = session["user"]
+    if "user" in session:
+        user = session["user"]
     comments_packet = get_comments_packet()
 
     if "M" in question_type: # multichoice
@@ -107,7 +109,8 @@ def main():
 
         if 'comment' in request.form:
             comment = request.form['comment']
-            user = session["user"]
+            if "user" in session:
+                user = session["user"]
             current_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
             user_comments = load_comments()
             user_comments[current_date] = {

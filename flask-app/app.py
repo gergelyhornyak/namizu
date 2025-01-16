@@ -13,6 +13,7 @@ def job():
 scheduler.add_job(
     func=job,
     trigger=CronTrigger(hour=5),
+    misfire_grace_time=30
 )
 
 scheduler.start()
