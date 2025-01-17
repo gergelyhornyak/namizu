@@ -472,6 +472,7 @@ def drawing_app_save():
             imageJson[full_filename]['title'] = "Untitled"
         imageJson[full_filename]['date'] = image_date
         imageJson[full_filename]['descr'] = image_descr
+        imageJson[full_filename]['submitted'] = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         with open(f"database/drawings.json", 'w') as f:
             json.dump(imageJson, f, indent=4)  
 
