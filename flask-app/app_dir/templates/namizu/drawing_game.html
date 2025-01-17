@@ -1,167 +1,299 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mobile Drawing Canvas</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background-color: ivory;
-    }
-    .canvas-container {
-      position: relative;
-      width: 100%;
-      max-width: 500px;
-      height: 500px;
-      border: 2px solid #ccc;
-      touch-action: none; /* Prevent scrolling on touch */
-    }
-    canvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-    .tools {
-      display: flex;
-      justify-content: center;
-      margin: 10px 0;
-    }
-    .tools button {
-      margin: 0 5px;
-      padding: 10px 15px;
-      border: none;
-      background-color: #f0f0f0;
-      cursor: pointer;
-      font-size: 16px;
-      border-radius: 5px;
-    }
-    .tools button.active {
-      background-color: #ddd;
-    }
-    .tools button.color {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      padding: 0;
-    }
-    .tools button.color.black { background-color: black; }
-    .tools button.color.red { background-color: red; }
-    .tools button.color.blue { background-color: blue; }
-    .tools button.color.green { background-color: green; }
-    .tools button.color.yellow { background-color: yellow; }
-    .tools button.color.white { background-color: white; }
-  </style>
-</head>
-<body>
-  <h1>Draw and Save</h1>
-  <div class="canvas-container">
-    <canvas id="drawingCanvas"></canvas>
-  </div>
-  <div class="tools">
-    <button class="color black" data-color="black"></button>
-    <button class="color white" data-color="white" style="border: 1.5px solid black; border-color: black;"></button>
-    <button class="color red" data-color="red"></button>
-    <button class="color blue" data-color="blue"></button>
-    <button class="color green" data-color="green"></button>
-    <button class="color yellow" data-color="yellow"></button>
-    <button id="eraser">Eraser</button>
-    <button id="fill">Fill</button>
-  </div>
-  <form id="saveForm" method="POST" enctype="multipart/form-data" action="/namizu/save">
-    <input type="hidden" name="imageData" id="imageData">
-    <button type="submit">Save Image</button>
-  </form>
-  <div class="info">
-    <p>Remember to fill the background white, if you want a non-transparent image.</p>
-  </div>
-
-  <script>
-    const canvas = document.getElementById('drawingCanvas');
-    const ctx = canvas.getContext('2d');
-    const tools = document.querySelector('.tools');
-    const imageDataInput = document.getElementById('imageData');
-    const saveForm = document.getElementById('saveForm');
-    
-    let isDrawing = false;
-    let currentColor = 'black';
-    let eraserMode = false;
-
-    // Set up canvas size
-    function resizeCanvas() {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-    }
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-
-    // Start drawing
-    canvas.addEventListener('mousedown', startDrawing);
-    canvas.addEventListener('touchstart', (e) => startDrawing(e.touches[0]));
-
-    // Drawing and stopping
-    canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('touchmove', (e) => draw(e.touches[0]));
-
-    canvas.addEventListener('mouseup', stopDrawing);
-    canvas.addEventListener('touchend', stopDrawing);
-
-    // Tool listeners
-    tools.addEventListener('click', (e) => {
-      if (e.target.classList.contains('color')) {
-        currentColor = e.target.getAttribute('data-color');
-        eraserMode = false;
-        setActiveTool(e.target);
-      } else if (e.target.id === 'eraser') {
-        eraserMode = true;
-        setActiveTool(e.target);
-      } else if (e.target.id === 'fill') {
-        fillCanvas();
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Drawing Canvas</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: ivory;
       }
-    });
+      .canvas-container {
+        position: relative;
+        width: 100%;
+        max-width: 400px;
+        height: 400px;
+        border: 2px solid #ccc;
+        touch-action: none; /* Prevent scrolling or gestures */
+      }
+      canvas {
+        display: block;
+        width: 400px;
+        height: 400px;
+      }
+      .tools {
+        display: flex;
+        justify-content: center;
+        margin: 10px 0;
+      }
+      .tools button {
+        margin: 0 5px;
+        padding: 10px 15px;
+        border: none;
+        background-color: #f0f0f0;
+        cursor: pointer;
+        font-size: 16px;
+        border-radius: 5px;
+      }
+      .tools button.active {
+        background-color: #ddd;
+      }
+      .tools button.color {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        padding: 0;
+      }
+      .tools button.color.black { background-color: black; }
+      .tools button.color.red { background-color: red; }
+      .tools button.color.blue { background-color: blue; }
+      .tools button.color.green { background-color: green; }
+      .tools button.color.yellow { background-color: yellow; }
+      .tools button.color.white { background-color: white; }
+    </style>
+  </head>
+  <body>
+    <label for="titleInput">
+      <input type="text" id="titleInput" maxlength="64" placeholder="Enter artwork title" style="font-size:x-large;margin: 4% 0%;text-align: center;" />
+    </label>
+    <div class="canvas-container">
+      <canvas id="canvas" style="border:solid black 1px;aspect-ratio: 400 / 400;">
+        Your browser does not support canvas element.
+      </canvas>
+    </div>
+    <div class="tools">
+      <button class="color black" data-color="black"></button>
+      <button class="color white" data-color="white" style="border: 1.5px solid black; border-color: black;"></button>
+      <button class="color red" data-color="red"></button>
+      <button class="color blue" data-color="blue"></button>
+      <button class="color green" data-color="green"></button>
+      <button class="color yellow" data-color="yellow"></button>
+      <button id="eraser">Eraser</button>
+      <button id="fill">Fill</button>
+      
+    </div>
+    <label for="descrInput">
+      <textarea id="descrInput" maxlength="256" rows="2" placeholder="Enter artwork description" style="font-size:medium;margin: 4% 0%;text-align: left;width: 300px;"></textarea>
+    </label>
+    <form id="saveForm" method="POST" enctype="multipart/form-data" action="/namizu/save">
+      <input type="hidden" name="imageData" id="imageData">
+      <input type="hidden" name="title" id="artworkTitle">
+      <input type="hidden" name="descr" id="artworkDescr">
+      <button type="submit">Save Image</button>
+    </form>
+    <div class="info" style="margin: 4%;">
+      <p>Remember to fill the background white if you want a non-transparent image.</p>
+    </div>
 
-    // Drawing functions
-    function startDrawing(event) {
-      isDrawing = true;
-      ctx.beginPath();
-      ctx.moveTo(event.offsetX, event.offsetY);
-    }
+    <script>
+      const ctx = canvas.getContext('2d');
+      const tools = document.querySelector('.tools');
+      const imageDataInput = document.getElementById('imageData');
+      const titleInput = document.getElementById('titleInput');
+      const artworkTitleInput = document.getElementById('artworkTitle');
+      const descrInput = document.getElementById('descrInput');
+      const artworkDescrInput = document.getElementById('artworkDescr');
+      const saveForm = document.getElementById('saveForm');
+      
+      let isDrawing = false;
+      let currentColor = 'black';
+      let eraserMode = false;
+      let polygonFillMode = false;
 
-    function draw(event) {
-      if (!isDrawing) return;
-      ctx.lineTo(event.offsetX, event.offsetY);
-      ctx.strokeStyle = eraserMode ? 'white' : currentColor;
-      ctx.lineWidth = 5;
-      ctx.lineCap = 'round';
-      ctx.stroke();
-    }
+      function getCanvasOffset() {
+        const el = document.getElementById("canvas");
+        const rect = el.getBoundingClientRect();
+        
+        // Get the position relative to the document
+        const offsetX = rect.left;
+        const offsetY = rect.top;
+        
+        return { offsetX, offsetY };
+      }
+      console.log("Canvas Offset:",getCanvasOffset());
 
-    function stopDrawing() {
-      isDrawing = false;
-      ctx.closePath();
-    }
+      // Set up canvas size
+      function resizeCanvas() {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+      }
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
 
-    // Fill canvas with current color
-    function fillCanvas() {
-      ctx.fillStyle = currentColor;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
+      function startup() {
+        const el = document.getElementById("canvas");
+        el.addEventListener("touchstart", handleStart);
+        el.addEventListener("touchend", handleEnd);
+        el.addEventListener("touchcancel", handleCancel);
+        el.addEventListener("touchmove", handleMove);
+        
+      }
 
-    // Highlight active tool
-    function setActiveTool(button) {
-      Array.from(tools.children).forEach(btn => btn.classList.remove('active'));
-      button.classList.add('active');
-    }
+      document.addEventListener("DOMContentLoaded", startup);
 
-    // Save image to form
-    saveForm.addEventListener('submit', () => {
-      imageDataInput.value = canvas.toDataURL('image/png');
-    });
-  </script>
-</body>
-</html>
+      const ongoingTouches = [];
+
+      function handleStart(evt) {
+        evt.preventDefault();
+        
+        const el = document.getElementById("canvas");
+        const ctx = el.getContext("2d");
+        const touches = evt.changedTouches;
+
+        for (let i = 0; i < touches.length; i++) {
+          
+          ongoingTouches.push(copyTouch(touches[i]));
+          const color = colorForTouch(touches[i]);
+          
+          ctx.beginPath();
+          
+          ctx.fillStyle = color;
+          ctx.fill();
+        }
+      }
+
+      function handleMove(evt) {
+        evt.preventDefault();
+        const el = document.getElementById("canvas");
+        const ctx = el.getContext("2d");
+        const touches = evt.changedTouches;
+
+        for (let i = 0; i < touches.length; i++) {
+          const color = colorForTouch(touches[i]);
+          const idx = ongoingTouchIndexById(touches[i].identifier);
+
+          if (idx >= 0) {
+            
+            ctx.beginPath();
+            
+            ctx.moveTo(ongoingTouches[idx].pageX - getCanvasOffset().offsetX, 
+                      ongoingTouches[idx].pageY - getCanvasOffset().offsetY);
+            ctx.lineTo(touches[i].pageX - getCanvasOffset().offsetX, 
+                      touches[i].pageY - getCanvasOffset().offsetY);
+            
+            if (eraserMode) {
+              ctx.lineWidth = 12;  
+            }
+            else {
+              ctx.lineWidth = 4;
+            }
+            
+            ctx.strokeStyle = eraserMode ? 'white' : currentColor;
+            ctx.stroke();
+
+            ongoingTouches.splice(idx, 1, copyTouch(touches[i])); // swap in the new touch record
+          } else {
+              console.log("else")
+          }
+        }
+      }
+
+      function handleEnd(evt) {
+        evt.preventDefault();
+        const el = document.getElementById("canvas");
+        const ctx = el.getContext("2d");
+        const touches = evt.changedTouches;
+
+        for (let i = 0; i < touches.length; i++) {
+          const color = colorForTouch(touches[i]);
+          let idx = ongoingTouchIndexById(touches[i].identifier);
+
+          if (idx >= 0) {
+            ctx.lineWidth = 5;
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.moveTo(ongoingTouches[idx].pageX - getCanvasOffset().offsetX, 
+                      -ongoingTouches[idx].pageY + getCanvasOffset().offsetY);
+            ctx.lineTo(touches[i].pageX - getCanvasOffset().offsetX,
+                      touches[i].pageY - getCanvasOffset().offsetY);
+            ongoingTouches.splice(idx, 1); // remove it; we're done
+          } else {
+            console.log("error")
+          }
+        }
+      }
+
+      function handleCancel(evt) {
+        evt.preventDefault();
+        const touches = evt.changedTouches;
+
+        for (let i = 0; i < touches.length; i++) {
+          let idx = ongoingTouchIndexById(touches[i].identifier);
+          ongoingTouches.splice(idx, 1); // remove it; we're done
+        }
+      }
+
+      function colorForTouch(touch) {
+        let r = touch.identifier % 16;
+        let g = Math.floor(touch.identifier / 3) % 16;
+        let b = Math.floor(touch.identifier / 7) % 16;
+        r = r.toString(16); // make it a hex digit
+        g = g.toString(16); // make it a hex digit
+        b = b.toString(16); // make it a hex digit
+        const color = `#${r}${g}${b}`;
+        return color;
+      }
+
+      function copyTouch({ identifier, pageX, pageY }) {
+        return { identifier, pageX, pageY };
+      }
+
+      function ongoingTouchIndexById(idToFind) {
+        for (let i = 0; i < ongoingTouches.length; i++) {
+          const id = ongoingTouches[i].identifier;
+
+          if (id === idToFind) {
+            return i;
+          }
+        }
+        return -1; // not found
+      }
+
+      // Tool listeners
+      tools.addEventListener('click', (e) => {
+        if (e.target.classList.contains('color')) {
+          currentColor = e.target.getAttribute('data-color');
+          eraserMode = false;
+          polygonFillMode = false;
+          setActiveTool(e.target);
+        } else if (e.target.id === 'eraser') {
+          eraserMode = true;
+          setActiveTool(e.target);
+        } else if (e.target.id === 'fill') {
+          fillCanvas();
+          polygonFillMode = false;
+        } else if (e.target.id === 'polygonFill') {
+          polygonFillMode = true;
+          eraserMode = false;
+          setActiveTool(e.target);
+        }
+      });
+
+      // Fill canvas with current color
+      function fillCanvas() {
+        ctx.fillStyle = currentColor;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+
+      // Highlight active tool
+      function setActiveTool(button) {
+        Array.from(tools.children).forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+      }
+
+      // Save image to form
+      saveForm.addEventListener('submit', () => {
+        imageDataInput.value = canvas.toDataURL('image/png');
+        artworkTitleInput.value = titleInput.value; // Save the title input 
+        artworkDescrInput.value = descrInput.value;
+      });
+
+    </script>
+  </body>
+  </html>
