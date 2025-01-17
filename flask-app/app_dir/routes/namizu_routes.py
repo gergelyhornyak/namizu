@@ -423,34 +423,58 @@ def admin_reset():
     return redirect(url_for('namizu.index'))
 
 @bp.route("/studio")
-def drawing_app():
+def studio():
+    if "user" not in session:
+        return redirect(url_for('namizu.login'))
     return render_template("namizu/drawing_game.html")
 
 @bp.route("/save", methods=['GET', 'POST'])
 def drawing_app_save():
     image_data = ""
+    image_title = ""
+    image_descr = ""
+    image_author = ""
+    image_date = ""
+    imageJson = {}
     directory_path = "uploads"
     if request.method == "POST":
         image_data = request.form.get('imageData')
+        image_title = request.form.get('title')
+        image_descr = request.form.get('descr')
+        image_author = session["user"]
+        image_date = "2025" #datetime.now().strftime("%Y")
     if image_data:
         # Decode the base64 image
         header, encoded = image_data.split(',', 1)
         image_data = base64.b64decode(encoded)
-        
         try:
             directory_path = "uploads"
             # List all entries in the directory
             entries = os.listdir(directory_path)    
-            
             # Count files only
             file_count = sum(1 for entry in entries if os.path.isfile(os.path.join(directory_path, entry)))
+            filename = file_count+1
         except FileNotFoundError:
             print(f"The directory '{directory_path}' does not exist.")
         except PermissionError:
             print(f"Permission denied to access the directory '{directory_path}'.")
-        file_path = os.path.join(directory_path, f'drawing_{file_count+1}.png')
+        file_path = os.path.join(directory_path, f'drawing_{filename}.png')
         with open(file_path, 'wb') as f:
             f.write(image_data)
+        with open(f"database/drawings.json", 'r') as f:
+            imageJson = json.load(f)
+        full_filename = f"drawing_{filename}.png"
+        imageJson[full_filename] = {}
+        imageJson[full_filename]['filename'] = full_filename
+        imageJson[full_filename]['author'] = image_author
+        imageJson[full_filename]['title'] = image_title
+        if image_title == "":
+            imageJson[full_filename]['title'] = "Untitled"
+        imageJson[full_filename]['date'] = image_date
+        imageJson[full_filename]['descr'] = image_descr
+        with open(f"database/drawings.json", 'w') as f:
+            json.dump(imageJson, f, indent=4)  
+
         print(f"<h1>Image saved at {file_path}</h1>")
         return redirect(url_for('namizu.gallery'))
     return "No image data received!", 400
@@ -462,13 +486,8 @@ def serve_uploads(filename):
 @bp.route("/gallery")
 def gallery():
     directory_path = "uploads"
-    art_db = {
-        "drawing_1.png":{"author":"Geri","title":"TITLE01","date":"2025","descr":"Lorem ipsum"},
-        "drawing_2.png":{"author":"Geri","title":"TITLE02 IMP","date":"2025","descr":"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo."},
-        "drawing_3.png":{"author":"Geri","title":"TITLE03 DECOR","date":"2025","descr":"Dolor Sit Amen Ipsum"},
-        "drawing_4.png":{"author":"Geri","title":"title04 ART-DECO very long new line title hahahahahaha haha","date":"2025","descr":"Sit DOLOR Amen Ipsum"},
-        "drawing_5.png":{"author":"Geri Megint","title":"title05","date":"2025","descr":"DOLOR Sit Amen Ipsum"},
-        }
+    with open(f"database/drawings.json", 'r') as f:
+        art_db = json.load(f)
     screenshots_pre = os.listdir(directory_path)
     screenshots = []
     for filename in screenshots_pre:
