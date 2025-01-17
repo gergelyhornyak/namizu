@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" href="https://img.icons8.com/nolan/64/slime-rancher.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>naMizu</title>
     <style>
         /* General Styles */
@@ -143,6 +145,10 @@
 </head>
 <body>
 
+    <script>
+        history.pushState(null, null, "namizu");
+    </script>
+
 <header>
     <h1>Welcome to naMizu!</h1>
     {% if not alreadyLoggedIn %}
@@ -177,6 +183,13 @@
     <div class="feature-card">
         <h3>Special Thanks 👏</h3>
         <p style="margin: 1% 0%;">to the testers <strong>Bella</strong> and <strong>Márk</strong>, who made sure the app runs smoothly.</p>
+    </div>
+    <div class="feature-card">
+        <h3>Draw your impression</h3>
+        <p style="margin: 1% 0%;">on today's poll in the new<br>
+            <a href="{{ url_for('namizu.studio') }}">naMizu Studio</a>
+        </p>
+        <p>(you need to be signed in)</p>
     </div>
 </section>
 
