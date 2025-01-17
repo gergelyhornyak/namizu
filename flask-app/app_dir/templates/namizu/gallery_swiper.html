@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>naMizu Calendar</title>
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <style>
+        /* Style for the gallery */
+        html, body {
+            height:100%;
+            margin: 0;
+            padding: 0;
+            font-family:Georgia, 'Times New Roman', Times, serif;
+            background-color: #f4f4f4;
+            /*background-image: url('https://t4.ftcdn.net/jpg/02/97/09/85/360_F_297098515_noDOtzUeSdCKRTnZQjgMc3rNmHeMIKrw.jpg'); */
+            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR48DhbmICKkXqFzi8jFwmAmliks54PL6_yOA&s');
+        }
+
+        /* Ensure the swiper container is styled properly */
+        .swiper {
+            width: 100%;
+            max-width: 600px;
+            height: 100vh;
+            margin: auto;
+        }
+
+        /* Style for each slide */
+        .swiper-slide {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* Style for slide content (image + title) */
+        .slide-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 10px; /* Add spacing between image and title */
+        }
+
+        /* Style the image */
+        .swiper-slide img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px; /* Optional: rounded corners */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow */
+        }
+
+        /* Style the title */
+        .slide-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+            margin-bottom: 4%;
+            color: #333;
+        }
+        /* Style the author section */
+        .slide-author {
+            font-size: 18px;
+            font-weight: bold;
+            color: #555;
+            margin: 0;
+            font-style: italic;
+        }
+
+        /* Style the description */
+        .slide-description {
+            font-size: 14px;
+            color: #666;
+            margin: 2% 0%;
+            line-height: 1.4;
+        }
+        /* Plaque effect container */
+        .plaque {
+            background: ivory;
+            color: white; /* White text for contrast */
+            padding: 15px 20px; /* Add space inside the plaque */
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: inset 4px 2px 7px 2px rgba(0, 0, 0, 0.3);
+            max-width: 90%; /* Limit width for better readability */
+            text-align: left; /* Center-align the text inside the plaque */
+            margin: 3%;
+        }
+        .frameX-image {
+            border:solid 3px;
+            border-bottom-color:#ffe;
+            border-left-color:#eed;
+            border-right-color:#eed;
+            border-top-color:#ccb;
+            max-height:100%;
+            max-width:100%;
+        }
+
+        .frameX {
+            background-color:#ddc;
+            border:solid 4vmin #eee;
+            border-bottom-color:#f4f4f4;
+            border-left-color:#e3e2e2;
+            border-radius:2px;
+            border-right-color:#e7e6e6;
+            border-top-color:#cacaca;
+            box-shadow:0 0 5px 0 rgba(0,0,0,.25) inset, 0 5px 10px 5px rgba(0,0,0,.25);
+            box-sizing:border-box;
+            display:inline-block;
+            margin:5%;
+            padding:5vmin;
+            position:relative;
+            text-align:center;
+        }
+
+
+    </style>
+</head>
+<body>
+    <!-- Swiper container -->
+    <div class="swiper">
+        <div class="swiper-wrapper">
+            <!-- Dynamically generate slides using a loop -->
+            {% for screenshot in screenshots %}
+            <div class="swiper-slide">
+                <div class="slide-content">
+                    <div class="frameX">
+                        <img class="frameX-image" src="{{ url_for('namizu.serve_uploads', filename=screenshot['filename']) }}" alt="Screenshot {{ loop.index }}">
+                    </div>
+                    <div class="plaque">
+                        <p class="slide-title">{{ screenshot["author"] }}</p>
+                        <p class="slide-author">{{ screenshot["title"] }}, {{ screenshot["date"] }}</p>
+                        <p class="slide-description">{{ screenshot["descr"] }}</p>
+                    </div>  
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Include Swiper.js -->
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script>
+        // Initialize Swiper
+        const swiper = new Swiper('.swiper', {
+            direction: 'horizontal',
+            loop: true,
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+        });
+
+        // Redirect function
+        function redirectToPage(url) {
+            window.location.href = url;
+        }
+    </script>
+</body>
+</html>

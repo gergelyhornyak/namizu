@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mobile Drawing Canvas</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: ivory;
+    }
+    .canvas-container {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+      height: 500px;
+      border: 2px solid #ccc;
+      touch-action: none; /* Prevent scrolling on touch */
+    }
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .tools {
+      display: flex;
+      justify-content: center;
+      margin: 10px 0;
+    }
+    .tools button {
+      margin: 0 5px;
+      padding: 10px 15px;
+      border: none;
+      background-color: #f0f0f0;
+      cursor: pointer;
+      font-size: 16px;
+      border-radius: 5px;
+    }
+    .tools button.active {
+      background-color: #ddd;
+    }
+    .tools button.color {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      padding: 0;
+    }
+    .tools button.color.black { background-color: black; }
+    .tools button.color.red { background-color: red; }
+    .tools button.color.blue { background-color: blue; }
+    .tools button.color.green { background-color: green; }
+    .tools button.color.yellow { background-color: yellow; }
+    .tools button.color.white { background-color: white; }
+  </style>
+</head>
+<body>
+  <h1>Draw and Save</h1>
+  <div class="canvas-container">
+    <canvas id="drawingCanvas"></canvas>
+  </div>
+  <div class="tools">
+    <button class="color black" data-color="black"></button>
+    <button class="color white" data-color="white" style="border: 1.5px solid black; border-color: black;"></button>
+    <button class="color red" data-color="red"></button>
+    <button class="color blue" data-color="blue"></button>
+    <button class="color green" data-color="green"></button>
+    <button class="color yellow" data-color="yellow"></button>
+    <button id="eraser">Eraser</button>
+    <button id="fill">Fill</button>
+  </div>
+  <form id="saveForm" method="POST" enctype="multipart/form-data" action="/namizu/save">
+    <input type="hidden" name="imageData" id="imageData">
+    <button type="submit">Save Image</button>
+  </form>
+  <div class="info">
+    <p>Remember to fill the background white, if you want a non-transparent image.</p>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('drawingCanvas');
+    const ctx = canvas.getContext('2d');
+    const tools = document.querySelector('.tools');
+    const imageDataInput = document.getElementById('imageData');
+    const saveForm = document.getElementById('saveForm');
+    
+    let isDrawing = false;
+    let currentColor = 'black';
+    let eraserMode = false;
+
+    // Set up canvas size
+    function resizeCanvas() {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Start drawing
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('touchstart', (e) => startDrawing(e.touches[0]));
+
+    // Drawing and stopping
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('touchmove', (e) => draw(e.touches[0]));
+
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('touchend', stopDrawing);
+
+    // Tool listeners
+    tools.addEventListener('click', (e) => {
+      if (e.target.classList.contains('color')) {
+        currentColor = e.target.getAttribute('data-color');
+        eraserMode = false;
+        setActiveTool(e.target);
+      } else if (e.target.id === 'eraser') {
+        eraserMode = true;
+        setActiveTool(e.target);
+      } else if (e.target.id === 'fill') {
+        fillCanvas();
+      }
+    });
+
+    // Drawing functions
+    function startDrawing(event) {
+      isDrawing = true;
+      ctx.beginPath();
+      ctx.moveTo(event.offsetX, event.offsetY);
+    }
+
+    function draw(event) {
+      if (!isDrawing) return;
+      ctx.lineTo(event.offsetX, event.offsetY);
+      ctx.strokeStyle = eraserMode ? 'white' : currentColor;
+      ctx.lineWidth = 5;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+    }
+
+    function stopDrawing() {
+      isDrawing = false;
+      ctx.closePath();
+    }
+
+    // Fill canvas with current color
+    function fillCanvas() {
+      ctx.fillStyle = currentColor;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // Highlight active tool
+    function setActiveTool(button) {
+      Array.from(tools.children).forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
+    }
+
+    // Save image to form
+    saveForm.addEventListener('submit', () => {
+      imageDataInput.value = canvas.toDataURL('image/png');
+    });
+  </script>
+</body>
+</html>

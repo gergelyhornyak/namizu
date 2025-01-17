@@ -1,13 +1,17 @@
-from flask import Blueprint, render_template, request, redirect, jsonify, url_for, session, flash, get_flashed_messages
+from flask import Blueprint, render_template, request, redirect, jsonify, url_for, session, flash, get_flashed_messages, send_from_directory
 from app_dir.utils.namizu_utils import save_comments, save_daily_poll, save_history, save_users_login, save_users_vote, save_visit_count, save_new_question
 from app_dir.utils.namizu_utils import load_user_creds, load_user_login, load_user_votes, load_visit_count
 from app_dir.utils.namizu_utils import load_today_poll, load_comments, load_question_bank, load_history, load_user_streak
 from app_dir.utils.namizu_utils import get_daily_question, get_new_question_id, get_vote_count, get_daily_results,get_comments_packet, get_user_names
 from app_dir.utils.namizu_utils import daily_routine
+
 from datetime import datetime
 import random
+import base64
 import json
+import os
 import re
+
 
 
 bp = Blueprint('namizu', __name__, template_folder='templates')
@@ -417,3 +421,62 @@ def admin_reset():
         return redirect(url_for('namizu.index'))
     daily_routine()
     return redirect(url_for('namizu.index'))
+
+@bp.route("/studio")
+def drawing_app():
+    return render_template("namizu/drawing_game.html")
+
+@bp.route("/save", methods=['GET', 'POST'])
+def drawing_app_save():
+    image_data = ""
+    directory_path = "uploads"
+    if request.method == "POST":
+        image_data = request.form.get('imageData')
+    if image_data:
+        # Decode the base64 image
+        header, encoded = image_data.split(',', 1)
+        image_data = base64.b64decode(encoded)
+        
+        try:
+            directory_path = "uploads"
+            # List all entries in the directory
+            entries = os.listdir(directory_path)    
+            
+            # Count files only
+            file_count = sum(1 for entry in entries if os.path.isfile(os.path.join(directory_path, entry)))
+        except FileNotFoundError:
+            print(f"The directory '{directory_path}' does not exist.")
+        except PermissionError:
+            print(f"Permission denied to access the directory '{directory_path}'.")
+        file_path = os.path.join(directory_path, f'drawing_{file_count+1}.png')
+        with open(file_path, 'wb') as f:
+            f.write(image_data)
+        print(f"<h1>Image saved at {file_path}</h1>")
+        return redirect(url_for('namizu.gallery'))
+    return "No image data received!", 400
+
+@bp.route('/uploads/<filename>')
+def serve_uploads(filename):
+    return send_from_directory("../uploads", filename)
+
+@bp.route("/gallery")
+def gallery():
+    directory_path = "uploads"
+    art_db = {
+        "drawing_1.png":{"author":"Geri","title":"TITLE01","date":"2025","descr":"Lorem ipsum"},
+        "drawing_2.png":{"author":"Geri","title":"TITLE02 IMP","date":"2025","descr":"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo."},
+        "drawing_3.png":{"author":"Geri","title":"TITLE03 DECOR","date":"2025","descr":"Dolor Sit Amen Ipsum"},
+        "drawing_4.png":{"author":"Geri","title":"title04 ART-DECO very long new line title hahahahahaha haha","date":"2025","descr":"Sit DOLOR Amen Ipsum"},
+        "drawing_5.png":{"author":"Geri Megint","title":"title05","date":"2025","descr":"DOLOR Sit Amen Ipsum"},
+        }
+    screenshots_pre = os.listdir(directory_path)
+    screenshots = []
+    for filename in screenshots_pre:
+        screenshot = {}
+        screenshot["filename"] = filename
+        screenshot["author"] = art_db[filename]["author"]
+        screenshot["title"] = art_db[filename]["title"]
+        screenshot["date"] = art_db[filename]["date"]
+        screenshot["descr"] = art_db[filename]["descr"]
+        screenshots.append(screenshot)
+    return render_template("namizu/gallery_swiper.html", screenshots=screenshots)
