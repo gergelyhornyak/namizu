@@ -428,6 +428,11 @@ def studio():
         return redirect(url_for('namizu.login'))
     return render_template("namizu/drawing_game.html")
 
+@bp.route("/painter")
+def painter():
+    return render_template("namizu/painter2.html")
+
+
 @bp.route("/save", methods=['GET', 'POST'])
 def save_drawing():
     image_data = ""
