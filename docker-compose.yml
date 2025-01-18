@@ -10,6 +10,7 @@ services:
     #  - "8080:5000"
     volumes:
       - ./flask-app/database:/docker_app/database
+      - ./flask-app/uploads:/docker_app/uploads
     expose:
       - "5000"  # Expose Flask app's internal port
     restart: always
