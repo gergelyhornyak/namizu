@@ -315,7 +315,13 @@
             <form method="POST">
                 <div class="panel panel-default" style="background-color: #fae5c9;border-color: transparent;">
                     <div class="panel-body">
-                        <div style="text-align: center;padding-bottom: 5%;font-weight: bold;font-size: large;">Choices</div>
+                        <div style="text-align: center;padding-bottom: 5%;font-weight: bold;font-size: large;">
+                            {% if is_poll_multichoice %}
+                            PICK ANY
+                            {% elif not is_poll_multichoice %}
+                            PICK ONE
+                            {% endif %}
+                        </div>
                         
                             {% if is_poll_multichoice %}
                                 <div class="preview" id="preview">
