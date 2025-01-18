@@ -429,7 +429,7 @@ def studio():
     return render_template("namizu/drawing_game.html")
 
 @bp.route("/save", methods=['GET', 'POST'])
-def drawing_app_save():
+def save_drawing():
     image_data = ""
     image_title = ""
     image_descr = ""

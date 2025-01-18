@@ -81,7 +81,7 @@
     <label for="descrInput">
       <textarea id="descrInput" maxlength="256" rows="2" placeholder="Enter artwork description" style="font-size:medium;margin: 4% 0%;text-align: left;width: 300px;"></textarea>
     </label>
-    <form id="saveForm" method="POST" enctype="multipart/form-data" action="/namizu/save">
+    <form id="saveForm" method="POST" enctype="multipart/form-data" action="{{ url_for('namizu.save_drawing') }}">
       <input type="hidden" name="imageData" id="imageData">
       <input type="hidden" name="title" id="artworkTitle">
       <input type="hidden" name="descr" id="artworkDescr">
@@ -124,7 +124,7 @@
         canvas.height = canvas.offsetHeight;
       }
       resizeCanvas();
-      window.addEventListener('resize', resizeCanvas);
+      //window.addEventListener('resize', resizeCanvas);
 
       function startup() {
         const el = document.getElementById("canvas");
