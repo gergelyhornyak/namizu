@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, jsonify, url_for, session, flash, get_flashed_messages, send_from_directory
 from app_dir.utils.namizu_utils import save_comments, save_daily_poll, save_history, save_users_login, save_users_vote, save_visit_count, save_new_question
-from app_dir.utils.namizu_utils import load_user_creds, load_user_login, load_user_votes, load_visit_count
+from app_dir.utils.namizu_utils import load_user_creds, load_user_login, load_user_votes, load_visit_count, load_drawings
 from app_dir.utils.namizu_utils import load_today_poll, load_comments, load_question_bank, load_history, load_user_streak
 from app_dir.utils.namizu_utils import get_daily_question, get_new_question_id, get_vote_count, get_daily_results,get_comments_packet, get_user_names
 from app_dir.utils.namizu_utils import daily_routine
@@ -11,8 +11,6 @@ import base64
 import json
 import os
 import re
-
-
 
 bp = Blueprint('namizu', __name__, template_folder='templates')
 
@@ -28,6 +26,7 @@ def page_not_found500(e):
 def page_not_found400(e):
     return render_template('namizu/400.html'), 400
 
+@bp.route("/index")
 @bp.route("/")
 def index():
     alreadyLoggedIn = False
@@ -49,11 +48,13 @@ def main():
     counter = 1
     user = ""
     is_poll_multichoice = False
+
+    #* exclude
     for key, value in daily_poll["Answers"].items():
         answers_ser_num[counter] = {"key":key,"value":value}
         counter+=1
 
-    # exclude
+    #* exclude
     vote_stats = {}
     for value in vote_stat.values():
         vote_stats[value["name"]] = value["voted"]
@@ -90,6 +91,7 @@ def main():
                 vote_stats[user] = 1 # submitted vote
                 vote_stat = load_user_votes()
                 new_vote_stats = vote_stat.copy()
+                #* exclude
                 for uid, details in vote_stat.items():
                     for name,vote in vote_stats.items():
                         if details["name"] == name:
@@ -432,7 +434,6 @@ def studio():
 def painter():
     return render_template("namizu/painter2.html")
 
-
 @bp.route("/save", methods=['GET', 'POST'])
 def save_drawing():
     image_data = ""
@@ -482,26 +483,110 @@ def save_drawing():
             json.dump(imageJson, f, indent=4)  
 
         print(f"<h1>Image saved at {file_path}</h1>")
-        return redirect(url_for('namizu.gallery'))
+        return redirect(url_for('namizu.index'))
     return "No image data received!", 400
+
+# painter studio layout:
+# 1. check if logged in
+# 2. welcome page -> enter elevator
+# 3. gallery elevator with dates as buttons
+
+# assets: gallery_landing_page, gallery_elevator, gallery_hall 
+# gallery_landing_page: background, welcome message, info, enter-button
+# gallery_elevator: buttons for each day - grouped by month
+# gallery_hall: dynamic display of pictures - sorted by day
+
+@bp.route("/gallery")
+def gallery_welcome():
+    name = ""
+    if "user" in session:
+        name = session["user"]
+    else:
+        return redirect(url_for('namizu.index'))
+    def get_drawings_sum():
+        return len(os.listdir("uploads"))
+    drawing_sum = get_drawings_sum()
+    
+    drawings = load_drawings()
+    authors = {item["author"] for item in drawings.values()}
+    authors_names = ', '.join(authors)
+    return render_template("namizu/gallery_welcome.html", drawing_sum=drawing_sum, name=name, authors=authors_names)
+
+@bp.route("/gallery_lift")
+def gallery_lift():
+    flash_message = "Select Floor"
+    #! buttons hardcoded
+    buttons = [{"day":13,"month":"JAN"},
+               {"day":14,"month":"JAN"},
+               {"day":15,"month":"JAN"},
+               {"day":16,"month":"JAN"},
+               {"day":17,"month":"JAN"},
+               {"day":18,"month":"JAN"},
+               {"day":19,"month":"JAN"},
+               {"day":20,"month":"JAN"},
+               {"day":21,"month":"JAN"},
+               {"day":22,"month":"JAN"},
+               {"day":23,"month":"JAN"},
+               {"day":24,"month":"JAN"},
+               {"day":25,"month":"JAN"},
+               {"day":26,"month":"JAN"},
+               {"day":27,"month":"JAN"},
+               {"day":28,"month":"JAN"},
+               {"day":29,"month":"JAN"},
+               {"day":30,"month":"JAN"},
+               {"day":31,"month":"JAN"},
+               {"day":1,"month":"FEB"},
+               {"day":2,"month":"FEB"},
+               {"day":3,"month":"FEB"},
+               {"day":4,"month":"FEB"},
+               {"day":5,"month":"FEB"},
+               {"day":6,"month":"FEB"},
+               {"day":7,"month":"FEB"},
+               {"day":8,"month":"FEB"},
+               {"day":"X","month":"HOME"},]
+    flash_messages = get_flashed_messages()
+    if flash_messages:
+        flash_message = flash_messages[0]
+    get_flashed_messages()
+    session.pop('_flashes', None)
+    return render_template("namizu/gallery_lift.html", buttons=buttons, flash_message=flash_message)
 
 @bp.route('/uploads/<filename>')
 def serve_uploads(filename):
     return send_from_directory("../uploads", filename)
 
-@bp.route("/gallery")
-def gallery():
+@bp.route("/gallery/<target_date>")
+def gallery_day(target_date):
     directory_path = "uploads"
+    date_found = False
+    screenshots_dir = os.listdir(directory_path)
+
     with open(f"database/drawings.json", 'r') as f:
-        art_db = json.load(f)
-    screenshots_pre = os.listdir(directory_path)
+        art_db = json.load(f)        
+    target_day_n_month = target_date.split("-")
+    date_str = f"{target_day_n_month[0]} {target_day_n_month[1]} 2025" #! hardcoded year
+    date_obj = datetime.strptime(date_str, "%d %b %Y")
+
     screenshots = []
-    for filename in screenshots_pre:
-        screenshot = {}
-        screenshot["filename"] = filename
-        screenshot["author"] = art_db[filename]["author"]
-        screenshot["title"] = art_db[filename]["title"]
-        screenshot["date"] = art_db[filename]["date"]
-        screenshot["descr"] = art_db[filename]["descr"]
-        screenshots.append(screenshot)
+    
+    for filename, details in art_db.items():
+        submit_date = datetime.strptime(details["submitted"], "%d/%m/%Y %H:%M:%S")
+        if filename not in screenshots_dir:
+            print("missing drawing. abort import.")
+            break
+        if submit_date.day == date_obj.day and submit_date.month == date_obj.month:
+            date_found = True
+            screenshot = {}
+            screenshot["filename"] = filename
+            screenshot["author"] = art_db[filename]["author"]
+            screenshot["title"] = art_db[filename]["title"]
+            screenshot["date"] = art_db[filename]["date"]
+            screenshot["descr"] = art_db[filename]["descr"]
+            screenshots.append(screenshot)
+    
+    if not date_found:
+        get_flashed_messages()
+        session.pop('_flashes', None)
+        flash(f"Floor {date_obj.day} {date_obj.strftime('%b')} is empty")
+        return redirect(url_for('namizu.gallery_lift'))
     return render_template("namizu/gallery_swiper.html", screenshots=screenshots)

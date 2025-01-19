@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landing Page</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #fff;
+            text-align: center;
+        }
+
+        .container {
+            margin-top: 70%;
+            max-width: 400px;
+            padding: 20px;
+            background:rgb(74 122 136 / 55%);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome-message {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .info-bubble {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        .enter-button {
+            background-color: #1189ff;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: bolder;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .welcome-message {
+                font-size: 1.5rem;
+            }
+
+            .info-bubble {
+                font-size: 0.9rem;
+            }
+
+            .enter-button {
+                font-size: 0.9rem;
+                padding: 10px 20px;
+            }
+        }
+    </style>
+</head>
+<body style="background: url({{ url_for('static', filename='img/infinity.png') }}) no-repeat center center/cover;">
+    <div class="container">
+        <div class="welcome-message">Welcome {{ name }} to<br>naMizu Gallery!</div>
+        <div class="info-bubble">Discover almost {{ drawing_sum }} artworks from famous artists like {{ authors }} in this infinite art gallery.</div>
+        <a href="{{ url_for('namizu.gallery_lift') }}" class="enter-button">ENTER</a>
+    </div>
+</body>
+</html>

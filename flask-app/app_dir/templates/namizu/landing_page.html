@@ -87,7 +87,6 @@
             border-radius: 6px;
             transition: background-color 0.3s;
         }
-        
 
         /* Call-to-Action (CTA) Button */
         .cta {
@@ -99,7 +98,7 @@
             background: #3a5d6c;
             color: #ffffff;
             text-decoration: none;
-            font-size: 3rem;
+            font-size: 1.6rem;
             font-weight: bold;
             padding: 0.8rem 1.5rem;
             border-radius: 8px;
@@ -137,17 +136,13 @@
                 max-width: 100%;
             }
             .cta a {
-                font-size: 2rem;
+                font-size: 1.6rem;
                 padding: 0.5rem 1.2rem;
             }
         }
     </style>
 </head>
 <body>
-
-    <script>
-        history.pushState(null, null, "namizu");
-    </script>
 
 <header>
     <h1>Welcome to naMizu!</h1>
@@ -170,32 +165,39 @@
         <h3>No Micro-Transactions</h3>
         <p style="margin: 1% 0%;">No hidden costs, no premium features. naMizu is 100% free for friends.</p>
     </div>
-    <div class="feature-card">
-        <h3 style="text-decoration:underline;">Do you wanna add new questions?</h3>
-        <p style="margin: 1% 0%;">Create your own questions using the <a href="{{ url_for('namizu.editor') }}">naMizu Editor</a></p>
-    </div>
+
     <div class="feature-card">
         <h3>Ready for a fun poll?</h3>
         <div class="cta">
             <a href="{{ url_for('namizu.login') }}">naMizu Poll</a>
         </div>
     </div>
+
+    <div class="feature-card">
+        <h3>Do you wanna add new questions?</h3>
+        <p style="margin: 1% 0%;">Create your own questions using the <a href="{{ url_for('namizu.editor') }}">naMizu Editor</a></p>
+    </div>
+    
+    <div class="feature-card">
+        <h3>Draw a sketch</h3>
+        <p style="margin: 1% 0%;">of today's poll in the new<br>
+            <a href="{{ url_for('namizu.studio') }}">naMizu Studio</a>
+        </p>
+        {% if not alreadyLoggedIn %}
+        <p>(you need to be signed in)</p>
+        {% endif %}
+    </div>
+
+    <div class="feature-card">
+        <h3>Visit the gallery</h3>
+        <p style="margin: 1% 0%;">displaying other's artworks in the<br>
+            <a href="{{ url_for('namizu.gallery_welcome') }}">naMizu Gallery</a>
+        </p>
+    </div>
+
     <div class="feature-card">
         <h3>Special Thanks 👏</h3>
         <p style="margin: 1% 0%;">to the testers <strong>Bella</strong> and <strong>Márk</strong>, who made sure the app runs smoothly.</p>
-    </div>
-    <div class="feature-card">
-        <h3>Draw your impression</h3>
-        <p style="margin: 1% 0%;">on today's poll in the new<br>
-            <a href="{{ url_for('namizu.studio') }}">naMizu Studio</a>
-        </p>
-        <p>(you need to be signed in)</p>
-    </div>
-    <div class="feature-card">
-        <h3>Check out other's artworks</h3>
-        <p style="margin: 1% 0%;">in the <br>
-            <a href="{{ url_for('namizu.gallery') }}">naMizu Gallery</a>
-        </p>
     </div>
 </section>
 

@@ -129,6 +129,13 @@ def load_history():
     except Exception as e:
         print(e)
 
+def load_drawings():
+    try:        
+        with open(f"database/drawings.json", 'r') as f:
+            return json.load(f)        
+    except Exception as e:
+        print(e)
+
 # savers
 
 def save_user_db(user_db):

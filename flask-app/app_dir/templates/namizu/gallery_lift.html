@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elevator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #3b3b3b;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            overflow-y: auto; /* Allows vertical scrolling */
+        }
+
+        .elevator {
+            background-color: #222;
+            width: 90%;
+            height: auto;
+            max-width: 400px;
+            border: 2px solid #999;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            padding: 2%;
+        }
+
+        .screen {
+            background-color: black;
+            color: #0f0;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #666;
+            border-radius: 5px;
+        }
+
+        .panel {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* Adjusted to fit 4 buttons per row */
+            gap: 24px;
+            width: 100%;
+            margin-bottom: 10%;
+        }
+
+        .button-wrapper {
+            position: relative;
+            background-color: #444;
+            border-radius: 25px;
+            padding: 10px 0;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .button {
+            background-color: #ddd;
+            box-shadow: 10px 8px 10px rgba(0, 0, 0, 0.5);
+            color: black;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 50%; /* Makes buttons round */
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            line-height: 50px; /* Centers text vertically inside round button */
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="elevator">
+        <div class="screen" id="elevator-screen">{{ flash_message }}</div>
+        <div class="panel">
+            {% for button in buttons %}
+            <div class="button-wrapper">
+                <button class="button" onclick="redirectToGallery('{{ button['day'] }}', '{{ button['month'] }}')">
+                    {{ button["day"] }}
+                    <div style="color: gold; text-align: center;">{{ button["month"] }}</div>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <script>
+        /**
+         * Redirect to gallery page with day and month in the URL.
+         * @param {string} day - The day value from the button.
+         * @param {string} month - The month value from the button.
+         */
+        function redirectToGallery(day, month) {
+            // Construct the URL dynamically based on day and month.
+            const formattedDay = day.toLowerCase(); // Optional formatting (lowercase)
+            const formattedMonth = month.toLowerCase(); // Optional formatting (lowercase)
+            let url = "";
+            console.log("formattedDay: ",formattedDay);
+            if (formattedDay=="x"){
+                url = '/namizu/index';
+            }
+            else {
+                url = `/namizu/gallery/${formattedDay}-${formattedMonth}`;
+            }
+            // Redirect to the constructed URL.
+            window.location.href = url;
+        }
+    </script>
+
+</body>
+</html>
