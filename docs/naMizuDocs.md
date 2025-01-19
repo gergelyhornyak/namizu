@@ -108,6 +108,7 @@ history file:
     },
 ```
 
+
 ## Big update ideas:
 - mysql setup,
 - profile pics?

@@ -71,19 +71,21 @@ def main():
     if vote_stats[user] == 1: # already voted
         submitted = True
 
-    #print(f"{question = }\n{question_type = }\n{options = }\n{answers_ser_num = }\n{vote_stats = }\n{is_poll_multichoice = }")
-
-
     if request.method == 'GET':    
         pass        
+
     elif request.method == 'POST':
         if vote_count == 7: # all voted
             submitted = True
         if 'vote' in request.form and not submitted:
             if is_poll_multichoice:
+
+                #* exclude
                 for opt in range(len(options)):
                     if str(opt+1) in request.form:
                         answers_ser_num[opt+1]["value"] += 1
+                
+                #* exclude
                 for details in answers_ser_num.values():
                     daily_poll["Answers"][details["key"]] = details["value"]
 
@@ -91,11 +93,13 @@ def main():
                 vote_stats[user] = 1 # submitted vote
                 vote_stat = load_user_votes()
                 new_vote_stats = vote_stat.copy()
+
                 #* exclude
                 for uid, details in vote_stat.items():
                     for name,vote in vote_stats.items():
                         if details["name"] == name:
                             new_vote_stats[uid]["voted"] = vote
+
                 save_users_vote(new_vote_stats)
                 submitted = True
             else:    
@@ -106,10 +110,13 @@ def main():
                 vote_stats[user] = 1 # submitted vote
                 vote_stat = load_user_votes()
                 new_vote_stats = vote_stat.copy()
+
+                #* exclude
                 for uid, details in vote_stat.items():
                     for name,vote in vote_stats.items():
                         if details["name"] == name:
                             new_vote_stats[uid]["voted"] = vote
+
                 save_users_vote(new_vote_stats)
                 submitted = True
 
@@ -126,17 +133,18 @@ def main():
             comments_packet = get_comments_packet()
             return redirect(url_for('namizu.main'))
     
+    #* exclude
     results_raw = daily_poll["Answers"]
     results = []
-    vote_stat = load_user_votes()
-    vote_count = get_vote_count()
     for k,v in results_raw.items():
         results_temp = {}
         results_temp["label"] = k
         results_temp["value"] = v
         results_temp["width"] = int(v/7*100)
         results.append(results_temp)
-    #print(f"{submitted = }\n{results = }")
+
+    vote_stat = load_user_votes()
+    vote_count = get_vote_count()
     return render_template('namizu/main.html', question=question, is_poll_multichoice=is_poll_multichoice,
                            options=options, results=results, form_submitted=submitted,
                            player_num=7, vote_count=vote_count, comments=comments_packet)
@@ -165,12 +173,15 @@ def show_history(target_date):
                 vote_count += v["voted"]
         else:
             vote_count = sum(history_log["Answers"].values())
+        
+        #* exclude
         for k,v in results_raw.items():
             results_temp = {}
             results_temp["label"] = k
             results_temp["value"] = v
             results_temp["width"] = int(v/7*100)
             results.append(results_temp)
+
         if "M" in history_log["Type"]: # multichoice
             is_poll_multichoice = True
         
@@ -187,6 +198,8 @@ def login():
     creds = load_user_creds()
     logins = load_user_login()
     options = list(creds.keys())
+
+    #* exclude
     streaks_all = load_user_streak()
     streaks = {}
     for uid,details in streaks_all.items():
@@ -291,6 +304,7 @@ def editor():
         poll_type += "V" if variable_in_question else "D"
         poll_type += "M" if multichoice else "S"
         poll_type += "N" if names_as_options else "C"
+
         if not names_as_options:
             if yes_or_no:
                 poll_type += "Y"
@@ -298,9 +312,7 @@ def editor():
                 poll_type += "O"
         else:
             poll_type += "X" # names, therefore yes or no is irrelevant
-
-        #return f"<h1>Poll type: {poll_type}</h1><p>{question}</p><p>{select_mode}</p><p>{option_mode}</p><p>{', '.join(answers)}</p>"
-            
+     
         if variable_in_question:
                 
             text = question
@@ -313,12 +325,6 @@ def editor():
             
         if not names_as_options:
             options = answers
-            """
-            if len(options) > 6 or len(options) < 1: # too long or empty
-                # restart
-                do_restart = True
-                flash("Too many / too few options provided. Session restarted")
-            """
             for option in options:
                 if option == "":
                     do_restart = True
@@ -338,6 +344,8 @@ def editor():
         answers = {key:0 for key in answers}
 
         submitPoll = True
+
+        #* exclude
         qid = get_new_question_id()
         qid = "Q"+str(qid)
         new_question_body = {
@@ -376,16 +384,20 @@ def namizu_admin():
     visits = load_visit_count()
     visits = visits["total"]
     questions_bank = load_question_bank()
+
+    #* exclude
     logins = load_user_login()
     loginers = []
     for v in logins.values():
         if v["loggedin"] == 1:
             loginers.append(v["name"])
+
     if loginers:
         loginers = ', '.join(loginers)
     else:
         loginers = "No one"
 
+    #* exclude
     used_questions = 0
     for details in questions_bank.values():
         if details["Status"] == 2:
@@ -404,6 +416,7 @@ def questions_list():
     questions_bank = load_question_bank()
     questions = []
     
+    #* exclude
     for qid,q_body in questions_bank.items():
         temp_question = {}  
         temp_question["QID"] = qid
@@ -486,16 +499,6 @@ def save_drawing():
         return redirect(url_for('namizu.index'))
     return "No image data received!", 400
 
-# painter studio layout:
-# 1. check if logged in
-# 2. welcome page -> enter elevator
-# 3. gallery elevator with dates as buttons
-
-# assets: gallery_landing_page, gallery_elevator, gallery_hall 
-# gallery_landing_page: background, welcome message, info, enter-button
-# gallery_elevator: buttons for each day - grouped by month
-# gallery_hall: dynamic display of pictures - sorted by day
-
 @bp.route("/gallery")
 def gallery_welcome():
     name = ""
@@ -516,9 +519,7 @@ def gallery_welcome():
 def gallery_lift():
     flash_message = "Select Floor"
     #! buttons hardcoded
-    buttons = [{"day":13,"month":"JAN"},
-               {"day":14,"month":"JAN"},
-               {"day":15,"month":"JAN"},
+    buttons = [{"day":"X","month":"HOME"},
                {"day":16,"month":"JAN"},
                {"day":17,"month":"JAN"},
                {"day":18,"month":"JAN"},
@@ -543,7 +544,8 @@ def gallery_lift():
                {"day":6,"month":"FEB"},
                {"day":7,"month":"FEB"},
                {"day":8,"month":"FEB"},
-               {"day":"X","month":"HOME"},]
+               {"day":9,"month":"FEB"},
+               {"day":10,"month":"FEB"}]
     flash_messages = get_flashed_messages()
     if flash_messages:
         flash_message = flash_messages[0]
