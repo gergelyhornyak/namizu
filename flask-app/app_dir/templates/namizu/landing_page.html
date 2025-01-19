@@ -184,7 +184,7 @@
             <a href="{{ url_for('namizu.studio') }}">naMizu Studio</a>
         </p>
         {% if not alreadyLoggedIn %}
-        <p>(you need to be signed in)</p>
+        <p style="margin: 1% 1%;">(you need to be signed in)</p>
         {% endif %}
     </div>
 
@@ -193,6 +193,9 @@
         <p style="margin: 1% 0%;">displaying other's artworks in the<br>
             <a href="{{ url_for('namizu.gallery_welcome') }}">naMizu Gallery</a>
         </p>
+        {% if not alreadyLoggedIn %}
+        <p style="margin: 1% 1%;">(you need to be signed in)</p>
+        {% endif %}
     </div>
 
     <div class="feature-card">
