@@ -2,7 +2,8 @@ from flask import Blueprint, render_template, request, redirect, jsonify, url_fo
 from app_dir.utils.namizu_utils import save_comments, save_daily_poll, save_history, save_users_login, save_users_vote, save_visit_count, save_new_question
 from app_dir.utils.namizu_utils import load_user_creds, load_user_login, load_user_votes, load_visit_count, load_drawings
 from app_dir.utils.namizu_utils import load_today_poll, load_comments, load_question_bank, load_history, load_user_streak
-from app_dir.utils.namizu_utils import get_daily_question, get_new_question_id, get_vote_count, get_daily_results,get_comments_packet, get_user_names
+from app_dir.utils.namizu_utils import get_daily_question, get_new_question_id, get_vote_count, get_daily_results,get_comments_packet
+from app_dir.utils.namizu_utils import get_user_names, get_drawings_by_matching_day, get_questions_for_admin
 from app_dir.utils.namizu_utils import daily_routine
 
 from datetime import datetime
@@ -26,18 +27,28 @@ def page_not_found500(e):
 def page_not_found400(e):
     return render_template('namizu/400.html'), 400
 
-@bp.route("/index")
-@bp.route("/")
-def index():
-    alreadyLoggedIn = False
+def check_user_logged_in(funcName) -> tuple[bool, str]:
+    print(f"{session = }")
     userName = ""
     if "user" in session:
         userName = session["user"]
-        alreadyLoggedIn = True
+        return True,userName
+    else:
+        session['url'] = funcName
+        return False,userName
+
+@bp.route("/index")
+@bp.route("/")
+def index():
+    alreadyLoggedIn, userName = check_user_logged_in("index")
     return render_template('/namizu/landing_page.html', userName=userName, alreadyLoggedIn=alreadyLoggedIn)
 
 @bp.route("/poll", methods=['GET', 'POST'])
-def main():
+def poll():
+    alreadyLoggedIn, userName = check_user_logged_in("poll")
+    if not alreadyLoggedIn:
+        return redirect(url_for('namizu.login'))
+
     daily_poll = get_daily_question()
     question = daily_poll["Question"]
     question_type = daily_poll["Type"]
@@ -46,7 +57,6 @@ def main():
     vote_stat = load_user_votes()
     answers_ser_num = {}
     counter = 1
-    user = ""
     is_poll_multichoice = False
 
     #* exclude
@@ -62,13 +72,13 @@ def main():
     vote_count = get_vote_count()
     submitted = False # if user submitted the form
     if "user" in session:
-        user = session["user"]
+        userName = session["user"]
     comments_packet = get_comments_packet()
 
     if "M" in question_type: # multichoice
         is_poll_multichoice = True
 
-    if vote_stats[user] == 1: # already voted
+    if vote_stats[userName] == 1: # already voted
         submitted = True
 
     if request.method == 'GET':    
@@ -90,7 +100,7 @@ def main():
                     daily_poll["Answers"][details["key"]] = details["value"]
 
                 save_daily_poll(daily_poll)
-                vote_stats[user] = 1 # submitted vote
+                vote_stats[userName] = 1 # submitted vote
                 vote_stat = load_user_votes()
                 new_vote_stats = vote_stat.copy()
 
@@ -107,7 +117,7 @@ def main():
                 daily_poll["Answers"][choice] += 1
 
                 save_daily_poll(daily_poll)
-                vote_stats[user] = 1 # submitted vote
+                vote_stats[userName] = 1 # submitted vote
                 vote_stat = load_user_votes()
                 new_vote_stats = vote_stat.copy()
 
@@ -123,15 +133,15 @@ def main():
         if 'comment' in request.form:
             comment = request.form['comment']
             if "user" in session:
-                user = session["user"]
+                userName = session["user"]
             current_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
             user_comments = load_comments()
             user_comments[current_date] = {
-                user: comment
+                userName: comment
             }
             save_comments(user_comments)
             comments_packet = get_comments_packet()
-            return redirect(url_for('namizu.main'))
+            return redirect(url_for('namizu.poll'))
     
     #* exclude
     results_raw = daily_poll["Answers"]
@@ -145,16 +155,22 @@ def main():
 
     vote_stat = load_user_votes()
     vote_count = get_vote_count()
-    return render_template('namizu/main.html', question=question, is_poll_multichoice=is_poll_multichoice,
+    return render_template('namizu/poll.html', question=question, is_poll_multichoice=is_poll_multichoice,
                            options=options, results=results, form_submitted=submitted,
                            player_num=7, vote_count=vote_count, comments=comments_packet)
 
 @bp.route("/calendar")
 def calendar():
+    alreadyLoggedIn, userName = check_user_logged_in("calendar")
+    if not alreadyLoggedIn:
+        return redirect(url_for('namizu.login'))
     return render_template('namizu/calendar.html')
 
 @bp.get("/history/<target_date>")
 def show_history(target_date):
+    alreadyLoggedIn, userName = check_user_logged_in("show_history")
+    if not alreadyLoggedIn:
+        return redirect(url_for('namizu.login'))
     is_poll_multichoice = False
     results = []
     comments_packet = []
@@ -194,7 +210,7 @@ def show_history(target_date):
                            player_num=player_count, comments=comments_packet, date=target_date_uk_format)
 
 @bp.route('/login', methods=['GET', 'POST'])
-def login():
+def login():  
     creds = load_user_creds()
     logins = load_user_login()
     options = list(creds.keys())
@@ -205,9 +221,6 @@ def login():
     for uid,details in streaks_all.items():
         if details["streak"] > 0:
             streaks[details["name"]] = details["streak"]
-
-    if "user" in session:
-        return redirect(url_for("namizu.main"),302)
 
     if request.method == "POST":
         user = request.form["vote"]
@@ -223,9 +236,9 @@ def login():
                     logins[uid]["loggedin"] = 1
                     break
             save_users_login(logins)
-
-            return redirect(url_for("namizu.main"),302)
-
+            if 'url' in session:
+                print()
+                return redirect(url_for(f"namizu.{session['url']}"))
     return render_template('namizu/login.html',options=options, streak=streaks)
 
 @bp.route('/logout')
@@ -235,6 +248,9 @@ def logout():
 
 @bp.route('/editor', methods=['GET', 'POST'])
 def editor():
+    alreadyLoggedIn, userName = check_user_logged_in("editor")
+    if not alreadyLoggedIn:
+        return redirect(url_for('namizu.login'))
     session.pop('_flashes', None)
     # define variables
     question = ""
@@ -413,18 +429,8 @@ def questions_list():
             return redirect(url_for('namizu.index'))
     else:
         return redirect(url_for('namizu.index'))
-    questions_bank = load_question_bank()
-    questions = []
     
-    #* exclude
-    for qid,q_body in questions_bank.items():
-        temp_question = {}  
-        temp_question["QID"] = qid
-        temp_question["Question"] = q_body["Question"]
-        temp_question["Answers"] = q_body["Answers"]
-        temp_question["Status"] = q_body["Status"]
-        questions.append(temp_question)
-
+    questions = get_questions_for_admin()
     return render_template('namizu/questions_list.html', questions=questions) 
 
 @bp.route("/reset")
@@ -439,7 +445,8 @@ def admin_reset():
 
 @bp.route("/studio")
 def studio():
-    if "user" not in session:
+    alreadyLoggedIn, userName = check_user_logged_in("studio")
+    if not alreadyLoggedIn:
         return redirect(url_for('namizu.login'))
     return render_template("namizu/drawing_game.html")
 
@@ -466,57 +473,31 @@ def save_drawing():
         # Decode the base64 image
         header, encoded = image_data.split(',', 1)
         image_data = base64.b64decode(encoded)
-        try:
-            directory_path = "uploads"
-            # List all entries in the directory
-            entries = os.listdir(directory_path)    
-            # Count files only
-            file_count = sum(1 for entry in entries if os.path.isfile(os.path.join(directory_path, entry)))
-            filename = file_count+1
-        except FileNotFoundError:
-            print(f"The directory '{directory_path}' does not exist.")
-        except PermissionError:
-            print(f"Permission denied to access the directory '{directory_path}'.")
-        file_path = os.path.join(directory_path, f'drawing_{filename}.png')
-        with open(file_path, 'wb') as f:
-            f.write(image_data)
-        with open(f"database/drawings.json", 'r') as f:
-            imageJson = json.load(f)
-        full_filename = f"drawing_{filename}.png"
-        imageJson[full_filename] = {}
-        imageJson[full_filename]['filename'] = full_filename
-        imageJson[full_filename]['author'] = image_author
-        imageJson[full_filename]['title'] = image_title
-        if image_title == "":
-            imageJson[full_filename]['title'] = "Untitled"
-        imageJson[full_filename]['date'] = image_date
-        imageJson[full_filename]['descr'] = image_descr
-        imageJson[full_filename]['submitted'] = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-        with open(f"database/drawings.json", 'w') as f:
-            json.dump(imageJson, f, indent=4)  
 
-        print(f"<h1>Image saved at {file_path}</h1>")
+        success = save_drawing(directory_path,image_data,image_author,image_title,image_date,image_descr)
+        if success == 0:
+            print(f"Image saved")
         return redirect(url_for('namizu.index'))
     return "No image data received!", 400
 
-@bp.route("/gallery")
+@bp.route("/gallery/welcome")
 def gallery_welcome():
-    name = ""
-    if "user" in session:
-        name = session["user"]
-    else:
-        return redirect(url_for('namizu.index'))
-    def get_drawings_sum():
-        return len(os.listdir("uploads"))
-    drawing_sum = get_drawings_sum()
+    alreadyLoggedIn, userName = check_user_logged_in("gallery_welcome")
+    if not alreadyLoggedIn:
+        return redirect(url_for('namizu.login'))
     
+    drawing_sum = len(os.listdir("uploads"))
     drawings = load_drawings()
     authors = {item["author"] for item in drawings.values()}
     authors_names = ', '.join(authors)
-    return render_template("namizu/gallery_welcome.html", drawing_sum=drawing_sum, name=name, authors=authors_names)
+    return render_template("namizu/gallery_welcome.html", drawing_sum=drawing_sum, name=userName, authors=authors_names)
 
-@bp.route("/gallery_lift")
+@bp.route("/gallery/lift")
 def gallery_lift():
+    alreadyLoggedIn, userName = check_user_logged_in("gallery_lift")
+    if not alreadyLoggedIn:
+        return redirect(url_for('namizu.login'))
+
     flash_message = "Select Floor"
     #! buttons hardcoded
     buttons = [{"day":"X","month":"HOME"},
@@ -559,33 +540,20 @@ def serve_uploads(filename):
 
 @bp.route("/gallery/<target_date>")
 def gallery_day(target_date):
+    alreadyLoggedIn, userName = check_user_logged_in("gallery_day")
+    if not alreadyLoggedIn:
+        return redirect(url_for('namizu.login'))
+
     directory_path = "uploads"
     date_found = False
-    screenshots_dir = os.listdir(directory_path)
-
-    with open(f"database/drawings.json", 'r') as f:
-        art_db = json.load(f)        
+    drawings_dir = os.listdir(directory_path)
+    art_db = load_drawings()  
     target_day_n_month = target_date.split("-")
     date_str = f"{target_day_n_month[0]} {target_day_n_month[1]} 2025" #! hardcoded year
     date_obj = datetime.strptime(date_str, "%d %b %Y")
+   
+    screenshots,date_found = get_drawings_by_matching_day(art_db,drawings_dir,date_obj,date_found)
 
-    screenshots = []
-    
-    for filename, details in art_db.items():
-        submit_date = datetime.strptime(details["submitted"], "%d/%m/%Y %H:%M:%S")
-        if filename not in screenshots_dir:
-            print("missing drawing. abort import.")
-            break
-        if submit_date.day == date_obj.day and submit_date.month == date_obj.month:
-            date_found = True
-            screenshot = {}
-            screenshot["filename"] = filename
-            screenshot["author"] = art_db[filename]["author"]
-            screenshot["title"] = art_db[filename]["title"]
-            screenshot["date"] = art_db[filename]["date"]
-            screenshot["descr"] = art_db[filename]["descr"]
-            screenshots.append(screenshot)
-    
     if not date_found:
         get_flashed_messages()
         session.pop('_flashes', None)

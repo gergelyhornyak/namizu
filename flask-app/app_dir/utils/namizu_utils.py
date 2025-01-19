@@ -1,8 +1,7 @@
 import json
+import os
 import random
 from datetime import datetime, timedelta
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 
 DATABASE_PATH = "database/"
 
@@ -138,6 +137,37 @@ def load_drawings():
 
 # savers
 
+def save_drawing(directory_path,image_data,image_author,image_title,image_date,image_descr):
+    try:
+        # List all entries in the directory
+        entries = os.listdir(directory_path)    
+        # Count files only
+        file_count = sum(1 for entry in entries if os.path.isfile(os.path.join(directory_path, entry)))
+        filename = file_count+1
+    except FileNotFoundError:
+        print(f"The directory '{directory_path}' does not exist.")
+        return 1
+    except PermissionError:
+        print(f"Permission denied to access the directory '{directory_path}'.")
+        return 2
+    file_path = os.path.join(directory_path, f'drawing_{filename}.png')
+    with open(file_path, 'wb') as f: f.write(image_data)
+    imageJson = load_drawings()
+    full_filename = f"drawing_{filename}.png"
+    imageJson[full_filename] = {}
+    imageJson[full_filename]['filename'] = full_filename
+    imageJson[full_filename]['author'] = image_author
+    imageJson[full_filename]['title'] = image_title
+    if image_title == "":
+        imageJson[full_filename]['title'] = "Untitled"
+    imageJson[full_filename]['date'] = image_date
+    imageJson[full_filename]['descr'] = image_descr
+    imageJson[full_filename]['submitted'] = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    with open(f"database/drawings.json", 'w') as f:
+        json.dump(imageJson, f, indent=4)  
+    return 0
+
+
 def save_user_db(user_db):
     with open('database/user_db.json', 'w') as f:
         json.dump(user_db, f,indent=4)
@@ -207,6 +237,39 @@ def save_new_question(qid,q):
         json.dump(questions_bank, f, indent=4)
 
 # getters
+
+def get_questions_for_admin():
+    questions_bank = load_question_bank()
+    questions = []
+    for qid,q_body in questions_bank.items():
+        temp_question = {}  
+        temp_question["QID"] = qid
+        temp_question["Question"] = q_body["Question"]
+        temp_question["Answers"] = q_body["Answers"]
+        temp_question["Status"] = q_body["Status"]
+        questions.append(temp_question)
+    return questions
+
+def get_drawings_by_matching_day(drawing_json:dict,drawing_dir:list,today:datetime,date_found:bool):
+    """
+    input: drawings json data, drawing directory content, date_found boolean
+    """
+    screenshots = []
+    for filename, details in drawing_json.items():
+        submit_date = datetime.strptime(details["submitted"], "%d/%m/%Y %H:%M:%S")
+        if filename not in drawing_dir:
+            print("missing drawing. abort import.")
+            break
+        if submit_date.day == today.day and submit_date.month == today.month:
+            date_found = True
+            screenshot = {}
+            screenshot["filename"] = filename
+            screenshot["author"] = drawing_json[filename]["author"]
+            screenshot["title"] = drawing_json[filename]["title"]
+            screenshot["date"] = drawing_json[filename]["date"]
+            screenshot["descr"] = drawing_json[filename]["descr"]
+            screenshots.append(screenshot)
+    return screenshots,date_found
 
 def get_new_question_id():
     questions = load_question_bank()
