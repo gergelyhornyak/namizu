@@ -59,6 +59,11 @@
     </style>
   </head>
   <body>
+    <div>
+      <a href="{{ url_for('namizu.index') }}">
+          <img src="{{ url_for('static', filename='img/exit.png') }}" width="60px" alt="EXIT">
+      </a>
+    </div>
     <label for="titleInput">
       <input type="text" id="titleInput" maxlength="64" placeholder="Enter artwork title" style="font-size:x-large;margin: 4% 0%;text-align: center;" />
     </label>

@@ -145,7 +145,7 @@
 <body>
 
 <header>
-    <h1>Welcome to naMizu!</h1>
+    <h1>Welcome to naMizu</h1>
     {% if not alreadyLoggedIn %}
     <p>Heated polls in the groupchat</p>
     {% elif alreadyLoggedIn %}
@@ -169,19 +169,19 @@
     <div class="feature-card">
         <h3>Ready for a fun poll?</h3>
         <div class="cta">
-            <a href="{{ url_for('namizu.login') }}">naMizu Poll</a>
+            <a href="{{ url_for('namizu.poll') }}">naMizu Poll</a>
         </div>
     </div>
 
     <div class="feature-card">
         <h3>Do you wanna add new questions?</h3>
-        <p style="margin: 1% 0%;">Create your own questions using the <a href="{{ url_for('namizu.editor') }}">naMizu Editor</a></p>
+        <p style="margin: 1% 0%;">Create your own questions using the <a href="{{ url_for('namizu.editor') }}">naMizu Poll Editor</a></p>
     </div>
     
     <div class="feature-card">
         <h3>Draw a sketch</h3>
         <p style="margin: 1% 0%;">of today's poll in the new<br>
-            <a href="{{ url_for('namizu.studio') }}">naMizu Studio</a>
+            <a href="{{ url_for('namizu.studio') }}">naMizu Sketcher</a>
         </p>
         {% if not alreadyLoggedIn %}
         <p style="margin: 1% 1%;">(you need to be signed in)</p>

@@ -112,16 +112,21 @@
             text-align:center;
         }
 
-
     </style>
 </head>
 <body>
-    <!-- Swiper container -->
-    <div>
+
+    <div style="display: inline;">
         <a href="{{ url_for('namizu.index') }}">
             <img src="{{ url_for('static', filename='img/exit.png') }}" width="60px" alt="EXIT">
         </a>
     </div>
+    <div style="display: inline;">
+        <a href="{{ url_for('namizu.gallery_lift') }}">
+            <img src='https://png.pngtree.com/png-vector/20221011/ourmid/pngtree-go-back-png-image_6295903.png' width="60px" alt="BACK">
+        </a>
+    </div>
+    
     <div class="swiper">
         <div class="swiper-wrapper">
             <!-- Dynamically generate slides using a loop -->
@@ -155,10 +160,6 @@
             },
         });
 
-        // Redirect function
-        function redirectToPage(url) {
-            window.location.href = url;
-        }
     </script>
 </body>
 </html>
