@@ -2,5 +2,5 @@ secret
 pyvenv
 __pycache__
 database/
-screenshots/
+uploads/
 flask_secret
