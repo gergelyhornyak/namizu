@@ -1,304 +1,244 @@
-  <!DOCTYPE html>
-  <html lang="en">
-  <head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mobile Drawing Canvas</title>
+    <title>Sketching Webpage</title>
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        background-color: ivory;
-      }
-      .canvas-container {
-        position: relative;
-        width: 100%;
-        max-width: 400px;
-        height: 400px;
-        border: 2px solid #ccc;
-        touch-action: none; /* Prevent scrolling or gestures */
-      }
-      canvas {
-        display: block;
-        width: 400px;
-        height: 400px;
-      }
-      .tools {
-        display: flex;
-        justify-content: center;
-        margin: 10px 0;
-      }
-      .tools button {
-        margin: 0 5px;
-        padding: 10px 15px;
-        border: none;
-        background-color: #f0f0f0;
-        cursor: pointer;
-        font-size: 16px;
-        border-radius: 5px;
-      }
-      .tools button.active {
-        background-color: #ddd;
-      }
-      .tools button.color {
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        padding: 0;
-      }
-      .tools button.color.black { background-color: black; }
-      .tools button.color.red { background-color: red; }
-      .tools button.color.blue { background-color: blue; }
-      .tools button.color.green { background-color: green; }
-      .tools button.color.yellow { background-color: yellow; }
-      .tools button.color.white { background-color: white; }
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        #canvas-container {
+            position: relative;
+            border: 14px solid rgb(222, 184, 135);
+            border-radius: 2%;
+            margin: 20px 0;
+            width: 380px;
+            height: 380px;
+        }
+
+        canvas {
+            touch-action: none; /* Ensures touch events work smoothly */
+
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .toolbar button, .toolbar select, .toolbar input {
+            padding: 5px 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .toolbar input[type="color"] {
+            padding: 0;
+            border: none;
+            width: 30px;
+            height: 30px;
+        }
+
+        #saveForm {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        #saveForm input, #saveForm button, #saveForm textarea {
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        #saveForm textarea {
+            resize: vertical;
+            height: 100px;
+        }
     </style>
-  </head>
-  <body>
-    <div>
-      <a href="{{ url_for('namizu.index') }}">
-          <img src="{{ url_for('static', filename='img/exit.png') }}" width="60px" alt="EXIT">
-      </a>
-    </div>
-    <label for="titleInput">
-      <input type="text" id="titleInput" maxlength="64" placeholder="Enter artwork title" style="font-size:x-large;margin: 4% 0%;text-align: center;" />
-    </label>
-    <div class="canvas-container">
-      <canvas id="canvas" style="border:solid black 1px;aspect-ratio: 400 / 400;">
-        Your browser does not support canvas element.
-      </canvas>
-    </div>
-    <div class="tools">
-      <button class="color black" data-color="black"></button>
-      <button class="color white" data-color="white" style="border: 1.5px solid black; border-color: black;"></button>
-      <button class="color red" data-color="red"></button>
-      <button class="color blue" data-color="blue"></button>
-      <button class="color green" data-color="green"></button>
-      <button class="color yellow" data-color="yellow"></button>
-      <button id="eraser">Eraser</button>
-      <button id="fill">Fill</button>
-      
-    </div>
-    <label for="descrInput">
-      <textarea id="descrInput" maxlength="256" rows="2" placeholder="Enter artwork description" style="font-size:medium;margin: 4% 0%;text-align: left;width: 300px;"></textarea>
-    </label>
-    <form id="saveForm" method="POST" enctype="multipart/form-data" action="{{ url_for('namizu.sketcher_save') }}">
-      <input type="hidden" name="imageData" id="imageData">
-      <input type="hidden" name="title" id="artworkTitle">
-      <input type="hidden" name="descr" id="artworkDescr">
-      <button type="submit">Save Image</button>
-    </form>
-    <div class="info" style="margin: 4%;">
-      <p>Remember to fill the background white if you want a non-transparent image.</p>
+</head>
+<body style="height: 100vh; background: url({{ url_for('static', filename='img/studio3.jpg') }}) no-repeat center center/cover;backdrop-filter: blur(4px);">
+    
+    <div style="margin: 5% 0%; padding: 2% 6%;background-color: rgba(222, 184, 135, 0.75);border-radius: 10%/20%;">
+        <h1 style="margin:0;color: azure;">naMizu Sketcher</h1>
     </div>
 
+    <div class="toolbar">
+        <select id="brushColor">
+            <option value="black">Black</option>
+            <option value="gray">Gray</option>
+            <option value="white">White</option>
+            <option value="red">Red</option>
+            <option value="orange">Orange</option>
+            <option value="yellow">Yellow</option>
+            <option value="green">Green</option>
+            <option value="cyan">Cyan</option>
+            <option value="blue">Blue</option>
+            <option value="purple">Purple</option>
+        </select>
+
+        <button id="undoButton">Undo</button>
+
+        <input type="color" id="bgColor" value="#ffffff">
+
+        <select id="brushWidth">
+            <option value="1">Thin</option>
+            <option value="3">Medium</option>
+            <option value="6">Thick</option>
+        </select>
+
+        <select id="canvasDim">
+            <option value="380">Square</option>
+            <option value="460">Portrait</option>
+        </select>
+    </div>
+
+    <div id="canvas-container">
+        <canvas id="drawingCanvas" width="380" height="380"></canvas>
+    </div>
+    <div style="width: 90%;padding: 2%;background-color: rgba(222, 184, 135, 0.6);border-radius: 5%;">
+        <form id="saveForm" method="POST" enctype="multipart/form-data" action="{{ url_for('namizu.sketcher_save') }}">
+            <input type="text" name="title" maxlength="64" placeholder="Title">
+            <textarea name="descr" placeholder="Description" maxlength="256"></textarea>
+            <input type="hidden" name="imageData" id="imageData">
+            <button type="submit">Save Drawing</button>
+        </form>
+    </div>
     <script>
-      const ctx = canvas.getContext('2d');
-      const tools = document.querySelector('.tools');
-      const imageDataInput = document.getElementById('imageData');
-      const titleInput = document.getElementById('titleInput');
-      const artworkTitleInput = document.getElementById('artworkTitle');
-      const descrInput = document.getElementById('descrInput');
-      const artworkDescrInput = document.getElementById('artworkDescr');
-      const saveForm = document.getElementById('saveForm');
-      
-      let isDrawing = false;
-      let currentColor = 'black';
-      let eraserMode = false;
-      let polygonFillMode = false;
+        const canvas = document.getElementById('drawingCanvas');
+        const ctx = canvas.getContext('2d');
+        const undoStack = [];
+        const brushColorPicker = document.getElementById('brushColor');
+        const bgColorPicker = document.getElementById('bgColor');
+        const brushWidthPicker = document.getElementById('brushWidth');
+        const undoButton = document.getElementById('undoButton');
+        const saveForm = document.getElementById('saveForm');
+        const imageDataInput = document.getElementById('imageData');
+        const resizeCanvas = document.getElementById('canvasDim');
+        const canvasContainer = document.getElementById('canvas-container');
 
-      function getCanvasOffset() {
-        const el = document.getElementById("canvas");
-        const rect = el.getBoundingClientRect();
-        
-        // Get the position relative to the document
-        const offsetX = rect.left;
-        const offsetY = rect.top;
-        
-        return { offsetX, offsetY };
-      }
-      console.log("Canvas Offset:",getCanvasOffset());
 
-      // Set up canvas size
-      function resizeCanvas() {
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
-      }
-      resizeCanvas();
-      //window.addEventListener('resize', resizeCanvas);
+        let drawing = false;
+        let currentBrushColor = brushColorPicker.value;
+        let currentBrushWidth = brushWidthPicker.value;
+        let currentBgColor = bgColorPicker.value;
 
-      function startup() {
-        const el = document.getElementById("canvas");
-        el.addEventListener("touchstart", handleStart);
-        el.addEventListener("touchend", handleEnd);
-        el.addEventListener("touchcancel", handleCancel);
-        el.addEventListener("touchmove", handleMove);
-        
-      }
-
-      document.addEventListener("DOMContentLoaded", startup);
-
-      const ongoingTouches = [];
-
-      function handleStart(evt) {
-        evt.preventDefault();
-        
-        const el = document.getElementById("canvas");
-        const ctx = el.getContext("2d");
-        const touches = evt.changedTouches;
-
-        for (let i = 0; i < touches.length; i++) {
-          
-          ongoingTouches.push(copyTouch(touches[i]));
-          const color = colorForTouch(touches[i]);
-          
-          ctx.beginPath();
-          
-          ctx.fillStyle = color;
-          ctx.fill();
-        }
-      }
-
-      function handleMove(evt) {
-        evt.preventDefault();
-        const el = document.getElementById("canvas");
-        const ctx = el.getContext("2d");
-        const touches = evt.changedTouches;
-
-        for (let i = 0; i < touches.length; i++) {
-          const color = colorForTouch(touches[i]);
-          const idx = ongoingTouchIndexById(touches[i].identifier);
-
-          if (idx >= 0) {
-            
-            ctx.beginPath();
-            
-            ctx.moveTo(ongoingTouches[idx].pageX - getCanvasOffset().offsetX, 
-                      ongoingTouches[idx].pageY - getCanvasOffset().offsetY);
-            ctx.lineTo(touches[i].pageX - getCanvasOffset().offsetX, 
-                      touches[i].pageY - getCanvasOffset().offsetY);
-            
-            if (eraserMode) {
-              ctx.lineWidth = 12;  
-            }
-            else {
-              ctx.lineWidth = 4;
-            }
-            
-            ctx.strokeStyle = eraserMode ? 'white' : currentColor;
-            ctx.stroke();
-
-            ongoingTouches.splice(idx, 1, copyTouch(touches[i])); // swap in the new touch record
-          } else {
-              console.log("else")
-          }
-        }
-      }
-
-      function handleEnd(evt) {
-        evt.preventDefault();
-        const el = document.getElementById("canvas");
-        const ctx = el.getContext("2d");
-        const touches = evt.changedTouches;
-
-        for (let i = 0; i < touches.length; i++) {
-          const color = colorForTouch(touches[i]);
-          let idx = ongoingTouchIndexById(touches[i].identifier);
-
-          if (idx >= 0) {
-            ctx.lineWidth = 5;
-            ctx.fillStyle = color;
-            ctx.beginPath();
-            ctx.moveTo(ongoingTouches[idx].pageX - getCanvasOffset().offsetX, 
-                      -ongoingTouches[idx].pageY + getCanvasOffset().offsetY);
-            ctx.lineTo(touches[i].pageX - getCanvasOffset().offsetX,
-                      touches[i].pageY - getCanvasOffset().offsetY);
-            ongoingTouches.splice(idx, 1); // remove it; we're done
-          } else {
-            console.log("error")
-          }
-        }
-      }
-
-      function handleCancel(evt) {
-        evt.preventDefault();
-        const touches = evt.changedTouches;
-
-        for (let i = 0; i < touches.length; i++) {
-          let idx = ongoingTouchIndexById(touches[i].identifier);
-          ongoingTouches.splice(idx, 1); // remove it; we're done
-        }
-      }
-
-      function colorForTouch(touch) {
-        let r = touch.identifier % 16;
-        let g = Math.floor(touch.identifier / 3) % 16;
-        let b = Math.floor(touch.identifier / 7) % 16;
-        r = r.toString(16); // make it a hex digit
-        g = g.toString(16); // make it a hex digit
-        b = b.toString(16); // make it a hex digit
-        const color = `#${r}${g}${b}`;
-        return color;
-      }
-
-      function copyTouch({ identifier, pageX, pageY }) {
-        return { identifier, pageX, pageY };
-      }
-
-      function ongoingTouchIndexById(idToFind) {
-        for (let i = 0; i < ongoingTouches.length; i++) {
-          const id = ongoingTouches[i].identifier;
-
-          if (id === idToFind) {
-            return i;
-          }
-        }
-        return -1; // not found
-      }
-
-      // Tool listeners
-      tools.addEventListener('click', (e) => {
-        if (e.target.classList.contains('color')) {
-          currentColor = e.target.getAttribute('data-color');
-          eraserMode = false;
-          polygonFillMode = false;
-          setActiveTool(e.target);
-        } else if (e.target.id === 'eraser') {
-          eraserMode = true;
-          setActiveTool(e.target);
-        } else if (e.target.id === 'fill') {
-          fillCanvas();
-          polygonFillMode = false;
-        } else if (e.target.id === 'polygonFill') {
-          polygonFillMode = true;
-          eraserMode = false;
-          setActiveTool(e.target);
-        }
-      });
-
-      // Fill canvas with current color
-      function fillCanvas() {
-        ctx.fillStyle = currentColor;
+        // Initialize canvas background
+        ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-      }
 
-      // Highlight active tool
-      function setActiveTool(button) {
-        Array.from(tools.children).forEach(btn => btn.classList.remove('active'));
-        button.classList.add('active');
-      }
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
 
-      // Save image to form
-      saveForm.addEventListener('submit', () => {
-        imageDataInput.value = canvas.toDataURL('image/png');
-        artworkTitleInput.value = titleInput.value; // Save the title input 
-        artworkDescrInput.value = descrInput.value;
-      });
+        canvas.addEventListener('touchstart', startDrawing);
+        canvas.addEventListener('touchmove', draw);
+        canvas.addEventListener('touchend', stopDrawing);
 
+        brushColorPicker.addEventListener('change', () => {
+            currentBrushColor = brushColorPicker.value;
+        });
+
+        bgColorPicker.addEventListener('change', () => {
+            currentBgColor = bgColorPicker.value;
+            ctx.fillStyle = currentBgColor;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        });
+
+        brushWidthPicker.addEventListener('change', () => {
+            currentBrushWidth = brushWidthPicker.value;
+        });
+
+        undoButton.addEventListener('click', () => {
+            if (undoStack.length > 0) {
+                const lastImage = undoStack.pop();
+                const img = new Image();
+                img.onload = () => {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0);
+                };
+                img.src = lastImage;
+            }
+        });
+
+        saveForm.addEventListener('submit', (event) => {
+            const imageData = canvas.toDataURL('image/png');
+            imageDataInput.value = imageData;
+        });
+
+        resizeCanvas.addEventListener('click', () => {
+            saveState();
+            canvas.width = 380;
+            canvas.height = resizeCanvas.value;
+            canvasContainer.style.height = (resizeCanvas.value).toString()+'px';
+            console.log("canvasContainer.style.height: ",canvasContainer.style.height);
+            ctx.fillStyle = currentBgColor;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            restoreDrawing();
+        });
+
+        function startDrawing(event) {
+            event.preventDefault();
+            drawing = true;
+            saveState();
+            ctx.beginPath();
+            const { x, y } = getCoordinates(event);
+            ctx.moveTo(x, y);
+        }
+
+        function draw(event) {
+            if (!drawing) return;
+            event.preventDefault();
+            const { x, y } = getCoordinates(event);
+            ctx.lineTo(x, y);
+            ctx.strokeStyle = currentBrushColor;
+            ctx.lineWidth = currentBrushWidth;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+            smoothStroke();
+        }
+
+        function stopDrawing(event) {
+            if (!drawing) return;
+            drawing = false;
+            ctx.closePath();
+        }
+
+        function saveState() {
+            undoStack.push(canvas.toDataURL());
+        }
+
+        function restoreDrawing() {
+            const img = new Image();
+            img.onload = () => {
+                ctx.drawImage(img, 0, 0);
+            };
+            if (undoStack.length > 0) {
+                img.src = undoStack[undoStack.length - 1];
+            }
+        }
+
+        function smoothStroke() {
+            ctx.filter = 'blur(0.5px)';
+        }
+
+        function getCoordinates(event) {
+            const rect = canvas.getBoundingClientRect();
+            const x = (event.touches ? event.touches[0].clientX : event.clientX) - rect.left;
+            const y = (event.touches ? event.touches[0].clientY : event.clientY) - rect.top;
+            return { x, y };
+        }
     </script>
-  </body>
-  </html>
+</body>
+</html>
+

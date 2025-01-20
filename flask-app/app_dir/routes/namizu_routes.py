@@ -450,10 +450,6 @@ def sketcher_canvas():
         return redirect(url_for('namizu.login'))
     return render_template("namizu/sketcher_canvas.html")
 
-@bp.route("/painter")
-def sketcher_canvas2():
-    return render_template("namizu/painter2.html")
-
 @bp.route("/sketcher/save", methods=['GET', 'POST'])
 def sketcher_save():
     image_data = ""
@@ -467,7 +463,7 @@ def sketcher_save():
         image_title = request.form.get('title')
         image_descr = request.form.get('descr')
         image_author = session["user"]
-        image_date = "2025" #datetime.now().strftime("%Y")
+        image_date = "2025" #datetime.now().strftime("%Y") #! hardcoded date
     if image_data:
         # Decode the base64 image
         header, encoded = image_data.split(',', 1)
