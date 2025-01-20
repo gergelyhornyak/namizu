@@ -86,7 +86,7 @@
     <label for="descrInput">
       <textarea id="descrInput" maxlength="256" rows="2" placeholder="Enter artwork description" style="font-size:medium;margin: 4% 0%;text-align: left;width: 300px;"></textarea>
     </label>
-    <form id="saveForm" method="POST" enctype="multipart/form-data" action="{{ url_for('namizu.save_drawing') }}">
+    <form id="saveForm" method="POST" enctype="multipart/form-data" action="{{ url_for('namizu.sketcher_save') }}">
       <input type="hidden" name="imageData" id="imageData">
       <input type="hidden" name="title" id="artworkTitle">
       <input type="hidden" name="descr" id="artworkDescr">

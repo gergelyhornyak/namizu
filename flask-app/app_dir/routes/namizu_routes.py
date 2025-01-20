@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, jsonify, url_for, session, flash, get_flashed_messages, send_from_directory
-from app_dir.utils.namizu_utils import save_comments, save_daily_poll, save_history, save_users_login, save_users_vote, save_visit_count, save_new_question
+from app_dir.utils.namizu_utils import save_comments, save_daily_poll, save_history, save_users_login, save_users_vote, save_visit_count, save_new_question, save_drawing
 from app_dir.utils.namizu_utils import load_user_creds, load_user_login, load_user_votes, load_visit_count, load_drawings
 from app_dir.utils.namizu_utils import load_today_poll, load_comments, load_question_bank, load_history, load_user_streak
 from app_dir.utils.namizu_utils import get_daily_question, get_new_question_id, get_vote_count, get_daily_results,get_comments_packet
@@ -444,24 +444,23 @@ def admin_reset():
     return redirect(url_for('namizu.index'))
 
 @bp.route("/studio")
-def studio():
+def sketcher_canvas():
     alreadyLoggedIn, userName = check_user_logged_in("studio")
     if not alreadyLoggedIn:
         return redirect(url_for('namizu.login'))
     return render_template("namizu/drawing_game.html")
 
 @bp.route("/painter")
-def painter():
+def sketcher_canvas2():
     return render_template("namizu/painter2.html")
 
 @bp.route("/save", methods=['GET', 'POST'])
-def save_drawing():
+def sketcher_save():
     image_data = ""
     image_title = ""
     image_descr = ""
     image_author = ""
     image_date = ""
-    imageJson = {}
     directory_path = "uploads"
     if request.method == "POST":
         image_data = request.form.get('imageData')
