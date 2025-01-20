@@ -16,7 +16,7 @@
 
         #canvas-container {
             position: relative;
-            border: 14px solid rgb(222, 184, 135);
+            border: 14px inset rgb(222, 184, 135);
             border-radius: 2%;
             margin: 20px 0;
             width: 380px;
@@ -66,10 +66,10 @@
         }
     </style>
 </head>
-<body style="height: 100vh; background: url({{ url_for('static', filename='img/studio3.jpg') }}) no-repeat center center/cover;backdrop-filter: blur(4px);">
+<body style="height: auto; background: url({{ url_for('static', filename='img/studio3.jpg') }}) no-repeat center center/cover;backdrop-filter: blur(3px);">
     
-    <div style="margin: 5% 0%; padding: 2% 6%;background-color: rgba(222, 184, 135, 0.75);border-radius: 10%/20%;">
-        <h1 style="margin:0;color: azure;">naMizu Sketcher</h1>
+    <div style="margin: 5% 0%; padding: 2% 6%;background-color: rgba(222, 184, 135, 0.85);border-radius: 4%/8%;display: flex;border: 3px groove saddlebrown;">
+        <h2 style="margin:0;color:black;">naMizu Sketcher</h2>
     </div>
 
     <div class="toolbar">
@@ -88,7 +88,7 @@
 
         <button id="undoButton">Undo</button>
 
-        <input type="color" id="bgColor" value="#ffffff">
+        <input type="color" id="bgColor" value="rgba(1,1,1,0.5)">
 
         <select id="brushWidth">
             <option value="1">Thin</option>
@@ -98,19 +98,22 @@
 
         <select id="canvasDim">
             <option value="380">Square</option>
-            <option value="460">Portrait</option>
+            <option value="480">Portrait</option>
         </select>
     </div>
 
     <div id="canvas-container">
         <canvas id="drawingCanvas" width="380" height="380"></canvas>
     </div>
-    <div style="width: 90%;padding: 2%;background-color: rgba(222, 184, 135, 0.6);border-radius: 5%;">
+    <div style="width: 90%;padding: 3% 3% 10% 3%;background-color: rgba(222, 184, 135, 0.6);border-radius: 5%;border: 3px groove saddlebrown;">
         <form id="saveForm" method="POST" enctype="multipart/form-data" action="{{ url_for('namizu.sketcher_save') }}">
             <input type="text" name="title" maxlength="64" placeholder="Title">
             <textarea name="descr" placeholder="Description" maxlength="256"></textarea>
             <input type="hidden" name="imageData" id="imageData">
             <button type="submit">Save Drawing</button>
+        </form>
+        <form action="{{ url_for('namizu.index') }}" method="GET" style="display: flex;flex-direction: column;">
+            <button type="submit" style="padding: 10px;font-size: 16px;margin-top: 8%;">Go Back</button>
         </form>
     </div>
     <script>

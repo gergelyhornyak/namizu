@@ -38,9 +38,6 @@
             font-weight: bold;
             text-decoration: none;
         }
-        header a:hover {
-            text-decoration: underline;
-        }
 
         /* Features Section */
         .features {
@@ -171,11 +168,17 @@
         <div class="cta">
             <a href="{{ url_for('namizu.poll') }}">naMizu Poll</a>
         </div>
+        {% if not alreadyLoggedIn %}
+        <p style="margin: 1% 1%;">(you need to be signed in)</p>
+        {% endif %}
     </div>
 
     <div class="feature-card">
         <h3>Do you wanna add new questions?</h3>
         <p style="margin: 1% 0%;">Create your own questions using the <a href="{{ url_for('namizu.editor') }}">naMizu Poll Editor</a></p>
+        {% if not alreadyLoggedIn %}
+        <p style="margin: 1% 1%;">(you need to be signed in)</p>
+        {% endif %}
     </div>
     
     <div class="feature-card">
