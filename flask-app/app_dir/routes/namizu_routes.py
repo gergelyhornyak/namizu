@@ -443,18 +443,18 @@ def admin_reset():
     daily_routine()
     return redirect(url_for('namizu.index'))
 
-@bp.route("/studio")
+@bp.route("/sketcher/canvas")
 def sketcher_canvas():
-    alreadyLoggedIn, userName = check_user_logged_in("studio")
+    alreadyLoggedIn, userName = check_user_logged_in("sketcher_canvas")
     if not alreadyLoggedIn:
         return redirect(url_for('namizu.login'))
-    return render_template("namizu/drawing_game.html")
+    return render_template("namizu/sketcher_canvas.html")
 
 @bp.route("/painter")
 def sketcher_canvas2():
     return render_template("namizu/painter2.html")
 
-@bp.route("/save", methods=['GET', 'POST'])
+@bp.route("/sketcher/save", methods=['GET', 'POST'])
 def sketcher_save():
     image_data = ""
     image_title = ""
