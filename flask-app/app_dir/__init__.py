@@ -11,7 +11,6 @@ def create_app():
     app.config['SECRET_KEY'] = stringg
     app.logger.debug("Secret key aquired")
     app.config['PERMANENT_SESSION_LIFETIME'] = 86400
-    app.config['SESSION_COOKIE_SAMESITE'] = "None"
     app.config['SESSION_COOKIE_SECURE'] = True
     app.logger.debug("Session lifetime set to 24hrs")
     # Register blueprints
