@@ -237,7 +237,6 @@ def login():
                     break
             save_users_login(logins)
             if 'url' in session:
-                print()
                 return redirect(url_for(f"namizu.{session['url']}"))
     return render_template('namizu/login.html',options=options, streak=streaks)
 
