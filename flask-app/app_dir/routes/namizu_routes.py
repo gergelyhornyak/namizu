@@ -43,6 +43,42 @@ def index():
     alreadyLoggedIn, userName = check_user_logged_in("index")
     return render_template('/namizu/landing_page.html', userName=userName, alreadyLoggedIn=alreadyLoggedIn)
 
+@bp.route('/login', methods=['GET', 'POST'])
+def login():  
+    creds = load_user_creds()
+    logins = load_user_login()
+    options = list(creds.keys())
+
+    #* exclude
+    streaks_all = load_user_streak()
+    streaks = {}
+    for uid,details in streaks_all.items():
+        if details["streak"] > 0:
+            streaks[details["name"]] = details["streak"]
+
+    if request.method == "POST":
+        user = request.form["vote"]
+        password = request.form["password"]
+        if creds[user] == password:
+            visit_count = load_visit_count()
+            visit_count["total"] += 1 # one more visitor
+            save_visit_count(visit_count)
+            session["user"] = user
+            session.modified = True
+            for uid,details in logins.items():
+                if details["name"] == user:
+                    logins[uid]["loggedin"] = 1
+                    break
+            save_users_login(logins)
+            if 'url' in session:
+                return redirect(url_for(f"namizu.{session['url']}"))
+    return render_template('namizu/login.html',options=options, streak=streaks)
+
+@bp.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for("namizu.index"),302)
+
 @bp.route("/poll", methods=['GET', 'POST'])
 def poll():
     alreadyLoggedIn, userName = check_user_logged_in("poll")
@@ -159,91 +195,6 @@ def poll():
                            options=options, results=results, form_submitted=submitted,
                            player_num=7, vote_count=vote_count, comments=comments_packet)
 
-@bp.route("/calendar")
-def calendar():
-    alreadyLoggedIn, userName = check_user_logged_in("calendar")
-    if not alreadyLoggedIn:
-        return redirect(url_for('namizu.login'))
-    return render_template('namizu/calendar.html')
-
-@bp.get("/history/<target_date>")
-def show_history(target_date):
-    alreadyLoggedIn, userName = check_user_logged_in("show_history")
-    if not alreadyLoggedIn:
-        return redirect(url_for('namizu.login'))
-    is_poll_multichoice = False
-    results = []
-    comments_packet = []
-    vote_count = 0
-    player_count = 7
-    history = load_history()
-    date_obj = datetime.strptime(target_date, "%Y-%m-%d")
-    target_date_uk_format = date_obj.strftime("%d-%m-%Y")
-    if target_date_uk_format in history:
-        history_log = history[target_date_uk_format]
-
-        results_raw = history_log["Answers"]
-        
-        if "Voted" in history_log:
-            for v in history_log["Voted"].values():
-                vote_count += v["voted"]
-        else:
-            vote_count = sum(history_log["Answers"].values())
-        
-        #* exclude
-        for k,v in results_raw.items():
-            results_temp = {}
-            results_temp["label"] = k
-            results_temp["value"] = v
-            results_temp["width"] = int(v/7*100)
-            results.append(results_temp)
-
-        if "M" in history_log["Type"]: # multichoice
-            is_poll_multichoice = True
-        
-        comments_packet = history_log["Comments"]
-    else:
-        return render_template('namizu/missing_history_log.html')
-        
-    return render_template('namizu/wayback_machine.html',question=history_log["Question"], 
-                           results=results, vote_count=vote_count, 
-                           player_num=player_count, comments=comments_packet, date=target_date_uk_format)
-
-@bp.route('/login', methods=['GET', 'POST'])
-def login():  
-    creds = load_user_creds()
-    logins = load_user_login()
-    options = list(creds.keys())
-
-    #* exclude
-    streaks_all = load_user_streak()
-    streaks = {}
-    for uid,details in streaks_all.items():
-        if details["streak"] > 0:
-            streaks[details["name"]] = details["streak"]
-
-    if request.method == "POST":
-        user = request.form["vote"]
-        password = request.form["password"]
-        if creds[user] == password:
-            visit_count = load_visit_count()
-            visit_count["total"] += 1 # one more visitor
-            save_visit_count(visit_count)
-            session["user"] = user
-            session.modified = True
-            for uid,details in logins.items():
-                if details["name"] == user:
-                    logins[uid]["loggedin"] = 1
-                    break
-            save_users_login(logins)
-            if 'url' in session:
-                return redirect(url_for(f"namizu.{session['url']}"))
-    return render_template('namizu/login.html',options=options, streak=streaks)
-
-@bp.route('/logout')
-def logout():
-    session.clear()
-    return redirect(url_for("namizu.index"),302)
 
 @bp.route('/editor', methods=['GET', 'POST'])
 def editor():
@@ -388,6 +339,57 @@ def editor():
         flash("Submitted successfully.")
 
     return render_template('namizu/editor.html', namesList=names)
+
+
+@bp.route("/calendar")
+def calendar():
+    alreadyLoggedIn, userName = check_user_logged_in("calendar")
+    if not alreadyLoggedIn:
+        return redirect(url_for('namizu.login'))
+    return render_template('namizu/calendar.html')
+
+@bp.get("/history/<target_date>")
+def show_history(target_date):
+    alreadyLoggedIn, userName = check_user_logged_in("show_history")
+    if not alreadyLoggedIn:
+        return redirect(url_for('namizu.login'))
+    is_poll_multichoice = False
+    results = []
+    comments_packet = []
+    vote_count = 0
+    player_count = 7
+    history = load_history()
+    date_obj = datetime.strptime(target_date, "%Y-%m-%d")
+    target_date_uk_format = date_obj.strftime("%d-%m-%Y")
+    if target_date_uk_format in history:
+        history_log = history[target_date_uk_format]
+
+        results_raw = history_log["Answers"]
+        
+        if "Voted" in history_log:
+            for v in history_log["Voted"].values():
+                vote_count += v["voted"]
+        else:
+            vote_count = sum(history_log["Answers"].values())
+        
+        #* exclude
+        for k,v in results_raw.items():
+            results_temp = {}
+            results_temp["label"] = k
+            results_temp["value"] = v
+            results_temp["width"] = int(v/7*100)
+            results.append(results_temp)
+
+        if "M" in history_log["Type"]: # multichoice
+            is_poll_multichoice = True
+        
+        comments_packet = history_log["Comments"]
+    else:
+        return render_template('namizu/missing_history_log.html')
+        
+    return render_template('namizu/wayback_machine.html',question=history_log["Question"], 
+                           results=results, vote_count=vote_count, 
+                           player_num=player_count, comments=comments_packet, date=target_date_uk_format)
     
 @bp.route("/admin")
 def namizu_admin():
@@ -554,3 +556,7 @@ def gallery_day(target_date):
         flash(f"Floor {date_obj.day} {date_obj.strftime('%b')} is empty")
         return redirect(url_for('namizu.gallery_lift'))
     return render_template("namizu/gallery_swiper.html", screenshots=screenshots)
+
+@bp.route("/multitouch")
+def multitouch_test():
+    return render_template("namizu/multi-touch.html")

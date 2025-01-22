@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi Touch Test</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+            touch-action: none; /* Prevent default touch gestures */
+        }
+    </style>
+</head>
+<body>
+    <canvas id="drawingCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('drawingCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Resize canvas to fill the window
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Store active touches
+        const activeTouches = {};
+
+        // Start drawing when a touch starts
+        canvas.addEventListener('pointerdown', (e) => {
+            if (e.pointerType === 'touch') {
+                activeTouches[e.pointerId] = { x: e.clientX, y: e.clientY };
+            }
+        });
+
+        // Draw as the touch moves
+        canvas.addEventListener('pointermove', (e) => {
+            if (e.pointerType === 'touch' && activeTouches[e.pointerId]) {
+                const prevPos = activeTouches[e.pointerId];
+                const currentPos = { x: e.clientX, y: e.clientY };
+
+                ctx.beginPath();
+                ctx.moveTo(prevPos.x, prevPos.y);
+                ctx.lineTo(currentPos.x, currentPos.y);
+                ctx.strokeStyle = 'black';
+                ctx.lineWidth = 4;
+                ctx.stroke();
+                ctx.closePath();
+
+                activeTouches[e.pointerId] = currentPos;
+            }
+        });
+
+        // Stop drawing when the touch ends
+        canvas.addEventListener('pointerup', (e) => {
+            if (e.pointerType === 'touch') {
+                delete activeTouches[e.pointerId];
+            }
+        });
+
+        // Handle touch cancellation (e.g., when the touch is interrupted)
+        canvas.addEventListener('pointercancel', (e) => {
+            if (e.pointerType === 'touch') {
+                delete activeTouches[e.pointerId];
+            }
+        });
+    </script>
+</body>
+</html>
+
