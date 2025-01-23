@@ -561,6 +561,6 @@ def gallery_day(target_date):
 def multitouch_test():
     return render_template("namizu/multi-touch.html")
     
-@bp.route("/pinchzoom")
-def pinchzoom_test():
-    return render_template("namizu/pinch_zoom.html")
+@bp.route("/drawingpro")
+def drawing_test():
+    return render_template("namizu/drawingPro.html")
