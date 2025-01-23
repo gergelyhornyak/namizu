@@ -562,5 +562,5 @@ def multitouch_test():
     return render_template("namizu/multi-touch.html")
     
 @bp.route("/pinchzoom")
-def multitouch_test():
+def pinchzoom_test():
     return render_template("namizu/pinch_zoom.html")
