@@ -496,33 +496,21 @@ def gallery_lift():
 
     flash_message = "Select Floor"
     #! buttons hardcoded
-    buttons = [{"day":"X","month":"HOME"},
-               {"day":16,"month":"JAN"},
-               {"day":17,"month":"JAN"},
-               {"day":18,"month":"JAN"},
-               {"day":19,"month":"JAN"},
-               {"day":20,"month":"JAN"},
-               {"day":21,"month":"JAN"},
-               {"day":22,"month":"JAN"},
-               {"day":23,"month":"JAN"},
-               {"day":24,"month":"JAN"},
-               {"day":25,"month":"JAN"},
-               {"day":26,"month":"JAN"},
-               {"day":27,"month":"JAN"},
-               {"day":28,"month":"JAN"},
-               {"day":29,"month":"JAN"},
-               {"day":30,"month":"JAN"},
-               {"day":31,"month":"JAN"},
-               {"day":1,"month":"FEB"},
-               {"day":2,"month":"FEB"},
-               {"day":3,"month":"FEB"},
-               {"day":4,"month":"FEB"},
-               {"day":5,"month":"FEB"},
-               {"day":6,"month":"FEB"},
-               {"day":7,"month":"FEB"},
-               {"day":8,"month":"FEB"},
-               {"day":9,"month":"FEB"},
-               {"day":10,"month":"FEB"}]
+    drawings = load_drawings()
+    buttons = []
+    buttons.append({"day":"X","month":"HOME"})
+    date_saved = []
+    for drawing_id,details in drawings.items():
+        temp_date = {}
+        date_obj = datetime.strptime(details["submitted"], "%d/%m/%Y %H:%M:%S")
+        if (date_obj.day.__str__()+"-"+date_obj.month.__str__()) not in date_saved:    
+            temp_date = {"day":date_obj.day,"month":date_obj.strftime("%b").upper()}
+            date_saved.append(date_obj.day.__str__()+"-"+date_obj.month.__str__())
+            if datetime.today().day == date_obj.day and datetime.today().month == date_obj.month:
+                # is today
+                temp_date["today"] = True
+            buttons.append(temp_date)
+    
     flash_messages = get_flashed_messages()
     if flash_messages:
         flash_message = flash_messages[0]
