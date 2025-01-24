@@ -192,6 +192,16 @@
     </div>
 
     <div class="feature-card">
+        <h3>Wanna try Sketcher 2?</h3>
+        <p style="margin: 1% 0%;">Make more precise sketches with<br>
+            <a href="{{ url_for('namizu.drawing_canvas') }}">naMizu Sketcher 2</a>
+        </p>
+        {% if not alreadyLoggedIn %}
+        <p style="margin: 1% 1%;">(you need to be signed in)</p>
+        {% endif %}
+    </div>
+
+    <div class="feature-card">
         <h3>Visit the gallery</h3>
         <p style="margin: 1% 0%;">displaying other's artworks in the<br>
             <a href="{{ url_for('namizu.gallery_welcome') }}">naMizu Gallery</a>

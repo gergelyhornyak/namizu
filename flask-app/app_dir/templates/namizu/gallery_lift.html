@@ -56,6 +56,17 @@
             margin-bottom: 10%;
         }
 
+        .button-wrapper2 {
+            position: relative;
+            background-color: #2d76cd;
+            border-radius: 25px;
+            padding: 10px 0;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
         .button-wrapper {
             position: relative;
             background-color: #444;
@@ -90,7 +101,12 @@
         <div class="screen" id="elevator-screen">{{ flash_message }}</div>
         <div class="panel">
             {% for button in buttons %}
+
+            {% if "today" in button %}
+            <div class="button-wrapper2">
+            {% else %}
             <div class="button-wrapper">
+            {% endif %}
                 <button class="button" onclick="redirectToGallery('{{ button['day'] }}', '{{ button['month'] }}')">
                     {{ button["day"] }}
                     <div style="color: gold; text-align: center;">{{ button["month"] }}</div>
