@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drawing App</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            margin: 0 10px;
+            background-color: #f0f0f0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        #drawing-area {
+            border: 14px inset rgb(222, 184, 135);   
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: white;
+            width: 360px;
+            height: 360px;
+            margin-left: auto;
+            margin-right: auto;
+        }   
+
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            
+        }
+
+        #bottom-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 4% 10%;
+        }
+
+        #joystick-container {
+            bottom: 20px;
+            left: 20px;
+            width: 100px;
+            height: 100px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #joystick {
+            width: 50px;
+            height: 50px;
+            background: #555;
+            border-radius: 50%;
+            touch-action: none;
+        }
+
+        #zoom-slider {
+            bottom: 20px;
+            right: 20px;
+        }
+
+        #saveForm {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        #saveForm input, #saveForm button, #saveForm textarea {
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        #saveForm textarea {
+            resize: vertical;
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div id="toolbar">
+        <label>
+            Width:
+            <input type="range" id="stroke-width" min="1" max="20" value="2">
+        </label>
+        <label>
+            Color:
+            <input type="color" id="stroke-color" value="#000000">
+        </label>
+        <label>
+            Canvas:
+            <input type="color" id="canvas-color" value="#ffffff">
+        </label>
+        <button id="undo" style="font-size: medium;">Undo</button>
+    </div>
+
+    <div id="drawing-area">
+        <canvas id="canvas" width="360" height="360"></canvas>
+    </div>
+    <p style="text-align: center;font-size: small;margin: 0% 1%;">
+        Hint: top left corner is the origin, better start there
+    </p>
+    
+    <div id="bottom-toolbar">
+        <label>
+            Joystick
+            <div id="joystick-container">
+                <div id="joystick"></div>
+            </div>
+        </label>
+        <label>
+            Zoom
+            <input type="range" id="zoom-slider" min="0.5" max="3" step="0.05" value="1">
+        </label>
+    </div>
+    <div style="width: 90%;padding: 3% 3% 10% 3%;background-color: rgba(222, 184, 135, 0.6);border-radius: 5%;border: 3px groove saddlebrown;">
+        <form id="saveForm" method="POST" enctype="multipart/form-data" action="{{ url_for('namizu.drawing_save') }}">
+            <input type="text" name="title" maxlength="64" placeholder="Title">
+            <textarea name="descr" placeholder="Description" maxlength="256"></textarea>
+            <input type="hidden" name="imageData" id="imageData">
+            <p style="text-align: center;font-size: small;margin: 0% 1%;">Hint: what you see <strong>now</strong> will be saved.</p>
+            <button type="submit">Save Drawing</button>
+        </form>
+        <form action="{{ url_for('namizu.index') }}" method="GET" style="display: flex;flex-direction: column;">
+            <button type="submit" style="padding: 10px;font-size: 16px;margin-top: 2%;">Go Back</button>
+        </form>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const strokeWidthInput = document.getElementById('stroke-width');
+        const strokeColorInput = document.getElementById('stroke-color');
+        const canvasColorInput = document.getElementById('canvas-color');
+        const undoButton = document.getElementById('undo');
+        const zoomSlider = document.getElementById('zoom-slider');
+        const joystick = document.getElementById('joystick');
+        const joystickContainer = document.getElementById('joystick-container');
+
+        const imageDataInput = document.getElementById('imageData');
+
+        let drawing = false;
+        let currentStroke = [];
+        let strokes = [];
+        let zoomLevel = 1;
+        let offsetX = 0;
+        let offsetY = 0;
+        let isPanning = false;
+        let joystickOffset = { x: 0, y: 0 };
+
+        // Resize canvas to fit the screen
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight - document.getElementById('toolbar').offsetHeight;
+            redrawCanvas();
+        }
+
+        // Redraw all strokes on the canvas
+        function redrawCanvas() {
+            ctx.setTransform(zoomLevel, 0, 0, zoomLevel, offsetX, offsetY);
+            ctx.clearRect(-offsetX / zoomLevel, -offsetY / zoomLevel, canvas.width / zoomLevel, canvas.height / zoomLevel);
+            ctx.fillStyle = canvasColorInput.value;
+            ctx.fillRect(-offsetX / zoomLevel, -offsetY / zoomLevel, canvas.width / zoomLevel, canvas.height / zoomLevel);
+
+            //drawGrid();
+
+            for (const stroke of strokes) {
+                ctx.strokeStyle = stroke.color;
+                ctx.lineWidth = stroke.width;
+                ctx.beginPath();
+                ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
+                for (const point of stroke.points.slice(1)) {
+                    ctx.lineTo(point.x, point.y);
+                }
+                ctx.lineCap = 'round';
+                ctx.stroke();
+            }
+        }
+
+        // Start drawing
+        function startDrawing(x, y) {
+            event.preventDefault();
+            redrawCanvas();
+            drawing = true;
+            currentStroke = {
+                color: strokeColorInput.value,
+                width: strokeWidthInput.value,
+                points: [{ x: (x - offsetX) / zoomLevel, y: (y - offsetY) / zoomLevel }]
+            };
+            const scaledX = (x - offsetX) / zoomLevel;
+            const scaledY = (y - offsetY) / zoomLevel;
+            currentStroke.points.push({ x: scaledX, y: scaledY });
+            ctx.beginPath();
+            ctx.moveTo(currentStroke.points[currentStroke.points.length - 2].x, currentStroke.points[currentStroke.points.length - 2].y);
+        }
+
+        function draw(x, y) {
+            if (drawing) {
+                event.preventDefault();
+                const scaledX = (x - offsetX) / zoomLevel;
+                const scaledY = (y - offsetY) / zoomLevel;
+                currentStroke.points.push({ x: scaledX, y: scaledY });
+                //ctx.beginPath();
+                //ctx.moveTo(currentStroke.points[currentStroke.points.length - 2].x, currentStroke.points[currentStroke.points.length - 2].y);
+                ctx.lineTo(scaledX, scaledY);
+                ctx.strokeStyle = currentStroke.color;
+                ctx.lineWidth = currentStroke.width;
+                ctx.lineCap = 'round';
+                ctx.stroke();
+            }
+        }
+
+        function stopDrawing() {
+            if (drawing) {
+                strokes.push(currentStroke);
+                drawing = false;
+            }
+        }
+
+        // Mouse events
+        canvas.addEventListener('mousedown', (e) => startDrawing(e.offsetX, e.offsetY));
+        canvas.addEventListener('mousemove', (e) => draw(e.offsetX, e.offsetY));
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        // Touch events
+        canvas.addEventListener('touchstart', (e) => {
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            startDrawing(touch.clientX - rect.left, touch.clientY - rect.top);
+        });
+
+        canvas.addEventListener('touchmove', (e) => {
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            draw(touch.clientX - rect.left, touch.clientY - rect.top);
+            e.preventDefault(); // Prevent scrolling
+        });
+
+        canvas.addEventListener('touchend', stopDrawing);
+
+        // Change canvas background color
+        canvasColorInput.addEventListener('input', redrawCanvas);
+
+        // Undo last action
+        undoButton.addEventListener('click', () => {
+            strokes.pop();
+            redrawCanvas();
+        });
+
+        // Zoom in and out
+        zoomSlider.addEventListener('input', (e) => {
+            zoomLevel = parseFloat(e.target.value);
+            redrawCanvas();
+        });
+
+        // Pan with joystick
+        let joystickDragging = false;
+        joystick.addEventListener('pointerdown', (e) => {
+            joystickDragging = true;
+            joystick.setPointerCapture(e.pointerId);
+        });
+
+        joystick.addEventListener('pointermove', (e) => {
+            if (joystickDragging) {
+                const rect = joystickContainer.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                joystickOffset.x = Math.min(Math.max(e.clientX - centerX, -50), 50);
+                joystickOffset.y = Math.min(Math.max(e.clientY - centerY, -50), 50);
+
+                joystick.style.transform = `translate(${joystickOffset.x}px, ${joystickOffset.y}px)`;
+
+                offsetX -= joystickOffset.x / 10;
+                offsetY -= joystickOffset.y / 10;
+                redrawCanvas();
+            }
+        });
+
+        joystick.addEventListener('pointerup', () => {
+            joystickDragging = false;
+            joystickOffset = { x: 0, y: 0 };
+            joystick.style.transform = 'translate(0, 0)';
+        });
+
+        saveForm.addEventListener('submit', (event) => {
+            const imageData = canvas.toDataURL('image/png');
+            imageDataInput.value = imageData;
+        });
+
+                // Draw grid based on zoom level and offset
+        function drawGrid() {
+            const gridSize = 50 * zoomLevel;  // Grid size scales with zoom level
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 0.5;
+
+            // Draw vertical lines
+            for (let x = -offsetX % gridSize; x < canvas.width / zoomLevel; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height / zoomLevel);
+                ctx.stroke();
+            }
+
+            // Draw horizontal lines
+            for (let y = -offsetY % gridSize; y < canvas.height / zoomLevel; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width / zoomLevel, y);
+                ctx.stroke();
+            }
+        }
+
+    </script>
+</body>
+</html>
+

@@ -451,8 +451,40 @@ def sketcher_canvas():
         return redirect(url_for('namizu.login'))
     return render_template("namizu/sketcher_canvas.html")
 
+@bp.route("/drawing/canvas")
+def drawing_canvas():
+    alreadyLoggedIn, userName = check_user_logged_in("drawing_canvas")
+    if not alreadyLoggedIn:
+        return redirect(url_for('namizu.login'))
+    return render_template("namizu/drawing_canvas.html")    
+
 @bp.route("/sketcher/save", methods=['GET', 'POST'])
 def sketcher_save():
+    image_data = ""
+    image_title = ""
+    image_descr = ""
+    image_author = ""
+    image_date = ""
+    directory_path = "uploads"
+    if request.method == "POST":
+        image_data = request.form.get('imageData')
+        image_title = request.form.get('title')
+        image_descr = request.form.get('descr')
+        image_author = session["user"]
+        image_date = "2025" #datetime.now().strftime("%Y") #! hardcoded date
+    if image_data:
+        # Decode the base64 image
+        header, encoded = image_data.split(',', 1)
+        image_data = base64.b64decode(encoded)
+
+        success = save_drawing(directory_path,image_data,image_author,image_title,image_date,image_descr)
+        if success == 0:
+            print(f"Image saved")
+        return redirect(url_for('namizu.index'))
+    return "No image data received!", 400
+
+@bp.route("/drawing/save", methods=['GET', 'POST'])
+def drawing_save():
     image_data = ""
     image_title = ""
     image_descr = ""
@@ -549,6 +581,4 @@ def gallery_day(target_date):
 def multitouch_test():
     return render_template("namizu/multi-touch.html")
     
-@bp.route("/drawingpro")
-def drawing_test():
-    return render_template("namizu/drawingPro.html")
+
