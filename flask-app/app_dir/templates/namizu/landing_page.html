@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <link rel="icon" href="https://img.icons8.com/nolan/64/slime-rancher.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <title>naMizu</title>
     <style>
         /* General Styles */
@@ -142,15 +142,21 @@
 <body>
 
 <header>
-    <h1>Welcome to naMizu</h1>
+    <h1>Welcome to naMizu!</h1>
     {% if not alreadyLoggedIn %}
-    <p>Heated polls in the groupchat</p>
+    <p style="font-size: 1.4rem;">The daily fun game</p>
     {% elif alreadyLoggedIn %}
     <p>Logged in as {{ userName }}. Wanna <a href="{{ url_for('namizu.logout') }}">logout?</a></p>
     {% endif %}
 </header>
 
 <section class="features">
+    <div class="feature-card">
+        <h3>31 Days - 31 fun polls</h3>
+        <p style="margin: 1% 0%;">Since 5th of Feb, 40 new questions have been added - which is <strong>incredible!</strong> The gallery was also expanded by 25 stunning artworks, making it a competitive of the Louvre Museum (almost). <br> <strong>Keep on guys!</strong>
+        </p>
+        
+    </div>
     <div class="feature-card">
         <h3>Open Source</h3>
         <p style="margin: 1% 0%;">Explore the code, contribute or leave a suggestion. naMizu is fully open source!</p>
@@ -222,6 +228,18 @@
 <footer>
     <p>&copy; 2025 naMizu&#8482;. Built with care for the community.</p>
 </footer>
+
+<script>
+    window.onload = function() {
+            confetti({
+                particleCount: 250,
+                spread: 70,
+                origin: { y: 0.6 },
+                gravity: 0.3 
+            });
+        };
+    
+</script>
 
 </body>
 </html>
