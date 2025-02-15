@@ -212,6 +212,7 @@ def editor():
     names = get_user_names()
     submitPoll = False
     do_restart = False
+    submitPoll = False
     select_mode = ""
     option_mode = ""
 
@@ -219,7 +220,10 @@ def editor():
     variable_in_question = False 
     multichoice = False #
     names_as_options = False
+    custom_as_options = False
     yes_or_no = False
+    showdown = False
+    selected_names_1v1 = []
 
     # question types:
 
@@ -234,10 +238,13 @@ def editor():
     # Custom options as options: C
     #   Yes or no answers: Y
     #   Open-ended answers: O
+    # 1v1 Showdown: F (fight)
+    #   put X at the end
 
-    # type example: DMNX
+    # type examples: DMNX, VSFX
 
     #* restart if M and CY in type
+    #* restart if M and F in type
 
     poll_type = ""
 
@@ -245,7 +252,7 @@ def editor():
         pass
     
     if request.method == "POST":
-
+        print(f"{request.form = }")
         question = request.form["question"]
         if "{" in question and "}" in question:
             variable_in_question = True
@@ -255,54 +262,75 @@ def editor():
         option_mode = request.form['radio-options']
         if option_mode == "names":
             names_as_options = True
+        elif option_mode == "showdown":
+            showdown = True
+        elif option_mode == "options":
+            custom_as_options = True
         answers = []   
         if names_as_options:
             answers = names
-        else:
+        elif custom_as_options:
             for key, val in request.form.items():
                 if key.startswith("answer"):
                     answers.append(val)
-        if not names_as_options:
+        if custom_as_options:
             if "yes" in [a.lower() for a in answers] or "no" in [a.lower() for a in answers]:
                 yes_or_no = True
 
         poll_type = ""
         poll_type += "V" if variable_in_question else "D"
         poll_type += "M" if multichoice else "S"
-        poll_type += "N" if names_as_options else "C"
+        if names_as_options:
+            poll_type += "N"
+        elif custom_as_options:
+            poll_type += "C"
+        elif showdown:
+            poll_type += "F"
 
-        if not names_as_options:
+        if custom_as_options:
             if yes_or_no:
                 poll_type += "Y"
             else:
                 poll_type += "O"
         else:
-            poll_type += "X" # names, therefore yes or no is irrelevant
+            poll_type += "X" # names and 1v1, therefore yes or no is irrelevant
      
         if variable_in_question:
                 
             text = question
             number_of_variables = text.count("{")
+            number_of_variables_check = text.count("}")
+            if number_of_variables!=number_of_variables_check:
+                do_restart = True
+                flash("Typo in random name {P}")
                 # Names to replace
             selected_names = random.sample(names, number_of_variables)
+            selected_names_1v1 = selected_names.copy()
                 # Replace placeholders sequentially
             result = re.sub(r"{P}", lambda _: selected_names.pop(0), text)
             question = result           
+            if showdown:
+                answers = selected_names_1v1
             
-        if not names_as_options:
+        if custom_as_options:
             options = answers
             for option in options:
                 if option == "":
                     do_restart = True
                     flash("Some options are empty. Session restarted")
-
+        
         if multichoice and yes_or_no:
             do_restart = True
             flash("Cannot be YesOrNo and Multichoice at the same time. Session restarted")
 
+        if multichoice and showdown:
+            do_restart = True
+            flash("Cannot be 1v1 and Multichoice at the same time. Session restarted")
+
         if question == "":
             do_restart = True
             flash("No question included. Session restarted")
+
         if not answers:
             do_restart = True
             flash("No answers included. Session restarted")
@@ -332,11 +360,12 @@ def editor():
             flash("Poll already exists. Session restarted.")
             break
     
-    if not do_restart and submitPoll:
-        for k,v in temp_q.items():
-            save_new_question(k,v)
-            break
-        flash("Submitted successfully.")
+    if submitPoll:
+        if not do_restart:
+            for k,v in temp_q.items():
+                save_new_question(k,v)
+                break
+            flash("Submitted successfully.")
 
     return render_template('namizu/editor.html', namesList=names)
 
