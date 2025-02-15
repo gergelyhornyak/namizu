@@ -144,19 +144,13 @@
 <header>
     <h1>Welcome to naMizu!</h1>
     {% if not alreadyLoggedIn %}
-    <p style="font-size: 1.4rem;">The daily fun game</p>
+    <p style="font-size: 1.4rem;">The daily game of fun</p>
     {% elif alreadyLoggedIn %}
     <p>Logged in as {{ userName }}. Wanna <a href="{{ url_for('namizu.logout') }}">logout?</a></p>
     {% endif %}
 </header>
 
 <section class="features">
-    <div class="feature-card">
-        <h3>31 Days - 31 fun polls</h3>
-        <p style="margin: 1% 0%;">Since 5th of Feb, 40 new questions have been added - which is <strong>incredible!</strong> The gallery was also expanded by 25 stunning artworks, making it a competitive of the Louvre Museum (almost). <br> <strong>Keep on guys!</strong>
-        </p>
-        
-    </div>
     <div class="feature-card">
         <h3>Open Source</h3>
         <p style="margin: 1% 0%;">Explore the code, contribute or leave a suggestion. naMizu is fully open source!</p>
@@ -224,22 +218,10 @@
 </section>
 
 
-
 <footer>
     <p>&copy; 2025 naMizu&#8482;. Built with care for the community.</p>
 </footer>
 
-<script>
-    window.onload = function() {
-            confetti({
-                particleCount: 250,
-                spread: 70,
-                origin: { y: 0.6 },
-                gravity: 0.3 
-            });
-        };
-    
-</script>
 
 </body>
 </html>
