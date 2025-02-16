@@ -1,3 +1,3 @@
-# Gamechanger: Homemade edition
+# naMizu Github repo
 
-Game Changer Show inspired game assets
+naMizu daily poll app inspired by askUs.
