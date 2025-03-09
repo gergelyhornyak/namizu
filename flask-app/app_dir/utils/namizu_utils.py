@@ -135,6 +135,22 @@ def load_drawings():
     except Exception as e:
         print(e)
 
+def loadSideQuest():
+    try:        
+        with open(f"database/sidequest.json", 'r') as f:
+            return json.load(f)        
+    except Exception as e:
+        print(e)
+
+
+def checkSideQuest():
+    try:        
+        with open(f"database/sidequest.json", 'r') as f:
+            return True    
+    except Exception as e:
+        return False
+
+
 # savers
 
 def save_drawing(directory_path,image_data,image_author,image_title,image_date,image_descr):
@@ -291,6 +307,9 @@ def get_vote_count():
         vote_count += details["voted"]
     if vote_count >= 0 and vote_count <= 7: # user count hardcoded
         return vote_count
+    
+def get_sidequest_vote_count():
+    return 0
 
 def get_user_names():
     """
@@ -414,6 +433,10 @@ def daily_routine():
     new_question_id = random.choice(unused_question_ids)
     # change
     unused_questions[new_question_id]["Status"] = 1 # set for today's Q
+    today = datetime.now()
+    if today.month == 3 and today.day == 9:
+        unused_questions[new_question_id]["Status"] = 0
+    
     all_questions = {}
     # update
     all_questions.update(unused_questions)
@@ -423,7 +446,19 @@ def daily_routine():
 
     set_daily_question() # cache after save
 
+    if today.month == 3 and today.day == 9:
+        with open('database/sidequest.json', 'r') as f:
+            sidequest = json.load(f)
+        with open('database/today_poll.json', 'w') as f:
+            json.dump(sidequest, f)
+
     # reset comments
 
     comments = {}
     save_comments(comments) # reset comments
+
+    # check for sidequest
+
+    # datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+
+    
