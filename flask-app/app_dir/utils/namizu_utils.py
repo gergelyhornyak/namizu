@@ -431,11 +431,11 @@ def daily_routine():
     
     # select question randomly
     new_question_id = random.choice(unused_question_ids)
-    # change
-    unused_questions[new_question_id]["Status"] = 1 # set for today's Q
     today = datetime.now()
     if today.month == 3 and today.day == 10:
-        unused_questions[new_question_id]["Status"] = 0
+        new_question_id = "Q00"
+    # change
+    unused_questions[new_question_id]["Status"] = 1 # set for today's Q
     
     all_questions = {}
     # update
@@ -445,12 +445,6 @@ def daily_routine():
     save_questions(all_questions) # save
 
     set_daily_question() # cache after save
-
-    if today.month == 3 and today.day == 10:
-        with open('database/sidequest.json', 'r') as f:
-            sidequest = json.load(f)
-        with open('database/today_poll.json', 'w') as f:
-            json.dump(sidequest, f)
 
     # reset comments
 
