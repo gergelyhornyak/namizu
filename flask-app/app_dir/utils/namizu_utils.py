@@ -434,7 +434,7 @@ def daily_routine():
     # change
     unused_questions[new_question_id]["Status"] = 1 # set for today's Q
     today = datetime.now()
-    if today.month == 3 and today.day == 9:
+    if today.month == 3 and today.day == 10:
         unused_questions[new_question_id]["Status"] = 0
     
     all_questions = {}
@@ -446,7 +446,7 @@ def daily_routine():
 
     set_daily_question() # cache after save
 
-    if today.month == 3 and today.day == 9:
+    if today.month == 3 and today.day == 10:
         with open('database/sidequest.json', 'r') as f:
             sidequest = json.load(f)
         with open('database/today_poll.json', 'w') as f:
