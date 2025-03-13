@@ -432,7 +432,7 @@ def daily_routine():
     # select question randomly
     new_question_id = random.choice(unused_question_ids)
     today = datetime.now()
-    if today.month == 3 and today.day == 10:
+    if today.month == 3 and today.day == 17:
         new_question_id = "Q00"
     # change
     unused_questions[new_question_id]["Status"] = 1 # set for today's Q
