@@ -163,6 +163,19 @@
         <p style="margin: 1% 0%;">No hidden costs, no premium features. naMizu is 100% free for friends.</p>
     </div>
 
+    {% if sideQuest %}
+    <div class="feature-card">
+        <h3>Heads up!</h3>
+        <p>Today we've got a</p>
+        <div class="cta">
+            <a href="{{ url_for('namizu.side_quest') }}">naMizu SideQuest!</a>
+        </div>
+        {% if not alreadyLoggedIn %}
+        <p style="margin: 1% 1%;">(you need to be signed in)</p>
+        {% endif %}
+    </div>
+    {% endif %}
+
     <div class="feature-card">
         <h3>Ready for a fun poll?</h3>
         <div class="cta">
@@ -180,7 +193,7 @@
         <p style="margin: 1% 1%;">(you need to be signed in)</p>
         {% endif %}
     </div>
-    
+    <!--
     <div class="feature-card">
         <h3>Draw a sketch</h3>
         <p style="margin: 1% 0%;">of today's poll in the new<br>
@@ -190,11 +203,12 @@
         <p style="margin: 1% 1%;">(you need to be signed in)</p>
         {% endif %}
     </div>
+    -->
 
     <div class="feature-card">
-        <h3>Wanna try Sketcher 2?</h3>
-        <p style="margin: 1% 0%;">Make more precise sketches with<br>
-            <a href="{{ url_for('namizu.drawing_canvas') }}">naMizu Sketcher 2</a>
+        <h3>Got some inspiration from today?</h3>
+        <p style="margin: 1% 0%;">Make precise, artistic sketches with<br>
+            <a href="{{ url_for('namizu.drawing_canvas') }}">naMizu Sketcher</a>
         </p>
         {% if not alreadyLoggedIn %}
         <p style="margin: 1% 1%;">(you need to be signed in)</p>
