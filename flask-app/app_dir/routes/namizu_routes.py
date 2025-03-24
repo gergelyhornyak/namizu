@@ -199,6 +199,7 @@ def poll():
 
 @bp.route("/sidequest", methods=['GET', 'POST'])
 def side_quest():
+    return 0
     alreadyLoggedIn, userName = check_user_logged_in("sidequest")
     if not alreadyLoggedIn:
         return redirect(url_for('namizu.login'))
