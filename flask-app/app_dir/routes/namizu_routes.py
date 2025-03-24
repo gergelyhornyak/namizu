@@ -4,7 +4,7 @@ from app_dir.utils.namizu_utils import load_user_creds, load_user_login, load_us
 from app_dir.utils.namizu_utils import load_today_poll, load_comments, load_question_bank, load_history, load_user_streak
 from app_dir.utils.namizu_utils import get_daily_question, get_new_question_id, get_vote_count, get_daily_results,get_comments_packet
 from app_dir.utils.namizu_utils import get_user_names, get_drawings_by_matching_day, get_questions_for_admin
-from app_dir.utils.namizu_utils import daily_routine
+from app_dir.utils.namizu_utils import daily_routine, checkSideQuest, loadSideQuest
 
 from datetime import datetime
 import random
@@ -41,7 +41,8 @@ def check_user_logged_in(funcName) -> tuple[bool, str]:
 @bp.route("/")
 def index():
     alreadyLoggedIn, userName = check_user_logged_in("index")
-    return render_template('/namizu/landing_page.html', userName=userName, alreadyLoggedIn=alreadyLoggedIn)
+    sidequest = False #checkSideQuest()
+    return render_template('/namizu/landing_page.html', userName=userName, alreadyLoggedIn=alreadyLoggedIn, sideQuest=sidequest)
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():  
@@ -193,6 +194,65 @@ def poll():
     vote_count = get_vote_count()
     return render_template('namizu/poll.html', question=question, is_poll_multichoice=is_poll_multichoice,
                            options=options, results=results, form_submitted=submitted,
+                           player_num=7, vote_count=vote_count, comments=comments_packet)
+
+
+@bp.route("/sidequest", methods=['GET', 'POST'])
+def side_quest():
+    alreadyLoggedIn, userName = check_user_logged_in("sidequest")
+    if not alreadyLoggedIn:
+        return redirect(url_for('namizu.login'))
+    
+    daily_poll = loadSideQuest()
+    question = daily_poll["Question"]
+    question_type = daily_poll["Type"]
+    options = list(daily_poll["Answers"].keys())
+    answers_ser_num = {}
+    counter = 1
+    vote_count = 0#get_sidequest_vote_count()
+
+    for key, value in daily_poll["Answers"].items():
+        answers_ser_num[counter] = {"key":key,"value":value}
+        counter+=1
+
+    if request.method == 'GET':    
+        pass        
+
+    elif request.method == 'POST':
+        if vote_count == 7: # all voted
+            submitted = True
+        if 'vote' in request.form and not submitted:
+            choice = request.form['vote']
+            daily_poll["Answers"][choice] += 1
+
+            save_daily_poll(daily_poll)
+            vote_stats[userName] = 1 # submitted vote
+            vote_stat = load_user_votes()
+            new_vote_stats = vote_stat.copy()
+
+            #* exclude
+            for uid, details in vote_stat.items():
+                for name,vote in vote_stats.items():
+                    if details["name"] == name:
+                        new_vote_stats[uid]["voted"] = vote
+
+            save_users_vote(new_vote_stats)
+            submitted = True
+
+        if 'comment' in request.form:
+            comment = request.form['comment']
+            if "user" in session:
+                userName = session["user"]
+            current_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+            user_comments = load_comments()
+            user_comments[current_date] = {
+                userName: comment
+            }
+            save_comments(user_comments)
+            comments_packet = get_comments_packet()
+            return redirect(url_for('namizu.poll'))
+
+    return render_template('namizu/sidequest.html', question=question, options=options, results=results, form_submitted=submitted,
                            player_num=7, vote_count=vote_count, comments=comments_packet)
 
 
