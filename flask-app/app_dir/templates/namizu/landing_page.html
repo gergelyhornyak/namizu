@@ -118,39 +118,6 @@
             color: #3a5d6c;
         }
 
-        .popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 20px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            display: none;
-            z-index: 1000;
-            border-radius: 8px;
-            width: 250px;
-            height: 400px;
-        }
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            z-index: 999;
-        }
-        .close-btn {
-            background: red;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
         /* Mobile View Compatibility */
         @media (max-width: 768px) {
             header h1 {
@@ -174,23 +141,10 @@
 </head>
 <body>
 
-
-    <div class="overlay" id="overlay"></div>
-    <div class="popup" id="popup">
-        <h2>🔥 Special Offer! 🔥</h2>
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzb4IR4uumVVRi63IvpP39YouNXKYsYLnt6wdqVEZIIOFosCZJvI4bwo6Ycu82ZnuUVEE&usqp=CAU" alt="Ad Image" width="95%">
-        <p>Keep your melons cool with the <strong>Marugoto Tamachan</strong> portable watermelon fridge!</p>
-        <p>Get 50% off your first purchase!</p>
-        <button class="close-btn" onclick="closePopup()">No Thanks</button>
-    </div>
-
-
-
-
 <header>
-    <h1>hogysMint?</h1>
+    <h1>naMizu?</h1>
     {% if not alreadyLoggedIn %}
-    <p style="font-size: 1.4rem;">Daily game for friends</p>
+    <p style="font-size: 1.4rem;">uzi Man in reverse!</p>
     {% elif alreadyLoggedIn %}
     <p>Logged in as {{ userName }}. Click to <a href="{{ url_for('namizu.logout') }}">logout.</a></p>
     {% endif %}
@@ -199,10 +153,10 @@
 <section class="features">
 
     <div class="feature-card">
-        <!-- <a href="https://github.com/gregoryhornyak/gamechanger" style="font-size: larger;">--><h3><s>Open</s> Closed Source</a></h3>
-        <h3><s>Ad-Free</s> Insane amount of ads</h3>
-        <h3><s>No</s> Only Micro-Transactions</h3>
-        <h3><s>Zero</s> Tremendous Data Collection</h3>
+        <a href="https://github.com/gregoryhornyak/gamechanger" style="font-size: larger;">Open Source</a>
+        <h3>Ad-Free</h3>
+        <h3>No Micro-Transactions</h3>
+        <h3>Zero Data Collection</h3>
     </div>
 
     {% if sideQuest %}
@@ -274,21 +228,8 @@
 
 
 <footer>
-    <p>&copy; 2025 naMizu&#8482;. Version Aprils_Fool. Built with care for the community.</p>
+    <p>&copy; 2025 naMizu&#8482;. Version 2.0. Built with care for the community.</p>
 </footer>
-
-
-<script>
-    window.onload = function() {
-        document.getElementById('popup').style.display = 'block';
-        document.getElementById('overlay').style.display = 'block';
-    };
-    function closePopup() {
-        document.getElementById('popup').style.display = 'none';
-        document.getElementById('overlay').style.display = 'none';
-    }
-</script>
-
 
 </body>
 
