@@ -142,9 +142,9 @@
 <body>
 
 <header>
-    <h1>naMizu?</h1>
+    <h1>naMizu? 🐇</h1>
     {% if not alreadyLoggedIn %}
-    <p style="font-size: 1.4rem;">uzi Man in reverse!</p>
+    <p style="font-size: 1.2rem;">uzi Man in reverse!</p>
     {% elif alreadyLoggedIn %}
     <p>Logged in as {{ userName }}. Click to <a href="{{ url_for('namizu.logout') }}">logout.</a></p>
     {% endif %}
@@ -158,9 +158,14 @@
         <h3>No Micro-Transactions</h3>
         <h3>Zero Data Collection</h3>
     </div>
-
+<!--
     <div class="feature-card">
-        <h3>Notice: Don't forget to login, to continue your streak.</h3>
+        <h4 style="font-size: large;">naMizu is looking for witty subtitles!</h4>
+        <p>If you have one in mind, click here to submit.</p>
+    </div>
+-->
+    <div class="feature-card">
+        <h4 style="margin: 2%;">Notice: Don't forget to login,<br>to continue your streak.</h4>
     </div>
 
     {% if sideQuest %}
