@@ -120,7 +120,9 @@
                 <button type="button" onclick="showInputField(this)" name="vote" value="{{ option }}">{{ option }}
                     {% if option in streak %}
                     &nbsp;🔥{{ streak[option] }}
+                    <!-- &nbsp;<img src="{{ url_for('static', filename='img/easter-egg2.png') }}" width="36px" alt="EXIT">{{ streak[option] }} -->
                     {% endif %}
+                    
                 </button>
                 
             </div>
