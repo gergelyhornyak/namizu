@@ -20,18 +20,24 @@ You can draw a sketch and submit it, then you can see your artwork in the galler
 
 All questions fall under some categories:
 
+- Using variable or default
+- Requires explanation or no comment
+- Single or multichoice
+- Anonym or public (the voters)
+- Names / Options / Range
+- Yes-or-no or open-ended
+- Normal (daily) poll or sidequest or letterloop
+
+|var|exp|sin|pub|nam|yes|nor|
+
+= almost 384 different poll types
+
+Sidequest: trivia, 
+
 - **D**efault / Using **V**ariables
 - **S**ingle or **M**ultiple choices
 - **N**ames or **C**ustom options as choices
 - The custom options are **Y**es-or-No questions, or user-defined **O**ptions
-
-Some example questions:
-- "Who is ..."
-- "What would XYZ do ..."
-- "Do you think XYZ would do ..."
-- "Would XYZ1 and XYZ2 work together ..."
-- "Would you rather do X or Y ..."
-- "Pick all who would do X."
 
 ### Answers
 
