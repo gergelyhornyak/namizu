@@ -20,6 +20,7 @@ You can draw a sketch and submit it, then you can see your artwork in the galler
 
 All questions fall under some categories:
 
+- Series of polls: create a story! -> each poll will inherit the previous answers
 - Using variable or default
 - Requires explanation or no comment
 - Single or multichoice
