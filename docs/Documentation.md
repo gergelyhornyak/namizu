@@ -1,28 +1,26 @@
 # naMizu Docs
 
-## Introduction
+naMizu polls have the following members: 
 
-naMizu is a free and open-source application based on askUs app.
+- voter(s), 
+- a pollster.
 
-## Features - Apps
+the polls have the following components: 
 
-### naMizu Poll
-
-You can create, vote, and add comments for daily polls.
-
-### naMizu Draw
-
-You can draw a sketch and submit it, then you can see your artwork in the gallery 
-
-## Polls
+- a unique ID, 
+- a type based on the catalogue of types, 
+- the question, 
+- answer(s), 
+- a status, 
+- a date-time.
 
 ### Questions
 
-All questions fall under some categories:
+All questions fall under the following categories:
 
 - Series of polls: create a story! -> each poll will inherit the previous answers
-- Using variable or default
-- Requires explanation or no comment
+- Using variable in the poll or not (default)
+- Requires extra text from users or no comment
 - Single or multichoice
 - Anonym or public (the voters)
 - Names / Options / Range
@@ -35,10 +33,16 @@ All questions fall under some categories:
 
 Sidequest: trivia, 
 
+---
+
+*LEGACY TYPES:*
+
 - **D**efault / Using **V**ariables
 - **S**ingle or **M**ultiple choices
 - **N**ames or **C**ustom options as choices
 - The custom options are **Y**es-or-No questions, or user-defined **O**ptions
+
+---
 
 ### Answers
 
@@ -55,13 +59,13 @@ poll format:
     "Type": "DSNX",
     "Question": "Who is most likely to cheat on a test?",
     "Answers": {
-        "B\u00e1lint": 0,
-        "Bella": 0,
-        "Geri": 0,
-        "Herczi": 1,
-        "Hanna": 0,
-        "Kopp\u00e1ny": 0,
-        "M\u00e1rk": 0
+        "Voter1": 0,
+        "Voter2": 0,
+        "Voter3": 0,
+        "Voter4": 1,
+        "Voter5": 0,
+        "Voter6": 0,
+        "Voter7": 0
     },
     "Status": 1
   }
@@ -117,6 +121,7 @@ history file:
 
 
 ## Big update ideas:
+
 - mysql setup,
 - profile pics?
 - anonym voting?
