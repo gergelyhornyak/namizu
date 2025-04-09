@@ -1,37 +1,53 @@
 # naMizu Docs
 
-naMizu polls have the following members: 
+logs current version
+
+---
+
+naMizu events have the following members: 
 
 - voter(s), 
 - a pollster.
 
-the polls have the following components: 
+the events have the following components: 
 
 - a unique ID, 
 - a type based on the catalogue of types, 
 - the question, 
-- answer(s), 
+- answer(s), *(response options)*
 - a status, 
 - a date-time.
+- a language format (HU, EN, DE, IT, ...)
+
+events can be: Story / SideQuest / DailyPoll
 
 ### Questions
 
-All questions fall under the following categories:
+All polls fall under the following categories:
 
-- Series of polls: create a story! -> each poll will inherit the previous answers
-- Using variable in the poll or not (default)
-- Requires extra text from users or no comment
-- Single or multichoice
-- Anonym or public (the voters)
-- Names / Options / Range
-- Yes-or-no or open-ended
-- Normal (daily) poll or sidequest or letterloop
-
-|var|exp|sin|pub|nam|yes|nor|
-
-= almost 384 different poll types
-
-Sidequest: trivia, 
+- Event category: Story / SideQuest / DailyPoll **(default)**
+    - DailyPoll: the usual daily poll, recurring every day.
+    - Story: a series of polls, where each poll will inherit the previous answers, and voters can go on an DnD adventure.
+    - SideQuest: pops up randomly, has a very unique task/poll for the voters
+- Using variable in the poll or not **(default)**
+    - Default: contains no variables
+    - Variable: can be in poll question body or answers body, will be rendered during the edit stage
+- Requires extra text from users or no comment **(default)**
+    - Extra text: users need to submit a short answer
+    - Nothing extra means answers are casual click buttons
+- Single **(default)** or multichoice
+    - Single: voters can only pick one answer
+    - Multichoice: voters can pick more than 1 answer at a time
+- Anonym **(default)** or public 
+    - Public: the voters identity is shows next to their answers
+    - Anonym: as usual, voters cannot see others' choices
+- Names **(default)** / Options / Range
+    - Names: The names of the voters are the answers
+    - Options: The pollster can create custom options to vote for
+    - Range: The pollster can set a range for the voters to select from - on a slider possibly
+- (if Options) Yes-or-no or open-ended **(default)**
+    - Open-ended options: voters can select more open ended options at a time
+    - Yes-or-no: excludes multichoice, since yes is the opposite of no
 
 ---
 
@@ -44,13 +60,7 @@ Sidequest: trivia,
 
 ---
 
-### Answers
-
-### Comments
-
-### Users - Voters
-
-## Data insight
+## Database insight
 
 poll format:
 
