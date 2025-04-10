@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" href="https://img.icons8.com/nolan/64/slime-rancher.png">
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/2298/2298487.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <title>naMizu</title>
@@ -145,15 +145,21 @@
 <header>
     <h1>naMizu?🐇</h1>
     {% if not alreadyLoggedIn %}
-    <p style="font-size: 1.2rem;">Not the restaurant</p>
+    <p style="font-size: 1.2rem;">Not the restaurant <!--{{ funnyMessage }}--> </p>
     {% elif alreadyLoggedIn %}
     <p>Logged in as {{ userName }}. Click to <a href="{{ url_for('namizu.logout') }}">logout.</a></p>
     {% endif %}
 </header>
 
 <section class="features">
-    
 
+    <!--NOTICE / ALERT-->
+
+    <div class="feature-card" style="border-color:tomato">
+        <h4 style="margin: 2%;"><u>Notice:</u> Don't forget to login,<br>to continue your streak.</h4>
+        This feature will be fixed soon.
+    </div>
+    
 <!--
     <div class="feature-card" style="border-color:steelblue">
         <h3>Magnificent 💯</h4>
@@ -162,22 +168,13 @@
         <img src="https://media1.giphy.com/media/Ov09jGgEThFKpxZ9eC/200w.gif?cid=6c09b952vn57zav2tc8oxsqxnew1fyopnp6rd6e8hsrrd6y5&ep=v1_gifs_search&rid=200w.gif&ct=g" width="200px" style="border: thick ridge steelblue; border-radius: 18%;">
     </div>
 -->
-    <div class="feature-card">
-        <a href="https://github.com/gregoryhornyak/gamechanger" style="font-size: larger;">Open Source</a>
-        <h3>Ad-Free</h3>
-        <h3>No Micro-Transactions</h3>
-        <h3>Zero Data Collection</h3>
-    </div>
 <!--
     <div class="feature-card">
         <h4 style="font-size: large;">naMizu is looking for witty subtitles!</h4>
         <p>If you have one in mind, click here to submit.</p>
     </div>
 -->
-    <div class="feature-card">
-        <h4 style="margin: 2%;">Notice: Don't forget to login,<br>to continue your streak.</h4>
-    </div>
-
+    
     {% if sideQuest %}
     <div class="feature-card">
         <h3>Heads up!</h3>
@@ -194,7 +191,7 @@
         <h3><img src="{{ url_for('static', filename='img/namizuGlitch2.png') }}" width="100px" alt="Ready"> for a fun poll?</h3>
         <!--<h3>Ready for a fun poll?</h3>-->
         <div class="cta">
-            <a href="{{ url_for('namizu.poll') }}">naMizu Poll</a>
+            <a href="{{ url_for('namizu.poll') }}">naMizu DailyPoll</a>
         </div>
         {% if not alreadyLoggedIn %}
         <p style="margin: 1% 1%;">(you need to be signed in)</p>
@@ -203,7 +200,7 @@
 
     <div class="feature-card">
         <h3>Do you wanna add new questions?</h3>
-        <p style="margin: 1% 0%;">Create your own questions using the <a href="{{ url_for('namizu.editor') }}">naMizu Poll Editor</a></p>
+        <p style="margin: 1% 0%;">Create your own questions using the <a href="{{ url_for('namizu.editor') }}">naMizu Editor</a></p>
         {% if not alreadyLoggedIn %}
         <p style="margin: 1% 1%;">(you need to be signed in)</p>
         {% endif %}
@@ -211,8 +208,8 @@
 
     <div class="feature-card">
         <h3>Inspired by today's poll?</h3>
-        <p style="margin: 1% 0%;">Make precise, artistic sketches with<br>
-            <a href="{{ url_for('namizu.drawing_canvas') }}">naMizu Sketcher</a>
+        <p style="margin: 1% 0%;">Draw a sketch, or visit the gallery<br>
+            <a href="{{ url_for('namizu.drawing_canvas') }}">naMizu<br>Sketcher</a> &ensp; <a href="{{ url_for('namizu.gallery_welcome') }}">naMizu<br>Gallery</a>
         </p>
         {% if not alreadyLoggedIn %}
         <p style="margin: 1% 1%;">(you need to be signed in)</p>
@@ -220,13 +217,10 @@
     </div>
 
     <div class="feature-card">
-        <h3>Visit the gallery</h3>
-        <p style="margin: 1% 0%;">displaying other's artworks in the<br>
-            <a href="{{ url_for('namizu.gallery_welcome') }}">naMizu Gallery</a>
-        </p>
-        {% if not alreadyLoggedIn %}
-        <p style="margin: 1% 1%;">(you need to be signed in)</p>
-        {% endif %}
+        <a href="https://github.com/gregoryhornyak/gamechanger" style="font-size: larger;">Open Source</a>
+        <h3>Ad-Free</h3>
+        <h3>No Micro-Transactions</h3>
+        <h3>Zero Data Collection</h3>
     </div>
 
     <div class="feature-card">
@@ -237,7 +231,7 @@
 
 
 <footer>
-    <p>&copy; 2025 naMizu&#8482;. Version 2.0. Built with care for the community.</p>
+    <p>&copy; 2025 naMizu&#8482;. Version 2.0.  <!--{{ versionLog }}--> Built with care for the community.</p>
 </footer>
 
 </body>
