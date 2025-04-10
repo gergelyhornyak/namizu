@@ -19,4 +19,4 @@ RUN pip install gunicorn
 EXPOSE 5000
 
 # Set the command to run the app
-CMD ["gunicorn", "-w", "3", "-b", "0.0.0.0:5000", "--preload", "--access-logfile", "database/gunicorn_access.log", "--error-logfile", "database/gunicorn_error.log", "app:app"]
+CMD ["gunicorn", "-w", "3", "-b", "0.0.0.0:5000", "--preload", "--access-logfile", "database/gunicorn_access.log", "--error-logfile", "database/gunicorn_error.log", "app:app", "--timeout 120"]
