@@ -142,9 +142,9 @@
 <body>
 
 <header>
-    <h1>naMizu? 🐇🐇</h1>
+    <h1>naMizu?🐇</h1>
     {% if not alreadyLoggedIn %}
-    <p style="font-size: 1.2rem;">uzi Man in reverse!</p>
+    <p style="font-size: 1.2rem;">Not the restaurant</p>
     {% elif alreadyLoggedIn %}
     <p>Logged in as {{ userName }}. Click to <a href="{{ url_for('namizu.logout') }}">logout.</a></p>
     {% endif %}
@@ -189,8 +189,8 @@
     {% endif %}
 
     <div class="feature-card">
-        <!--<h3><img src="{{ url_for('static', filename='img/namizuGlitch2.png') }}" width="100px" alt="Ready"> for a fun poll?</h3>-->
-        <h3>Ready for a fun poll?</h3>
+        <h3><img src="{{ url_for('static', filename='img/namizuGlitch2.png') }}" width="100px" alt="Ready"> for a fun poll?</h3>
+        <!--<h3>Ready for a fun poll?</h3>-->
         <div class="cta">
             <a href="{{ url_for('namizu.poll') }}">naMizu Poll</a>
         </div>
