@@ -16,5 +16,16 @@ RUN sed -i '/mpm_event_module/d' /usr/local/apache2/conf/httpd.conf \
 # COPY apache.conf /usr/local/apache2/conf/httpd.conf
 COPY apache.conf /usr/local/apache2/conf/extra/apache-config.conf
 
+# RUN a2enmod status
+
+# /etc/apache2/mods-enabled/status.conf
+# set ExtendedStatus to On
+# <Location /server-status>, append  IP address to the line with the Allow directive. Example: 'Allow from 127.0.0.1 ::1 66.77.88.99'
+# service apache2 restart
+
+# or
+
+# try: 'tail -f /var/log/apache2/access.log'
+
 # Expose the port Apache will run on
 EXPOSE 80
