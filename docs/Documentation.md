@@ -129,6 +129,45 @@ history file:
     },
 ```
 
+---
+
+## Components/Routes
+
+### Landing page
+
+1) Banner
+    - could change seasonally
+2) username
+    - show username who is logged in
+3) Alert / Notice popup
+    - any important info should show up on the top
+4) Story / Sidequest
+    - if sidequest or story is active, show up before DailyPoll
+5) DailyPoll
+6) Event Editor
+7) Canvas + Gallery
+8) naMizu info: opensource, free, no data collection...
+9) Special Thanks
+10) Version log
+
+### Login page + logout page
+
+DailyPoll page
+
+SideQuest page
+
+EventEditor page
+
+Calendar page
+
+History pages
+
+Admin page
+
+Drawing Canvas page
+
+Gallery page
+
 
 ## Big update ideas:
 
