@@ -1,4 +1,7 @@
-# NaMizu Github Repo
+# naMizu App
+
+![banner](./docs/img/banner.png)
+
 
 naMizu daily poll app inspired by askUs.
 
