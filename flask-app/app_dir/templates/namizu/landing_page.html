@@ -143,9 +143,9 @@
 <body>
 
 <header>
-    <h1>naMizu?🐇</h1>
+    <h1>naMizu?🐇</h1> <!-- ¿ -->
     {% if not alreadyLoggedIn %}
-    <p style="font-size: 1.2rem;">Not the restaurant <!--{{ funnyMessage }}--> </p>
+    <p style="font-size: 1.2rem;">Not the restaurant<img src="{{ url_for('static', filename='img/glitch3.png') }}" width="100px" alt=""> <!--{{ funnyMessage }}--> </p>
     {% elif alreadyLoggedIn %}
     <p>Logged in as {{ userName }}. Click to <a href="{{ url_for('namizu.logout') }}">logout.</a></p>
     {% endif %}
