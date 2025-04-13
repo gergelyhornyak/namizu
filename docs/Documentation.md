@@ -50,12 +50,8 @@ Task: haiku battle
 
 - Using variable in the poll or not **(default)**
     - <variable,novariable>
-    - Default: contains no variables
+    - Plain: contains no variables
     - Variable: can be in poll question body or answers body, will be rendered during the edit stage
-- Prompt extra text from users or no comment **(default)**
-    - <prompt,noprompt>
-    - Extra text: users need to submit a short answer
-    - Nothing extra means answers are casual click buttons
 - Single **(default)** or multichoice
     - <single,multichoice>
     - Single: voters can only pick one answer
@@ -64,14 +60,19 @@ Task: haiku battle
     - <anonym,public>
     - Public: the voters identity is shows next to their answers, plus pollster name
     - Anonym: as usual, voters cannot see others' choices, nor pollster name
+- Ranking or not **(default)**:
+    - Voters rank answers by preference (e.g., 1st, 2nd, 3rd).
 - Names **(default)** / Options / Range
-    - <names,yesorno,openended,range>
+    - <names,range,yesorno,openended,prompt,teams>
     - Names: The names of the voters are the answers
     - Range: The pollster can set a range for the voters to select from - on a slider possibly
-    - Options: The pollster can create custom options to vote for
-        - Yes-or-no or open-ended **(default)**
-        - Open-ended options: voters can select more open ended options at a time
-        - Yes-or-no: excludes multichoice, since yes is the opposite of no
+    - YesOrNo: excludes multichoice, since yes is the opposite of no
+    - Open-ended: The pollster can create custom options to vote for
+    - Prompt: extra text from users, users need to submit a short answer
+    - Teams: show which team you have ended up, only 2 choices are accepted
+    + Chained: an extra question after you saw the results
++ Theme: colours, font and such can be customised to create theme for the question (e.g.: spooky, dark, funny, resiliant)
+
 ---
 
 question type format:
@@ -79,6 +80,40 @@ question type format:
 dailypoll,variable,prompt,single,anonym,names
 dailypoll,novariable,noprompt,multichoice,public,options,openended
 
+---
+
+question json descr:
+
+ID,
+Type,
+Theme,
+Question,
+Pollster,
+Answers
+Status,
+DateTime
+
+```json
+{
+    "Type":"...,theme,...",
+    "Theme":{
+        "bgColour":"HEX",
+        "fontstyle":"...",
+        "frontColour":"HEX"
+    }
+}
+```
+
+---
+
+use SVG curve for Range plotting
+
+```css
+  <svg viewBox="0 0 400 200">
+    <!-- Cubic Bezier Curve from (50,150) to (350,150) -->
+    <path d="M 50 150 C 150 110, 50 50, 350 150" />
+  </svg>
+```
 ---
 
 *LEGACY TYPES:*
@@ -240,7 +275,7 @@ new poll format:
   "IDX": {
     "Type": "a,b,c,d,e",
     "Question": "Who is most likely to cheat on a test?",
-    "Answers": {
+    "Config": {
         "endpoints":{
             "0":"text",
             "10":"text",
@@ -250,6 +285,11 @@ new poll format:
             "UID1":2,
             "UID2":5,
         }
+    },
+    "Answers":{
+        "ID1":3,
+        "ID3":8,
+        "ID6":9,
     },
     "Status": 0
   }
