@@ -1,10 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, jsonify, url_for, session, flash, get_flashed_messages, send_from_directory
-from app_dir.utils.namizu_utils import save_comments, save_daily_poll, save_history, save_users_login, save_users_vote, save_visit_count, save_new_question, save_drawing
-from app_dir.utils.namizu_utils import load_user_creds, load_user_login, load_user_votes, load_visit_count, load_drawings
-from app_dir.utils.namizu_utils import load_today_poll, load_comments, load_question_bank, load_history, load_user_streak
-from app_dir.utils.namizu_utils import get_daily_question, get_new_question_id, get_vote_count, get_daily_results,get_comments_packet
-from app_dir.utils.namizu_utils import get_user_names, get_drawings_by_matching_day, get_questions_for_admin
-from app_dir.utils.namizu_utils import daily_routine, checkSideQuest, loadSideQuest
+from app_dir.utils.namizu_utils import *
 
 from datetime import datetime
 import random
@@ -531,7 +526,7 @@ def admin_reset():
             return redirect(url_for('namizu.index'))
     else:
         return redirect(url_for('namizu.index'))
-    daily_routine()
+    #daily_routine()
     return redirect(url_for('namizu.index'))
 
 @bp.route("/sketcher/canvas")
@@ -541,7 +536,7 @@ def sketcher_canvas():
         return redirect(url_for('namizu.login'))
     return render_template("namizu/sketcher_canvas.html")
 
-@bp.route("/drawing/canvas")
+@bp.route("/drawing/canvas")    
 def drawing_canvas():
     alreadyLoggedIn, userName = check_user_logged_in("drawing_canvas")
     if not alreadyLoggedIn:
