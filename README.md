@@ -2,7 +2,7 @@
 
 naMizu daily poll app.
 
-![front page](./docs/img/image.png)
+![front page](./docs/img/image2.png)
 
 ## Introduction
 
