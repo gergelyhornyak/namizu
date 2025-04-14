@@ -7,19 +7,25 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <title>naMizu</title>
     <style>
+        /* 
+        #b8dae8
+        #717472
+        #dcded1
+        #9a9481
+        
+        */
         /* General Styles */
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            color: #3a5d6c;
-            background-color: #fae5c9;
+            background-color: #bfe5f7;
         }
 
         /* Header Styling */
         header {
-            background: linear-gradient(135deg, #3a5d6c, #1d2e36);
-            color: #ffffff;
+            background: linear-gradient(135deg, #50bbf3, #7bcdf6);
+            color: #243934;
             text-align: center;
             padding: 10% 2% 4%;
         }
@@ -46,14 +52,13 @@
             gap: 1.5rem;
             padding: 0 1rem;
             max-width: 1200px;
-            background-image: url('{{ url_for("static", filename="img/bg_glitch.png") }}');
             background-repeat: no-repeat;
         }
 
         /* Feature Card Styling */
         .feature-card {
-            background: #ffffff;
-            border: 4px solid #f7c49d;
+            background: #dcded1;
+            border: 4px solid #9a9481;
             border-radius: 12px;
             padding: 2%;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
@@ -64,7 +69,7 @@
         }
         
         .feature-card h3 {
-            color: #3a5d6c;
+            color: #212522;
             font-size: 1.8rem;
             margin-bottom: 2%;
             margin-top: 2%;
@@ -72,7 +77,7 @@
         .feature-card p {
             font-size: 1rem;
             line-height: 1.6;
-            color: #555;
+            color: #212522;
         }
         .feature-card a {
             display: inline-block;
@@ -80,7 +85,7 @@
             text-decoration: none;
             font-weight: bold;
             color: #ffffff;
-            background: #3a5d6c;
+            background: #544639;
             padding: 0.6rem 1.2rem;
             border-radius: 6px;
             transition: background-color 0.3s;
@@ -93,7 +98,7 @@
         }
         .cta a {
             display: inline-block;
-            background: #3a5d6c;
+            background: #544639;
             color: #ffffff;
             text-decoration: none;
             font-size: 1.6rem;
@@ -107,7 +112,7 @@
         footer {
             text-align: center;
             padding: 1.5rem;
-            background: #3a5d6c;
+            background: #6694ac;
             color: #ffffff;
             margin-top: 2%;
         }
@@ -143,9 +148,9 @@
 <body>
 
 <header>
-    <h1>naMizu?🐇</h1> <!-- ¿ -->
+    <h1>¿naMizu?🐇</h1> <!-- ¿ -->
     {% if not alreadyLoggedIn %}
-    <p style="font-size: 1.2rem;">Not the restaurant<img src="{{ url_for('static', filename='img/glitch3.png') }}" width="100px" alt=""> <!--{{ funnyMessage }}--> </p>
+    <p style="font-size: 1.2rem;">Not the restaurant <!--{{ funnyMessage }}--> </p>
     {% elif alreadyLoggedIn %}
     <p>Logged in as {{ userName }}. Click to <a href="{{ url_for('namizu.logout') }}">logout.</a></p>
     {% endif %}
@@ -155,7 +160,7 @@
 
     <!--NOTICE / ALERT-->
 
-    <div class="feature-card" style="border-color:tomato">
+    <div class="feature-card" style="border-color:#f68c7d">
         <h4 style="margin: 2%;"><u>Notice:</u> Don't forget to login,<br>to continue your streak.</h4>
         This feature will be fixed soon.
     </div>
@@ -188,8 +193,8 @@
     {% endif %}
 
     <div class="feature-card">
-        <h3><img src="{{ url_for('static', filename='img/namizuGlitch2.png') }}" width="100px" alt="Ready"> for a fun poll?</h3>
-        <!--<h3>Ready for a fun poll?</h3>-->
+        
+        <h3>Ready for a fun poll?</h3>
         <div class="cta">
             <a href="{{ url_for('namizu.poll') }}">naMizu DailyPoll</a>
         </div>
