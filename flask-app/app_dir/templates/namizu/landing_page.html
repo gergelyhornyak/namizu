@@ -28,6 +28,7 @@
             color: #243934;
             text-align: center;
             padding: 10% 2% 4%;
+            margin-bottom: 4%;
         }
         header h1 {
             margin: 0;
@@ -148,7 +149,7 @@
 <body>
 
 <header>
-    <h1>¿naMizu?🐇</h1> <!-- ¿ -->
+    <h1><img src="{{ url_for('static', filename='img/cloudBunny.png') }}" width="100px" alt="">naMizu? &nbsp; &nbsp; </h1> <!-- ¿ -->
     {% if not alreadyLoggedIn %}
     <p style="font-size: 1.2rem;">Not the restaurant <!--{{ funnyMessage }}--> </p>
     {% elif alreadyLoggedIn %}
@@ -157,14 +158,8 @@
 </header>
 
 <section class="features">
-
-    <!--NOTICE / ALERT-->
-
-    <div class="feature-card" style="border-color:#f68c7d">
-        <h4 style="margin: 2%;"><u>Notice:</u> Don't forget to login,<br>to continue your streak.</h4>
-        This feature will be fixed soon.
-    </div>
     
+
 <!--
     <div class="feature-card" style="border-color:steelblue">
         <h3>Magnificent 💯</h4>
@@ -236,7 +231,7 @@
 
 
 <footer>
-    <p>&copy; 2025 naMizu&#8482;. Version 2.0.  <!--{{ versionLog }}--> Built with care for the community.</p>
+    <p>&copy; 2025 naMizu&#8482;, Version 2.X  <!--{{ versionLog }}--> .<br>Built with care for the community.</p>
 </footer>
 
 </body>
