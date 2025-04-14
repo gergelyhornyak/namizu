@@ -1,10 +1,12 @@
 # NaMizu Github Repo
 
-naMizu daily poll app inspired by askUs.
+naMizu daily poll app.
+
+![front page](./docs/img/image.png)
 
 ## Introduction
 
-naMizu is a free and open-source application based on askUs app.
+naMizu is a free and open-source application.
 
 ## Apps
 

@@ -2,7 +2,7 @@
 
 ## Introduction
 
-naMizu is a free and open-source application based on askUs app.
+naMizu is a free and open-source application.
 
 ## Features - Apps
 
