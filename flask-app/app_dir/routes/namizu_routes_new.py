@@ -39,7 +39,7 @@ def check_user_logged_in(funcName) -> tuple[bool, str]:
 def typeParser(qTypeRaw:dict) -> dict:
     """
     single multichoice anonym public
-    ranking theme themeDescr names
+    ranking names
     range yesorno openended prompt teams
     """
     qTypeDescr = {}
@@ -79,6 +79,10 @@ def typeParser(qTypeRaw:dict) -> dict:
         qTypeDescr["ranking"] = True
     
     return qTypeDescr
+
+def prettyPrintJson(jsonFile:dict):
+    json_formatted_str = json.dumps(jsonFile, indent=4)
+    print(json_formatted_str)
 
 #* LANDING PAGE
 
@@ -131,7 +135,7 @@ def dailyPollApp():
     }
 
     dailyPollMulti = {
-        "Type": "multichoice,names,public",
+        "Type": "multichoice,names,anonym",
         "Theme": "1",
         "Question": "Who is the tallest?",
         "Pollster": "Lajos",
@@ -145,16 +149,17 @@ def dailyPollApp():
             "o7":"Márk"
         },
         "Answers": {
-            "VID1": 22,
-            "VID2": 25,
-            "VID3": 19,
-            "VID4": 33,
+            "VID1": ["o1","o5"],
+            "VID2": ["o1","o5"],
+            "VID3": ["o2"],
+            "VID4": ["o5"],
+            "VID5": ["o7"],
         },
         "Status": 0
     }
 
     dailyPollSingle = {
-        "Type": "single,names,private",
+        "Type": "single,names,anonym",
         "Theme": "1",
         "Question": "Who is the tallest?",
         "Pollster": "Lajos",
@@ -168,16 +173,16 @@ def dailyPollApp():
             "o7":"Márk"
         },
         "Answers": {
-            "VID1": 22,
-            "VID2": 25,
-            "VID3": 19,
-            "VID4": 33,
+            "VID1": ["o1"],
+            "VID2": ["o6"],
+            "VID3": ["o3"],
+            "VID4": ["o6"],
         },
         "Status": 0
     }
 
     dailyPollRank = {
-        "Type": "single,ranking,private",
+        "Type": "single,ranking,anonym",
         "Theme": "1",
         "Question": "Which would you eat the most?",
         "Pollster": "Lajos",
@@ -188,16 +193,16 @@ def dailyPollApp():
             "o4":"Cheddar cheese",
         },
         "Answers": {
-            "VID1": "o2,o1,o4,o3",
-            "VID2": "o4,o2,o1,o3",
-            "VID3": "o1,o2,o4,o3",
-            "VID4": "o3,o2,o1,o4",
+            "VID1": ["o2","o1","o4","o3"],
+            "VID2": ["o4","o2","o1","o3"],
+            "VID3": ["o1","o2","o4","o3"],
+            "VID4": ["o3","o2","o1","o4"],
         },
         "Status": 0
     }
 
     dailyPollPrompt = {
-        "Type": "single,prompt,public",
+        "Type": "single,prompt,anonym",
         "Theme": "1",
         "Question": "Describe your best day.",
         "Pollster": "Lajos",
@@ -212,7 +217,7 @@ def dailyPollApp():
         "Status": 0
     }
 
-    dailyPoll = dailyPollPrompt#dailyPollRank#dailyPollSingle#dailyPollMulti#dailyPollRange
+    dailyPoll = dailyPollMulti#dailyPollPrompt#dailyPollRank#dailyPollSingle#dailyPollMulti#dailyPollRange
     questionBody = dailyPoll["Question"]
     pollster = dailyPoll["Pollster"]
     questionType = dailyPoll["Type"]
@@ -229,9 +234,36 @@ def dailyPollApp():
     }
     optionsBody = dailyPoll["Options"]
     qTypeDescr = typeParser(questionType)
-    votersStats = dailyPoll["Answers"]
+    voterStat = {
+        "voteSum":2,
+        "voterSum":7
+    }
+    answersBody = dailyPoll["Answers"]
+    answersProcessed = {}
+
+    if(qTypeDescr["multichoice"] or qTypeDescr["single"]):
+        # create unique list of choices
+        for uid, oList in answersBody.items(): # optionList
+            for oid in oList:
+                option = optionsBody[oid] # get actual choice by ID
+                if option not in answersProcessed:
+                    answersProcessed[option] = {}
+                    answersProcessed[option]["value"] = 1
+                    answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
+                    answersProcessed[option]["voters"] = [uid]
+                else:
+                    answersProcessed[option]["value"] += 1
+                    answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
+                    if(uid not in answersProcessed[option]["voters"]):
+                        answersProcessed[option]["voters"].append(uid)
+
+    if(qTypeDescr["names"] or qTypeDescr["ranking"] or qTypeDescr["openended"]):
+        pass
+    
+    prettyPrintJson(answersProcessed)
+
     kudosMessage = "Grats!"
-    comments = ""
+    comments = {}
     version = "3.0"
 
     if request.method == 'GET':    
@@ -241,9 +273,9 @@ def dailyPollApp():
         pass
 
     return render_template('namizu/dailyPollPage.html', 
-                           banner=banner,qTypeDescr=qTypeDescr,
-                           theme=theme, optionsBody=optionsBody,
-                           questionBody=questionBody, pollster=pollster, pollSubmitted=False
+                           banner=banner,qTypeDescr=qTypeDescr,answersProcessed=answersProcessed,
+                           theme=theme, optionsBody=optionsBody,voterStat=voterStat,kudosMessage=kudosMessage,
+                           questionBody=questionBody, pollster=pollster, pollSubmitted=True
                            )
 
 
