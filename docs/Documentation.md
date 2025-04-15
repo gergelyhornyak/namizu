@@ -62,8 +62,12 @@ Task: haiku battle
     - Multichoice: voters can pick more than 1 answer at a time
 - Anonym **(default)** or public 
     - <anonym,public>
-    - Public: the voters identity is shows next to their answers, plus pollster name
-    - Anonym: as usual, voters cannot see others' choices, nor pollster name
+    - Public: 
+        - the voters identity is shows next to their answers, plus pollster name
+        - complex answers are individually displayed
+    - Anonym: 
+        - as usual, voters cannot see others' choices, nor pollster name
+        - complex answers are collated into one graph
 - Names **(default)** / Options / Range
     - <names,range,yesorno,openended,prompt,teams>
     - Names: The names of the voters are the answers
@@ -85,11 +89,13 @@ multichoice X yesorno
 multichoice X range
 multichoice X teams
 multichoice X prompt
+multichoice X public
 single X ranking
 anonym X teams
 ranking X prompt
 ranking X yesorno
 ranking X teams
+
 
 ---
 
