@@ -39,10 +39,23 @@ def check_user_logged_in(funcName) -> tuple[bool, str]:
 def typeParser(qTypeRaw:dict) -> dict:
     """
     single multichoice anonym public
-    ranking names
-    range yesorno openended prompt teams
+    ranking names range yesorno 
+    openended prompt teams
     """
-    qTypeDescr = {}
+    qTypeDescr = {
+        "single":False,
+        "multichoice":False,
+        "anonym":False,
+        "public":False,
+        "ranking":False,
+        "names":False,
+        "range":False,
+        "yesorno":False,
+        "openended":False,
+        "prompt":False,
+        "teams":False,
+    }
+    
     flags = qTypeRaw.split(",")
 
     if "single" in flags:
@@ -120,16 +133,17 @@ def dailyPollApp():
         "Question": "What is the best age?",
         "Pollster": "X",
         "Options": {
-            "mintext":"18 yrs",
-            "maxtext":"33 yrs",
-            "minvalue":18,
-            "maxvalue":33,
+            "mintext":"01234567890123456789",
+            "maxtext":"01234567890123456789",
+            "minvalue":1,
+            "maxvalue":10,
         },
         "Answers": {
-            "VID1": 22,
-            "VID2": 25,
-            "VID3": 19,
-            "VID4": 33,
+            "VID1": "4",
+            "VID2": "5",
+            "VID3": "8",
+            "VID4": "5",
+            "VID5": "5",
         },
         "Status": 0
     }
@@ -217,7 +231,7 @@ def dailyPollApp():
         "Status": 0
     }
 
-    dailyPoll = dailyPollMulti#dailyPollPrompt#dailyPollRank#dailyPollSingle#dailyPollMulti#dailyPollRange
+    dailyPoll = dailyPollRange#dailyPollPrompt#dailyPollRank#dailyPollSingle#dailyPollMulti#dailyPollRange
     questionBody = dailyPoll["Question"]
     pollster = dailyPoll["Pollster"]
     questionType = dailyPoll["Type"]
@@ -241,7 +255,7 @@ def dailyPollApp():
     answersBody = dailyPoll["Answers"]
     answersProcessed = {}
 
-    if(qTypeDescr["multichoice"] or qTypeDescr["single"]):
+    if(not qTypeDescr["range"]):
         # create unique list of choices
         for uid, oList in answersBody.items(): # optionList
             for oid in oList:
@@ -256,6 +270,19 @@ def dailyPollApp():
                     answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
                     if(uid not in answersProcessed[option]["voters"]):
                         answersProcessed[option]["voters"].append(uid)
+
+    if(qTypeDescr["range"]):
+        for uid, option in answersBody.items():
+            if option not in answersProcessed:
+                answersProcessed[option] = {}
+                answersProcessed[option]["value"] = 1
+                answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
+                answersProcessed[option]["voters"] = [uid]
+            else:
+                answersProcessed[option]["value"] += 1
+                answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
+                if(uid not in answersProcessed[option]["voters"]):
+                    answersProcessed[option]["voters"].append(uid)
 
     if(qTypeDescr["names"] or qTypeDescr["ranking"] or qTypeDescr["openended"]):
         pass
@@ -275,7 +302,7 @@ def dailyPollApp():
     return render_template('namizu/dailyPollPage.html', 
                            banner=banner,qTypeDescr=qTypeDescr,answersProcessed=answersProcessed,
                            theme=theme, optionsBody=optionsBody,voterStat=voterStat,kudosMessage=kudosMessage,
-                           questionBody=questionBody, pollster=pollster, pollSubmitted=True
+                           questionBody=questionBody, pollster=pollster, pollSubmitted=False
                            )
 
 
@@ -289,9 +316,9 @@ def sideQuestApp():
 @bp.route('/editor', methods=['GET', 'POST'])
 def editorApp():
 
-    
+    namesList = ["Bálint","Bella","Geri","Herczi","Hanna","Koppány","Márk"]
 
-    return render_template('namizu/editor.html')
+    return render_template('namizu/editorPage.html',namesList=namesList)
 
 
 @bp.route("/sketcher/canvas")
