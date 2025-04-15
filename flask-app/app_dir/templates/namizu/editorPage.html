@@ -47,14 +47,19 @@
       margin-bottom: 5px;
     }
 
-    textarea {
-      width: 94%;
-      height: 60px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
+    textarea, input[type="text"], button {
+      font-size: 12px;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+
+    textarea, input[type="text"] {
+      width: 100%;
       padding: 10px;
-      resize: none;
-      font-size: 1rem;
+      margin: 10px 0px 0px;
+      border: 1px solid #3a5d6c; /* Dark teal border */
+      background-color: #ffffff; /* White input background */
+      color: #3a5d6c; /* Dark teal text */
     }
 
     .button-group {
@@ -86,6 +91,30 @@
       color: white;
     }
 
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #3a5d6c; /* Dark teal button */
+      color: #ffffff; /* White button text */
+      cursor: pointer; 
+      color: #fff;
+      font-weight: bold;
+      font-size: medium;
+      margin: 1%;
+    }
+
+    .answer-input {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .answer-input input {
+      flex: 1;
+      margin-right: 10px;
+    }
+
     .preview-controls {
       display: flex;
       justify-content: space-between;
@@ -104,6 +133,16 @@
       cursor: pointer;
     }
 
+    .preview .answers-button {
+      border: 1px solid #3a5d6c;
+      margin: 5px;
+      cursor: pointer;
+      padding: 4px 12px;
+      border-radius: 5px;
+      background-color: #3a5d6c; /* Dark teal button */
+      color: #ffffff; /* White button text */   
+    }
+
     .poll-preview {
       background-color: white;
       border-radius: 6px;
@@ -115,16 +154,40 @@
       border: 1px solid #ccc;
     }
 
+    .tutorial {
+      font-size: 12px;
+    }
+
     .submit-button {
       width: 100%;
       margin-top: 15px;
-      padding: 12px;
+      padding: 18px;
       border: none;
       background-color: #2d5b68;
       color: white;
       font-weight: bold;
+      font-size: medium;
       border-radius: 6px;
       cursor: pointer;
+    }
+
+    .range-text {
+    width: 80%;
+    margin: 0% 10%;
+    font-size: 0.6rem;
+    color: #000;  
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    }
+
+    footer {
+    margin-top: auto;
+    text-align: center;
+    padding: 13px;
+    font-size: 0.8rem;
+    background: #000;
+    color: #fff;
     }
 
   </style>
@@ -136,120 +199,291 @@
         <div class="nav-icon">&#128197;</div>
     </header>
     <div class="editor-container">
-        
 
-        <label class="section-label" for="question">Question:</label>
-        <textarea id="question" placeholder="Type your question here..."></textarea>
+        <form id="editor-form" method="POST">
 
-        <label class="section-label">Selection Mode:</label>
-        <div class="button-group">
-            <input type="radio" name="selectionType" id="single" checked>
-            <label for="single">Single-Choice</label>
+            <label class="section-label" for="question">Question:</label>
+                <div class="tutorial" id="question_tutorial" style="display: none;">
+                    Question tutorial
+                </div>
+            <textarea id="question" name="question" maxlength="256" placeholder="Type your question here..."></textarea>
 
-            <input type="radio" name="selectionType" id="multi">
-            <label for="multi">Multi-Choice</label>
-        </div>
+            <label class="section-label">Selection Mode:</label>
+                <div class="tutorial" id="selection_tutorial" style="display: none;">
+                    Selection tutorial
+                </div>
+            <div class="button-group">
+                <input type="radio" name="selectionType" id="single" value="single" />
+                <label for="single">Single-Choice</label>
 
-        <label class="section-label">Voting privacy:</label>
-        <div class="button-group">
-            <input type="radio" name="privacyType" id="anonym" checked>
-            <label for="anonym">Anonym</label>
+                <input type="radio" name="selectionType" id="multi" value="multi" />
+                <label for="multi">Multi-Choice</label>
+            </div>
 
-            <input type="radio" name="privacyType" id="public">
-            <label for="public">Public</label>
-        </div>
-        
+            <label class="section-label">Voting privacy:</label>
+                <div class="tutorial" id="voting_tutorial" style="display: none;">
+                    Voting tutorial
+                </div>
+            <div class="button-group">
+                <input type="radio" name="privacyType" id="anonym" value="anonym">
+                <label for="anonym">Anonym</label>
 
-        <label class="section-label">Poll Type:</label>
-        <div class="button-group">
+                <input type="radio" name="privacyType" id="public" value="public">
+                <label for="public">Public</label>
+            </div>
+            
 
-            <input type="radio" name="optionsType" id="names">
-            <label for="names">Names</label>
+            <label class="section-label">Poll Type:</label>
+                <div class="tutorial" id="polltype_tutorial" style="display: none;">
+                    Poll Type tutorial
+                </div>
+            <div class="button-group">
 
-            <input type="radio" name="optionsType" id="range" checked>
-            <label for="range">Range</label>
+                <input type="radio" name="optionsType" id="names" value="names">
+                <label for="names">Names</label>
 
-            <input type="radio" name="optionsType" id="prompt">
-            <label for="prompt">Prompt</label>
-        </div>
+                <input type="radio" name="optionsType" id="range" value="range">
+                <label for="range">Range</label>
 
-        <div class="button-group">
+                <input type="radio" name="optionsType" id="prompt" value="prompt">
+                <label for="prompt">Prompt</label>
+            </div>
 
-            <input type="radio" name="optionsType" id="yesorno">
-            <label for="yesorno">Yes or No</label>
+            <div class="button-group">
 
-            <input type="radio" name="optionsType" id="openended">
-            <label for="openended">Open Ended</label>
+                <input type="radio" name="optionsType" id="yesorno" value="yesorno">
+                <label for="yesorno">Yes or No</label>
 
-        </div>
+                <input type="radio" name="optionsType" id="openended" value="openended">
+                <label for="openended">Open Ended</label>
 
-        <div class="button-group">
+            </div>
 
-            <input type="radio" name="optionsType" id="teams" checked>
-            <label for="teams">Teams</label>
+            <div class="button-group">
 
-            <input type="radio" name="optionsType" id="chained" checked>
-            <label for="chained">Chained</label>
+                <input type="radio" name="optionsType" id="teams" value="teams">
+                <label for="teams">Teams</label>
 
-        </div>
+                <input type="radio" name="optionsType" id="ranking" value="ranking">
+                <label for="ranking">Ranking</label>
 
-        <hr style="border: 3px dashed black;">
+                <input type="radio" name="optionsType" id="chained" value="chained">
+                <label for="chained">Chained</label>
 
-        <div class="preview-controls">
-            <button type="button">Preview</button>
-            <button type="button">Tutorial</button>
-            <button type="button">Advanced Mode</button>
-        </div>
+            </div>
 
-        <div class="poll-preview">
-            [ Poll Preview ]
-        </div>
+            
+            <div class="form-group answers" id="openended_answers" style="display: none;">
+                <label class="section-label">Open-Ended Options:</label>
+                <div class="answer-input">
+                    <input type="text" class="answer_oe" name="answer-1" placeholder="Type an answer..." maxlength="96">
+                    <button type="button" class="add-answer">+</button>
+                </div>
+            </div>
 
-        <button class="submit-button">Submit New Poll</button>
+            <div class="form-group answers" id="ranking_answers" style="display: none;">
+                <label class="section-label">Ranking Options:</label>
+                <div class="answer-input">
+                    <input type="text" class="answer_rk" name="answer-1" placeholder="Type an answer..." maxlength="96">
+                    <button type="button" class="add-answer">+</button>
+                </div>
+            </div>
+
+            <div class="form-group answers" id="range_answers" style="display: none;">
+                <label class="section-label">Range Options:</label>
+                <div class="answer-input">
+                    <input type="text" class="answer_rg" name="answer-1" placeholder="Start Label" maxlength="20">
+                    <input type="text" class="answer_rg" name="answer-2" placeholder="End Label" maxlength="20">
+                    <input type="text" class="answer_rg" name="answer-3" placeholder="Scale Size" maxlength="2">
+                </div>
+            </div>
+
+            <div class="form-group answers" id="teams_answers" style="display: none;">
+                <label class="section-label">Teams Options:</label>
+                <div class="answer-input">
+                    <input type="text" class="answer_ts" name="answer-1" placeholder="Team A" maxlength="96">
+                    <input type="text" class="answer_ts" name="answer-2" placeholder="Team B" maxlength="96">
+                </div>
+            </div>
+
+            <div class="preview-controls">
+                <button type="button" id="toggle-preview">Preview</button>
+                <button type="button" id="toggle-tutorial">Show Tutorial</button>
+                <button type="button">Advanced Mode</button>
+            </div>
+
+            <div class="poll-preview" id="preview">
+                <h2 id="preview-question">[ Poll Preview ]</h2>
+                <div id="preview-answers"></div>
+              </div>
+
+            <button class="submit-button" type="submit" name="submit" value="submit">Submit New Poll</button>
+        </form>
     </div>
 
+    <footer>
+        naMizu 2025
+    </footer>
+
   <script>
-    const tutorialDiv = document.getElementById('tutorial');
+    const answersDiv = document.getElementById('openended_answers');
+    const ranksDiv = document.getElementById('ranking_answers');
+    
+    const openendedAnswersFormGroup = document.getElementById('openended_answers');
+    const rangeAnswersFormGroup = document.getElementById('range_answers');
+    const teamsAnswersFormGroup = document.getElementById('teams_answers');
+    const rankingAnswersFormGroup = document.getElementById('ranking_answers');
+
+    const radioOptions = document.querySelectorAll('input[name="optionsType"]');
+
+    const previewDiv = document.getElementById('preview');
+    const previewQuestion = document.getElementById('preview-question');
+    const previewAnswers = document.getElementById('preview-answers');
+    
+    const question_tutorialDiv = document.getElementById('question_tutorial');
+    const selection_tutorialDiv = document.getElementById('selection_tutorial');
+    const voting_tutorialDiv = document.getElementById('voting_tutorial');
+    const polltype_tutorialDiv = document.getElementById('polltype_tutorial');
+
     const toggleTutorialButton = document.getElementById('toggle-tutorial');
+    
     // Show/hide tutorial
     toggleTutorialButton.addEventListener('click', () => {
-      const isVisible = tutorialDiv.style.display === 'block';
-      tutorialDiv.style.display = isVisible ? 'none' : 'block';
-      toggleTutorialButton.textContent = isVisible ? 'Show Tutorial' : 'Hide Tutorial';
+      question_tutorialDiv.style.display = (question_tutorialDiv.style.display === 'block') ? 'none' : 'block';
+      selection_tutorialDiv.style.display = (selection_tutorialDiv.style.display === 'block') ? 'none' : 'block';
+      voting_tutorialDiv.style.display = (voting_tutorialDiv.style.display === 'block') ? 'none' : 'block';
+      polltype_tutorialDiv.style.display = (polltype_tutorialDiv.style.display === 'block') ? 'none' : 'block';
+      toggleTutorialButton.textContent = (question_tutorialDiv.style.display !== 'block') ? 'Show Tutorial' : 'Hide Tutorial';
     });
 
-    const switches = {
-      A: document.getElementById("singlechoice"),
-      B: document.getElementById("multichoice"),
-      C: document.getElementById("switchC")
-    };
+    // Add event listeners to the radio buttons
+    radioOptions.forEach((radio) => {
+      radio.addEventListener('change', () => {
+        if (radio.value === 'openended') {
+            openendedAnswersFormGroup.style.display = 'block'; // Show answers form group
+            rangeAnswersFormGroup.style.display = 'none'; // Hide answers form group
+            teamsAnswersFormGroup.style.display = 'none'; 
+            rankingAnswersFormGroup.style.display = 'none'; 
+        }
+        else if (radio.value === 'range') {
+            rangeAnswersFormGroup.style.display = 'block'; // Show answers form group
+            openendedAnswersFormGroup.style.display = 'none'; // Hide answers form group
+            teamsAnswersFormGroup.style.display = 'none'; 
+            rankingAnswersFormGroup.style.display = 'none'; 
+        }
+        else if (radio.value === 'teams') {
+            teamsAnswersFormGroup.style.display = 'block'; // Show answers form group
+            openendedAnswersFormGroup.style.display = 'none'; // Hide answers form group
+            rangeAnswersFormGroup.style.display = 'none'; // Hide answers form group
+            rankingAnswersFormGroup.style.display = 'none'; 
+        }
+        else if (radio.value === 'ranking') {
+            rankingAnswersFormGroup.style.display = 'block'; // Show answers form group
+            teamsAnswersFormGroup.style.display = 'none'; 
+            openendedAnswersFormGroup.style.display = 'none'; // Hide answers form group
+            rangeAnswersFormGroup.style.display = 'none'; 
+        }
+        else if (radio.value === 'names' || radio.value === 'yesorno' || radio.value === 'chained' || radio.value === 'prompt') {
+            openendedAnswersFormGroup.style.display = 'none'; // Hide answers form group
+            rangeAnswersFormGroup.style.display = 'none'; 
+            teamsAnswersFormGroup.style.display = 'none'; 
+            rankingAnswersFormGroup.style.display = 'none'; 
+        }
+      });
+    });
 
-    function enforceRules(source) {
-      const A = switches.A.checked;
-      const B = switches.B.checked;
-      const C = switches.C.checked;
-
-      // Rule: If A is turned on directly, turn off B
-      if (source === 'A' && switches.A.checked) {
-        switches.B.checked = false;
-        switches.C.checked = false;
+    let answerCounter = 2; // Initialize counter for answer input fields
+    // Add answer input dynamically
+    answersDiv.addEventListener('click', (e) => {
+      if (e.target.classList.contains('add-answer')) {
+        answerCounter++;
+        const newAnswerDiv = document.createElement('div');
+        newAnswerDiv.classList.add('answer-input');
+        newAnswerDiv.innerHTML = `
+          <input type="text" class="answer_oe" name="answer-${answerCounter}" placeholder="Type an answer..." maxlength="96">
+          <button type="button" class="delete-answer">—</button>
+        `;
+        answersDiv.appendChild(newAnswerDiv);
+      } else if (e.target.classList.contains('delete-answer')) {
+        e.target.parentElement.remove();
+        if (answerCounter > 1) {
+          answerCounter--;
+        }
       }
+    });
 
-      // Rule: If B is turned on and A is already on, disable A
-      if (source === 'B' && switches.B.checked && A) {
-        switches.A.checked = false;
+    let rankAnswerCounter = 2; // Initialize counter for answer input fields
+    // Add answer input dynamically
+    ranksDiv.addEventListener('click', (e) => {
+      if (e.target.classList.contains('add-answer')) {
+        rankAnswerCounter++;
+        const newAnswerDiv = document.createElement('div');
+        newAnswerDiv.classList.add('answer-input');
+        newAnswerDiv.innerHTML = `
+          <input type="text" class="answer_rk" name="answer-${rankAnswerCounter}" placeholder="Type an answer..." maxlength="96">
+          <button type="button" class="delete-answer">—</button>
+        `;
+        ranksDiv.appendChild(newAnswerDiv);
+      } else if (e.target.classList.contains('delete-answer')) {
+        e.target.parentElement.remove();
+        if (rankAnswerCounter > 1) {
+            rankAnswerCounter--;
+        }
       }
+    });
 
-      // Rule: If C is turned on, A must be turned off
-      if (source === 'C' && switches.C.checked && A) {
-        switches.A.checked = false;
+
+    // Handle preview
+    const namesListJson = {{ namesList | tojson }};
+    document.getElementById('toggle-preview').addEventListener('click', () => {
+      const selectedOption = document.querySelector('input[name="optionsType"]:checked').value;
+      const question = document.getElementById('question').value;
+      let answers = [];
+      if (selectedOption == 'openended') {
+          answers = Array.from(document.querySelectorAll('.answer_oe'))
+          .map(input => input.value)
+          .filter(Boolean);
+      } 
+      else if (selectedOption == 'ranking') {
+          answers = Array.from(document.querySelectorAll('.answer_rk'))
+          .map(input => input.value)
+          .filter(Boolean);
+      } 
+      else if (selectedOption == 'range') {
+        answers = Array.from(document.querySelectorAll('.answer_rg'))
+          .map(input => input.value)
+          .filter(Boolean);
       }
-    }
+      else if (selectedOption == 'teams') {
+        answers = Array.from(document.querySelectorAll('.answer_ts'))
+          .map(input => input.value)
+          .filter(Boolean);
+      }
+      else if (selectedOption == 'names') {
+          answers = namesListJson;
+      }
+      else if (selectedOption == 'yesorno') {
+          answers = ['Definitely!', 'Yes', 'No', 'Never!'];
+      }
+      previewQuestion.textContent = question.replace(/{P}/g, "Someone");
 
-    // Add listeners with named sources
-    switches.A.addEventListener("change", () => enforceRules('A'));
-    switches.B.addEventListener("change", () => enforceRules('B'));
-    switches.C.addEventListener("change", () => enforceRules('C'));
+      if (selectedOption != 'range') {
+            
+            previewAnswers.innerHTML = answers.map(answer => `<button class="answers-button" disabled>${answer}</button>`).join('');
+      }
+      else if (selectedOption == 'range') {
+            mintext = answers[0];
+            maxtext = answers[1];
+            steps = answers[2];
+            previewAnswers.innerHTML = `<div class="range-text">
+                  <div>${mintext}</div>
+                  <div>${maxtext}</div>
+              </div>
+              <input type="range" min=${1} max=${steps} value=1 class="slider" id="myRange">`
+            
+      }
+      previewDiv.style.display = 'block';
+    });
 
   </script>
 </body>
