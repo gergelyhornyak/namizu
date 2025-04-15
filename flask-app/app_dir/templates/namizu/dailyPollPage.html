@@ -7,12 +7,15 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Joti+One&family=VT323&display=swap" rel="stylesheet">
     
-    <title>naMizu Poll</title>
+    <title>naMizu daily poll</title>
     <style>
-    /* Reset & base styles */
+:root {
+    --bg-color: {{ theme.mainBG }};
+}
+
 body {
   margin: 0;
-  background: #fef6e9;
+  background-color: var(--bg-color);
   color: #333;
 }
 
@@ -23,7 +26,7 @@ body {
   flex-direction: column;
   min-height: 100vh;
   border: 1px solid #ccc;
-  background: #fde8cd;
+  background-color: var(--bg-color);
 }
 
 header {
@@ -72,6 +75,7 @@ header h1 {
   padding: 4px;
   font-weight: bold;
   font-size: 1rem;
+  margin: 2%;
 }
 
 /* Voting area */
@@ -235,6 +239,65 @@ footer {
     margin-top: 20px;
 }
 
+#chart-container {
+    width: 90%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-left: 2%;
+}
+
+.bar-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.bar {
+    position: relative;
+    background-color: #bf4222;
+    border-radius: 20px;
+    border-top-left-radius: 0%;
+    border-bottom-left-radius: 0%;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    flex-wrap: wrap;
+    word-wrap: break-word;
+    padding: 1% 0%;
+}
+
+.bar .value {
+    color: #fff;
+    font-weight: bold;
+    font-size: medium;
+    white-space: normal;
+    overflow-wrap: break-word;
+    padding-left: 10px;
+    padding-right: 10px;
+    max-width: 100%;
+    text-align: right;
+    align-self: flex-end; /* Align value to the bottom right */
+    display: inline-block;
+}
+
+.bar .label {
+    font-size: 16px;
+    font-weight: normal;
+    text-align: left;
+    color: #333;
+    padding-left: 10px;
+    width: 100%; /* Ensure label spans the full width */
+}
+
+/* Optional: Style for bar container to ensure it wraps neatly */
+.bar-wrapper .label {
+    font-weight: bold;
+}
+
 
   </style>
 </head>
@@ -256,91 +319,116 @@ footer {
       </p>
     </section>
     
-    <section class="instruction">
-      {% if qTypeDescr.multichoice %}
-      <p>MULTI-CHOICE</p>
-      {% endif %}
-      {% if qTypeDescr.single %}
-      <p>SINGLE-CHOICE</p>
-      {% endif %}
-      {% if qTypeDescr.range %}
-      <p>RANGE</p>
-      {% endif %}
-    </section>
+    {% if not pollSubmitted %}
 
-    {% if qTypeDescr.buttons %}
+        <section class="instruction">
+          {% if qTypeDescr.multichoice %}
+          MULTI-CHOICE 
+          {% endif %}
 
-      {% if qTypeDescr.single %}
-      <section class="vote-box">
-          {% for oid, option in optionsBody.items() %}
-              <button class="vote-btn" type="submit" name="{{ oid }}" value="{{ option }}">{{ option }}</button>
-          {% endfor %}
-      </section>
+          {% if qTypeDescr.single %}
+          SINGLE-CHOICE 
+          {% endif %}
 
-      {% elif qTypeDescr.multichoice %}
-      <section class="vote-box">
-          {% for oid, option in optionsBody.items() %}
-          <label class="checkboxx">
-            <input class="checkboxx_input" type="checkbox" name="{{ oid }}" style="display: none;" value="{{ option }}" onchange="isChecked(this,'')"/>
-            <div class="checkboxx_label">{{ option }}</div>
-          </label>
-          {% endfor %}
-      </section>
-      {% endif %}
-    {% endif %}
+          {% if qTypeDescr.range %}
+          RANGE 
+          {% endif %}
 
-    {% if qTypeDescr.range %}
-      <section class="vote-box">
-          <div class="range-text">
-              <div>{{ optionsBody.mintext }}</div>
-              <div>{{ optionsBody.maxtext }}</div>
-          </div>
-          <input type="range" min="{{ optionsBody.minvalue }}" max="{{ optionsBody.maxvalue }}" value="{{ optionsBody.minvalue }}" class="slider" id="myRange">
-      </section>
-    {% endif %}
+          {% if qTypeDescr.prompt %}
+          PROMPT 
+          {% endif %}
+        </section>
 
-    {% if qTypeDescr.ranking %}
-    <section class="vote-box" style="display:block;">
-        <!--ranking-->
-        <form id="rankingForm" method="POST">
-            <ul id="sortable-list" class="ranking-list">
-                {% for option in optionsBody %}
-                <li data-value="{{ loop.index }}">{{ option }}</li>
-                {% endfor %}
-            </ul>
-            <input type="hidden" name="ranked_list" id="rankedInput">
-            <button class="submit-btn" type="submit">Submit rankings</button>
-        </form>
-    </section>
-    {% endif %}
+        {% if qTypeDescr.buttons %}
 
-    {% if qTypeDescr.prompt %}
-    <section class="vote-box">
-        <div class="prompt-box">
-            <input type="text" id="prompt" name="promptMessage" placeholder="Type a message..." >
-            <input type="submit" id="promptSubmit" value="Submit">
-        </div>
-    </section>
-    {% endif %}
+          {% if qTypeDescr.single %}
+          <section class="vote-box">
+              {% for oid, option in optionsBody.items() %}
+                  <button class="vote-btn" type="submit" name="{{ oid }}" value="{{ option }}">{{ option }}</button>
+              {% endfor %}
+          </section>
 
-    <section class="comments-box">
-        <div class="comments-header">Comments</div>
-        {% if comments %}
-            {% for comment in comments %}
-                <div class="comment">
-                    <div class="text"><strong>{{ comment["name"] }}:</strong> {{ comment["message"] }}</div>
-                </div>  
-            {% endfor %}
+          {% elif qTypeDescr.multichoice %}
+          <section class="vote-box">
+              {% for oid, option in optionsBody.items() %}
+              <label class="checkboxx">
+                <input class="checkboxx_input" type="checkbox" name="{{ oid }}" style="display: none;" value="{{ option }}" onchange="isChecked(this,'')"/>
+                <div class="checkboxx_label">{{ option }}</div>
+              </label>
+              {% endfor %}
+          </section>
+          {% endif %}
         {% endif %}
 
-        <form method="POST">
+        {% if qTypeDescr.range %}
+          <section class="vote-box">
+              <div class="range-text">
+                  <div>{{ optionsBody.mintext }}</div>
+                  <div>{{ optionsBody.maxtext }}</div>
+              </div>
+              <input type="range" min="{{ optionsBody.minvalue }}" max="{{ optionsBody.maxvalue }}" value="{{ optionsBody.minvalue }}" class="slider" id="myRange">
+          </section>
+        {% endif %}
+
+        {% if qTypeDescr.ranking %}
+        <section class="vote-box" style="display:block;">
+            <!--ranking-->
+            <form id="rankingForm" method="POST">
+                <ul id="sortable-list" class="ranking-list">
+                    {% for option in optionsBody %}
+                    <li data-value="{{ loop.index }}">{{ option }}</li>
+                    {% endfor %}
+                </ul>
+                <input type="hidden" name="ranked_list" id="rankedInput">
+                <button class="submit-btn" type="submit">Submit rankings</button>
+            </form>
+        </section>
+        {% endif %}
+
+        {% if qTypeDescr.prompt %}
+        <section class="vote-box">
             <div class="prompt-box">
-                <input type="text" id="prompt" name="comment" placeholder="Type a message..." >
+                <input type="text" id="prompt" name="promptMessage" placeholder="Write your answer here..." >
                 <input type="submit" id="promptSubmit" value="Submit">
             </div>
-        </form>
-    </section>
+        </section>
+        {% endif %}
+
+    {% else %}
+    <!-- if player already submitted poll -->
+
+        {{ voteSum }} of {{ voterSum }} people have voted already</div>
     
+        <div id="chart-container">
+            {% for label, answerDetails in answersBody.items() %}  
+                <div class="bar-wrapper">
+                    <div class="label">{{ label }}</div>
+                    <div class="bar" style="width: {{ answerDetails.width }}%;">
+                        <span class="value" >{{ answerDetails.value }}</span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <section class="comments-box">
+            <div class="comments-header">Comments</div>
+            {% if comments %}
+                {% for comment in comments %}
+                    <div class="comment">
+                        <div class="text"><strong>{{ comment["name"] }}:</strong> {{ comment["message"] }}</div>
+                    </div>  
+                {% endfor %}
+            {% endif %}
+
+            <form method="POST">
+                <div class="prompt-box">
+                    <input type="text" id="prompt" name="comment" placeholder="Type a message..." >
+                    <input type="submit" id="promptSubmit" value="Submit">
+                </div>
+            </form>
+        </section>
+        
+    {% endif %}
 
     <footer>
       <p>© 2025 naMizu™. Built with care for the community.</p>
