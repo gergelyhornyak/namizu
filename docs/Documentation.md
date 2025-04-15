@@ -6,6 +6,10 @@ and do backup every day -> private github repo
 
 ---
 
+Flask, Jinja, Python3, CSS, Bootstrap
+
+---
+
 naMizu events have the following members: 
 
 - voter(s), 
@@ -60,8 +64,6 @@ Task: haiku battle
     - <anonym,public>
     - Public: the voters identity is shows next to their answers, plus pollster name
     - Anonym: as usual, voters cannot see others' choices, nor pollster name
-- Ranking or not **(default)**:
-    - Voters rank answers by preference (e.g., 1st, 2nd, 3rd).
 - Names **(default)** / Options / Range
     - <names,range,yesorno,openended,prompt,teams>
     - Names: The names of the voters are the answers
@@ -70,8 +72,24 @@ Task: haiku battle
     - Open-ended: The pollster can create custom options to vote for
     - Prompt: extra text from users, users need to submit a short answer
     - Teams: show which team you have ended up, only 2 choices are accepted
+    - Ranking or not **(default)**:
+        - Voters rank answers by preference (e.g., 1st, 2nd, 3rd).
     + Chained: an extra question after you saw the results
 + Theme: colours, font and such can be customised to create theme for the question (e.g.: spooky, dark, funny, resiliant)
+
+---
+
+question type rules:
+
+multichoice X yesorno
+multichoice X range
+multichoice X teams
+multichoice X prompt
+single X ranking
+anonym X teams
+ranking X prompt
+ranking X yesorno
+ranking X teams
 
 ---
 
@@ -102,6 +120,21 @@ DateTime
         "frontColour":"HEX"
     }
 }
+"IDX": {
+    "Type": "a,b,c,d,e",
+    "Question": "Who is most likely to cheat on a test?",
+    "Pollster": "UID",
+    "Options": {
+        "range config":"and options as list with ID"
+    },
+    "Answers": {
+        "Voter1": "either the value, or the key",
+        "Voter2": 0,
+        "Voter3": 0,
+        "Voter4": 1,
+    },
+    "Status": 0
+  }
 ```
 
 ---
@@ -264,6 +297,7 @@ new poll format:
     "Type": "a,b,c,d,e",
     "Question": "Who is most likely to cheat on a test?",
     "Pollster": "UID",
+    "Options":{},
     "Answers": {
         "Voter1": 0,
         "Voter2": 0,
