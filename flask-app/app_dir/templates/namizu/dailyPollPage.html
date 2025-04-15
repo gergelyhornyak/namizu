@@ -397,18 +397,20 @@ footer {
     {% else %}
     <!-- if player already submitted poll -->
 
-        {{ voteSum }} of {{ voterSum }} people have voted already</div>
-    
+        {{ kudosMessage }} <br>
+        {{ voterStat.voteSum }} of {{ voterStat.voterSum }} people have voted already
+        {% if qTypeDescr.ranking or qTypeDescr.names or qTypeDescr.openended %}
         <div id="chart-container">
-            {% for label, answerDetails in answersBody.items() %}  
+            {% for label, details in answersProcessed.items() %}  
                 <div class="bar-wrapper">
                     <div class="label">{{ label }}</div>
-                    <div class="bar" style="width: {{ answerDetails.width }}%;">
-                        <span class="value" >{{ answerDetails.value }}</span>
+                    <div class="bar" style="width: {{ details.width }}%;">
+                        <span class="value" >{{ details.value }}</span>
                     </div>
                 </div>
             {% endfor %}
         </div>
+        {% endif %}
 
         <section class="comments-box">
             <div class="comments-header">Comments</div>
@@ -434,7 +436,7 @@ footer {
       <p>© 2025 naMizu™. Built with care for the community.</p>
     </footer>
 
-    </div>
+  </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
       <script>
