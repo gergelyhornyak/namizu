@@ -196,11 +196,37 @@ def dailyPollApp():
         "Status": 0
     }
 
-    dailyPoll = dailyPollRank#dailyPollSingle#dailyPollMulti#dailyPollRange
+    dailyPollPrompt = {
+        "Type": "single,prompt,public",
+        "Theme": "1",
+        "Question": "Describe your best day.",
+        "Pollster": "Lajos",
+        "Options": {},
+        "Answers": {
+            "VID1": "jndkj dajsndjka sdkj naskjdn ajkdk ksa nd",
+            "VID2": "odsao jaso jd oia sjd oi jwo idcnqincq cwqc",
+            "VID3": "dn idjasc di cha sbhd csha chjd cj d",
+            "VID4": "po pfdsfpoiswejc bhjc whd uqwuch qwuxn u wc éőéő",
+            "VID5": "haha nope",
+        },
+        "Status": 0
+    }
+
+    dailyPoll = dailyPollPrompt#dailyPollRank#dailyPollSingle#dailyPollMulti#dailyPollRange
     questionBody = dailyPoll["Question"]
     pollster = dailyPoll["Pollster"]
     questionType = dailyPoll["Type"]
-    questionTheme = dailyPoll["Theme"]
+    theme = dailyPoll["Theme"]
+    theme = {
+        "mainBG":"#bfe5f7",
+        "bannerBG":"#50bbf3",
+        "bannerTXT":"#000000",
+        "questionBG":"#7bcdf6",
+        "questionTXT":"#000000",
+        "infoTXT":"#000000",
+        "voteboxBG":"#dcded1",
+        "voteboxTXT":"#000000"
+    }
     optionsBody = dailyPoll["Options"]
     qTypeDescr = typeParser(questionType)
     votersStats = dailyPoll["Answers"]
@@ -216,8 +242,8 @@ def dailyPollApp():
 
     return render_template('namizu/dailyPollPage.html', 
                            banner=banner,qTypeDescr=qTypeDescr,
-                           theme=questionTheme, optionsBody=optionsBody,
-                           questionBody=questionBody, pollster=pollster
+                           theme=theme, optionsBody=optionsBody,
+                           questionBody=questionBody, pollster=pollster, pollSubmitted=False
                            )
 
 
