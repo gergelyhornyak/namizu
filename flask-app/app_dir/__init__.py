@@ -1,5 +1,6 @@
 from flask import Flask
 from .routes import main_routes, namizu_routes
+from .routes import namizu_routes_new, main_routes_new
 import logging
 
 def create_app():
@@ -13,7 +14,7 @@ def create_app():
     app.config['PERMANENT_SESSION_LIFETIME'] = 86400
     app.logger.debug("Session lifetime set to 24hrs")
     # Register blueprints
-    app.register_blueprint(main_routes.bp)
-    app.register_blueprint(namizu_routes.bp, url_prefix="/namizu")
+    app.register_blueprint(main_routes_new.bp)
+    app.register_blueprint(namizu_routes_new.bp, url_prefix="/namizu")
 
     return app
