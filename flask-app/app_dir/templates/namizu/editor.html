@@ -49,8 +49,7 @@
       border-radius: 5px;
       background-color: #3a5d6c; /* Dark teal button */
       color: #ffffff; /* White button text */
-      cursor: pointer;
-      
+      cursor: pointer; 
     }
 
     .form-group {
@@ -187,6 +186,7 @@
     .radio-input2 input {
       display: none;
     }
+    
 
     .radio-input1 {
       --container_width: 300px;
@@ -520,7 +520,7 @@
     });
 
     // Handle preview
-    const namesList = {{ namesList | tojson }};
+    const namesListJson = {{ namesList | tojson }};
     document.getElementById('toggle-preview').addEventListener('click', () => {
       const selectedOption = document.querySelector('input[name="radio-options"]:checked').value;
       const question = document.getElementById('question').value;
@@ -530,12 +530,10 @@
           .map(input => input.value)
           .filter(Boolean);
       } else if (selectedOption == 'names') {
-          answers = namesList;
+          answers = namesListJson;
       } else if (selectedOption == 'showdown') {
           answers = ["{P}","{P}"];
       }
-
-
       previewQuestion.textContent = question;
       previewAnswers.innerHTML = answers.map(answer => `<button class="answers-button" disabled>${answer}</button>`).join('');
       previewDiv.style.display = 'block';
