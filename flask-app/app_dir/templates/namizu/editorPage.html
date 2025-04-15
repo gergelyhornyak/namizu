@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>naMizu Editor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Courier New', monospace;
+      background-color: #fce5c0;
+      display: block;
+      justify-content: center;
+    }
+
+    .editor-container {
+      background-color: #fce5c0;
+      padding: 2%;
+    }
+
+    header {
+        background: #2b4f5b;
+        color: #fff;
+        padding: 12px 16px;
+        margin: 0%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    header h1 {
+        font-size: 1.5rem;
+        margin: 0;
+    }
+
+    .nav-icon {
+        font-size: 1.6rem;
+        background-color: #fae5c9; 
+        border-radius: 50%; 
+        padding: 8px;
+    }
+
+    label.section-label {
+      display: block;
+      font-weight: bold;
+      margin-top: 15px;
+      margin-bottom: 5px;
+    }
+
+    textarea {
+      width: 94%;
+      height: 60px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      resize: none;
+      font-size: 1rem;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      gap: 10px;
+    }
+
+    .button-group input {
+      display: none;
+    }
+
+    .button-group label {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      border: 1px solid #2d5b68;
+      border-radius: 8px;
+      background-color: white;
+      color: #2d5b68;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .button-group input:checked + label {
+      background-color: #2d5b68;
+      color: white;
+    }
+
+    .preview-controls {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+    }
+
+    .preview-controls button {
+      flex: 1;
+      margin: 0 5px;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      background-color: #2d5b68;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .poll-preview {
+      background-color: white;
+      border-radius: 6px;
+      padding: 20px;
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+      color: #2d5b68;
+      border: 1px solid #ccc;
+    }
+
+    .submit-button {
+      width: 100%;
+      margin-top: 15px;
+      padding: 12px;
+      border: none;
+      background-color: #2d5b68;
+      color: white;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+  </style>
+</head>
+<body>
+    <header>
+        <div class="nav-icon">&#127968;</div>
+        <h1>naMizu Editor</h1>
+        <div class="nav-icon">&#128197;</div>
+    </header>
+    <div class="editor-container">
+        
+
+        <label class="section-label" for="question">Question:</label>
+        <textarea id="question" placeholder="Type your question here..."></textarea>
+
+        <label class="section-label">Selection Mode:</label>
+        <div class="button-group">
+            <input type="radio" name="selectionType" id="single" checked>
+            <label for="single">Single-Choice</label>
+
+            <input type="radio" name="selectionType" id="multi">
+            <label for="multi">Multi-Choice</label>
+        </div>
+
+        <label class="section-label">Voting privacy:</label>
+        <div class="button-group">
+            <input type="radio" name="privacyType" id="anonym" checked>
+            <label for="anonym">Anonym</label>
+
+            <input type="radio" name="privacyType" id="public">
+            <label for="public">Public</label>
+        </div>
+        
+
+        <label class="section-label">Poll Type:</label>
+        <div class="button-group">
+
+            <input type="radio" name="optionsType" id="names">
+            <label for="names">Names</label>
+
+            <input type="radio" name="optionsType" id="range" checked>
+            <label for="range">Range</label>
+
+            <input type="radio" name="optionsType" id="prompt">
+            <label for="prompt">Prompt</label>
+        </div>
+
+        <div class="button-group">
+
+            <input type="radio" name="optionsType" id="yesorno">
+            <label for="yesorno">Yes or No</label>
+
+            <input type="radio" name="optionsType" id="openended">
+            <label for="openended">Open Ended</label>
+
+        </div>
+
+        <div class="button-group">
+
+            <input type="radio" name="optionsType" id="teams" checked>
+            <label for="teams">Teams</label>
+
+            <input type="radio" name="optionsType" id="chained" checked>
+            <label for="chained">Chained</label>
+
+        </div>
+
+        <hr style="border: 3px dashed black;">
+
+        <div class="preview-controls">
+            <button type="button">Preview</button>
+            <button type="button">Tutorial</button>
+            <button type="button">Advanced Mode</button>
+        </div>
+
+        <div class="poll-preview">
+            [ Poll Preview ]
+        </div>
+
+        <button class="submit-button">Submit New Poll</button>
+    </div>
+
+  <script>
+    const tutorialDiv = document.getElementById('tutorial');
+    const toggleTutorialButton = document.getElementById('toggle-tutorial');
+    // Show/hide tutorial
+    toggleTutorialButton.addEventListener('click', () => {
+      const isVisible = tutorialDiv.style.display === 'block';
+      tutorialDiv.style.display = isVisible ? 'none' : 'block';
+      toggleTutorialButton.textContent = isVisible ? 'Show Tutorial' : 'Hide Tutorial';
+    });
+
+    const switches = {
+      A: document.getElementById("singlechoice"),
+      B: document.getElementById("multichoice"),
+      C: document.getElementById("switchC")
+    };
+
+    function enforceRules(source) {
+      const A = switches.A.checked;
+      const B = switches.B.checked;
+      const C = switches.C.checked;
+
+      // Rule: If A is turned on directly, turn off B
+      if (source === 'A' && switches.A.checked) {
+        switches.B.checked = false;
+        switches.C.checked = false;
+      }
+
+      // Rule: If B is turned on and A is already on, disable A
+      if (source === 'B' && switches.B.checked && A) {
+        switches.A.checked = false;
+      }
+
+      // Rule: If C is turned on, A must be turned off
+      if (source === 'C' && switches.C.checked && A) {
+        switches.A.checked = false;
+      }
+    }
+
+    // Add listeners with named sources
+    switches.A.addEventListener("change", () => enforceRules('A'));
+    switches.B.addEventListener("change", () => enforceRules('B'));
+    switches.C.addEventListener("change", () => enforceRules('C'));
+
+  </script>
+</body>
+</html>
