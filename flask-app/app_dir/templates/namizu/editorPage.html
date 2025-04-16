@@ -233,9 +233,13 @@
 </head>
 <body>
     <header>
-        <div class="nav-icon">&#127968;</div>
+        <a href="{{ url_for('namizu.landingPage') }}">
+            <div class="nav-icon">&#127968;</div>
+        </a>
         <h1>naMizu Editor</h1>
-        <div class="nav-icon">&#128197;</div>
+        <a href="{{ url_for('namizu.landingPage') }}">
+            <div class="nav-icon">&#128197;</div>
+        </a>
     </header>
 
     <div id="overlay"></div>
@@ -260,11 +264,11 @@
                     Selection tutorial
                 </div>
             <div class="button-group">
-                <input type="radio" name="selectionType" id="single" value="single" />
-                <label for="single">Single-Choice</label>
+                <input type="radio" name="selectionType" id="singlechoice" value="singlechoice" />
+                <label for="singlechoice">Single-Choice</label>
 
-                <input type="radio" name="selectionType" id="multi" value="multi" />
-                <label for="multi">Multi-Choice</label>
+                <input type="radio" name="selectionType" id="multichoice" value="multichoice" />
+                <label for="multichoice">Multi-Choice</label>
             </div>
 
             <label class="section-label">Voting privacy:</label>
