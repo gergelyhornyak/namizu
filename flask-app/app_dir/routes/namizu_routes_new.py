@@ -38,12 +38,12 @@ def check_user_logged_in(funcName) -> tuple[bool, str]:
 
 def typeParser(qTypeRaw:dict) -> dict:
     """
-    single multichoice anonym public
+    singlechoice multichoice anonym public
     ranking names range yesorno 
     openended prompt teams
     """
     qTypeDescr = {
-        "single":False,
+        "singlechoice":False,
         "multichoice":False,
         "anonym":False,
         "public":False,
@@ -58,17 +58,17 @@ def typeParser(qTypeRaw:dict) -> dict:
     
     flags = qTypeRaw.split(",")
 
-    if "single" in flags:
-        qTypeDescr["single"] = True
+    if "singlechoice" in flags:
+        qTypeDescr["singlechoice"] = True
         qTypeDescr["multichoice"] = False
-    else:
-        qTypeDescr["single"] = False
+    elif "multichoice" in flags:
+        qTypeDescr["singlechoice"] = False
         qTypeDescr["multichoice"] = True
 
     if "anonym" in flags:
         qTypeDescr["anonym"] = True
         qTypeDescr["public"] = False
-    else:
+    elif "public" in flags:
         qTypeDescr["anonym"] = False
         qTypeDescr["public"] = True
 
@@ -186,7 +186,7 @@ def dailyPollApp():
     }
 
     dailyPollSingle = {
-        "Type": "single,names,anonym",
+        "Type": "singlechoice,names,anonym",
         "Theme": "1",
         "Question": "Who is the tallest?",
         "Pollster": "Lajos",
@@ -209,21 +209,21 @@ def dailyPollApp():
     }
 
     dailyPollRank = {
-        "Type": "single,ranking,anonym",
-        "Theme": "1",
-        "Question": "Which would you eat the most?",
-        "Pollster": "Lajos",
+        "Type": "multichoice,ranking,anonym",
+        "Theme": "default",
+        "Question": "Rank the following places!",
+        "Pollster": "Geri",
         "Options": {
-            "o1":"Banana",
-            "o2":"Garlic",
-            "o3":"Cheese cake",
-            "o4":"Cheddar cheese",
+            "option1": "Budapest",
+            "option2": "Debrecen",
+            "option3": "P\u00e9cs",
+            "option4": "G\u00f6d"
         },
         "Answers": {
-            "VID1": ["o2","o1","o4","o3"],
-            "VID2": ["o4","o2","o1","o3"],
-            "VID3": ["o1","o2","o4","o3"],
-            "VID4": ["o3","o2","o1","o4"],
+            "VID1": ["option2","option1","option4","option3"],
+            "VID2": ["option4","option2","option1","option3"],
+            "VID3": ["option1","option2","option4","option3"],
+            "VID4": ["option3","option2","option1","option4"],
         },
         "Status": 0
     }
@@ -244,7 +244,7 @@ def dailyPollApp():
         "Status": 0
     }
 
-    dailyPoll = dailyPollRange#dailyPollPrompt#dailyPollRank#dailyPollSingle#dailyPollMulti#dailyPollRange
+    dailyPoll = dailyPollSingle#dailyPollPrompt#dailyPollRank#dailyPollSingle#dailyPollMulti#dailyPollRange
     questionBody = dailyPoll["Question"]
     pollster = dailyPoll["Pollster"]
     questionType = dailyPoll["Type"]
@@ -268,7 +268,7 @@ def dailyPollApp():
     answersBody = dailyPoll["Answers"]
     answersProcessed = {}
 
-    if(not qTypeDescr["range"]):
+    if(not qTypeDescr["range"] and not qTypeDescr["prompt"]):
         # create unique list of choices
         for uid, oList in answersBody.items(): # optionList
             for oid in oList:
@@ -297,6 +297,9 @@ def dailyPollApp():
                 if(uid not in answersProcessed[option]["voters"]):
                     answersProcessed[option]["voters"].append(uid)
 
+    if(qTypeDescr["prompt"]):
+        pass
+
     if(qTypeDescr["names"] or qTypeDescr["ranking"] or qTypeDescr["openended"]):
         pass
     
@@ -310,7 +313,13 @@ def dailyPollApp():
         pass        
 
     elif request.method == 'POST':
-        pass
+        print(f"{request.form = }")
+        # [('ranked_list', '["Göd","Budapest","Pécs","Debrecen"]')]
+        # [('range_value', '3')]
+        # [('promptMessage', 'jdassk jdnd kasd kas ndkka dsa ')]
+        # MULTI [('o3', 'Geri'), ('o5', 'Hanna'), ('o6', 'Koppány')]
+        # SINGLE [('o2', 'Geri')]
+
 
     return render_template('namizu/dailyPollPage.html', 
                            banner=banner,qTypeDescr=qTypeDescr,answersProcessed=answersProcessed,
@@ -330,6 +339,7 @@ def sideQuestApp():
 def editorApp():
     namesList = ["Bálint","Bella","Geri","Herczi","Hanna","Koppány","Márk"]
     restartEditor = False
+    session.pop('_flashes', None)
     pollBody = {
         "Type":"",
         "Question":"",
@@ -354,7 +364,7 @@ def editorApp():
             pollBody["Options"] = {            
                 "mintext": request.form["answer_range-1"],
                 "maxtext": request.form["answer_range-2"],
-                "minvalue":1,
+                "minvalue":"1",
                 "maxvalue":request.form["answer_range-3"],
             }
         if(request.form["optionsType"] == "teams"):
@@ -396,15 +406,15 @@ def editorApp():
 
         ## ERROR CHECKING
 
-        if("multi" in pollBody["Type"] and "yesorno" in pollBody["Type"]):
+        if("multichoice" in pollBody["Type"] and "yesorno" in pollBody["Type"]):
             flash("Cannot be yes-or-no and multi-choice at the same time. Session restarted")
-        if("multi" in pollBody["Type"] and "range" in pollBody["Type"]):
+        if("multichoice" in pollBody["Type"] and "range" in pollBody["Type"]):
             flash("Cannot be range and multi-choice at the same time. Session restarted")
-        if("multi" in pollBody["Type"] and "teams" in pollBody["Type"]):
+        if("multichoice" in pollBody["Type"] and "teams" in pollBody["Type"]):
             flash("Cannot be teams and multi-choice at the same time. Session restarted")
-        if("multi" in pollBody["Type"] and "prompt" in pollBody["Type"]):
+        if("multichoice" in pollBody["Type"] and "prompt" in pollBody["Type"]):
             flash("Cannot be prompt and multi-choice at the same time. Session restarted")
-        if("single" in pollBody["Type"] and "ranking" in pollBody["Type"]):
+        if("singlechoice" in pollBody["Type"] and "ranking" in pollBody["Type"]):
             flash("Cannot be ranking and single-choice at the same time. Session restarted")
         if("anonym" in pollBody["Type"] and "teams" in pollBody["Type"]):
             flash("Cannot be anonym and teams at the same time. Session restarted")
@@ -430,6 +440,13 @@ def editorApp():
                 restartEditor = True
                 flash("This poll already exists. Session restarted.")
                 break
+
+        if not restartEditor:
+            qid = "Q"+str(len(questions_bank)+1)
+            questions_bank[qid] = pollBody
+            with open('database/questions_bank.json', 'w') as f:
+                json.dump(questions_bank, f, indent=4)
+            flash("Poll submitted successfully.")
     
     return render_template('namizu/editorPage.html',namesList=namesList)
 
@@ -440,4 +457,8 @@ def sketcherApp():
 
 @bp.route("/gallery/welcome")
 def galleryApp():
+    return 0
+
+@bp.route("/calendar")
+def calendarApp():
     return 0
