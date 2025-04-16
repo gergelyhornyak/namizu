@@ -93,9 +93,22 @@ def typeParser(qTypeRaw:dict) -> dict:
     
     return qTypeDescr
 
-def prettyPrintJson(jsonFile:dict):
+def prettyPrintJson(jsonFile:dict) -> None:
     json_formatted_str = json.dumps(jsonFile, indent=4)
     print(json_formatted_str)
+
+def findByID(uid:str) -> str:
+    users_db = {}
+    try:
+        with open('database/user_db.json', 'r') as f:
+            users_db = json.load(f)
+    except Exception as e:
+        print(e)
+    try:
+        username = users_db[uid]["name"]
+    except KeyError:
+        print("User cannot be found.\n")
+    return username
 
 #* LANDING PAGE
 
@@ -315,9 +328,109 @@ def sideQuestApp():
     
 @bp.route('/editor', methods=['GET', 'POST'])
 def editorApp():
-
     namesList = ["Bálint","Bella","Geri","Herczi","Hanna","Koppány","Márk"]
+    restartEditor = False
+    pollBody = {
+        "Type":"",
+        "Question":"",
+        "Options":{},
+        "Pollster":"",
+        "Theme":""
+    }
+    if request.method == "POST":
+        #print(f"{request.form = }")
+        pollBody["Question"] = request.form["question"]
+        pollBody["Type"] = request.form["selectionType"] + "," + request.form["privacyType"] + "," + request.form["optionsType"]
+        pollBody["Pollster"] = findByID("ID3")
+        pollBody["Theme"] = "default"
+        
+        ## process Options
 
+        if(request.form["optionsType"] == "yesorno"):
+            pollBody["Options"] = {f"option{i+1}": val for i, val in enumerate(['Definitely!', 'Yes', 'No', 'Never!'])}
+        if(request.form["optionsType"] == "names"):
+            pollBody["Options"] = {f"option{i+1}": val for i, val in enumerate(namesList)}
+        if(request.form["optionsType"] == "range"):
+            pollBody["Options"] = {            
+                "mintext": request.form["answer_range-1"],
+                "maxtext": request.form["answer_range-2"],
+                "minvalue":1,
+                "maxvalue":request.form["answer_range-3"],
+            }
+        if(request.form["optionsType"] == "teams"):
+            pollBody["Options"] = {            
+                "Team A": request.form["teams-1"],
+                "Team B": request.form["teams-2"],
+            }
+        if(request.form["optionsType"] == "ranking"):
+            rankingAnswers = [value for key, value in request.form.items() if key.startswith('answer_ranking')]
+            #print(f"{rankingAnswers = }\n")
+            pollBody["Options"] = {f"option{i+1}": val for i, val in enumerate(rankingAnswers)}
+        if(request.form["optionsType"] == "openended"):
+            openendedAnswers = [value for key, value in request.form.items() if key.startswith('answer_openended')]
+            #print(f"{openendedAnswers = }\n")
+            pollBody["Options"] = {f"option{i+1}": val for i, val in enumerate(openendedAnswers)}
+
+        ## process the Question
+
+        if "{" in pollBody["Question"] and "}" in pollBody["Question"]:
+            text = pollBody["Question"]
+            number_of_variables = text.count("{")
+            number_of_variables_check = text.count("}")
+            if number_of_variables!=number_of_variables_check:
+                restartEditor = True
+                flash("Typo in random name {P}.")
+            if number_of_variables > 7:#voterSum()
+                restartEditor = True
+                flash("Too many variables.")
+            # Names to replace - double the lenght, so less errors
+            selected_names = random.sample(namesList, number_of_variables)
+            # Replace placeholders sequentially
+            try:
+                result = re.sub(r"{P}", lambda _: selected_names.pop(0), text)
+            except IndexError:
+                print("No more names to pop out.\n")
+            pollBody["Question"] = result
+
+        prettyPrintJson(pollBody)
+
+        ## ERROR CHECKING
+
+        if("multi" in pollBody["Type"] and "yesorno" in pollBody["Type"]):
+            flash("Cannot be yes-or-no and multi-choice at the same time. Session restarted")
+        if("multi" in pollBody["Type"] and "range" in pollBody["Type"]):
+            flash("Cannot be range and multi-choice at the same time. Session restarted")
+        if("multi" in pollBody["Type"] and "teams" in pollBody["Type"]):
+            flash("Cannot be teams and multi-choice at the same time. Session restarted")
+        if("multi" in pollBody["Type"] and "prompt" in pollBody["Type"]):
+            flash("Cannot be prompt and multi-choice at the same time. Session restarted")
+        if("single" in pollBody["Type"] and "ranking" in pollBody["Type"]):
+            flash("Cannot be ranking and single-choice at the same time. Session restarted")
+        if("anonym" in pollBody["Type"] and "teams" in pollBody["Type"]):
+            flash("Cannot be anonym and teams at the same time. Session restarted")
+
+        if pollBody["Question"] == "":
+            restartEditor = True
+            flash("No question included. Session restarted")
+
+        if not pollBody["Options"]:
+            restartEditor = True
+            flash("No answers included. Session restarted")
+
+        for option in pollBody["Options"].values():
+            if option == "":
+                restartEditor = True
+                flash("Some options are empty. Session restarted")    
+
+        with open('database/questions_bank.json', 'r') as f:
+            questions_bank =  json.load(f)
+        for details in questions_bank.values():
+            # chances are low
+            if details["Question"] == pollBody["Question"] and details["Options"] == pollBody["Options"] and details["Type"] == pollBody["Type"]:
+                restartEditor = True
+                flash("This poll already exists. Session restarted.")
+                break
+    
     return render_template('namizu/editorPage.html',namesList=namesList)
 
 
