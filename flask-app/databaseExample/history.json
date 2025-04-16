@@ -1,0 +1,84 @@
+{
+    "DD-MM-YYYY": {
+        "Type": "DSNX",
+        "Question": "Who is most likely to lock themselves out of their own home?",
+        "Answers": {
+            "USER02": 0,
+            "USER03": 0,
+            "USER01": 0,
+            "USER04": 1,
+            "USER05": 3,
+            "USER06": 0,
+            "USER07": 0
+        },
+        "Comments": [
+            {
+                "name": "USER01",
+                "message": "Hello there!"
+            },
+            {
+                "name": "USER01",
+                "message": "szia"
+            },
+            {
+                "name": "USER06",
+                "message": "ez nem USER06"
+            },
+            {
+                "name": "USER01",
+                "message": ""
+            },
+            {
+                "name": "USER01",
+                "message": " margar\u00e9ta "
+            },
+            {
+                "name": "USER01",
+                "message": "abc"
+            },
+            {
+                "name": "USER01",
+                "message": "hello"
+            }
+        ]
+    },
+    "01-01-2020": {
+        "Type": "DSNX",
+        "Question": "Who's the most likely to have watched the most shows on Netflix?",
+        "Answers": {
+            "USER02": 0,
+            "USER03": 0,
+            "USER01": 0,
+            "USER04": 1,
+            "USER05": 1,
+            "USER06": 0,
+            "USER07": 2
+        },
+        "Comments": [
+            {
+                "name": "USER01",
+                "message": "First \ud83d\ude01"
+            },
+            {
+                "name": "USER02",
+                "message": "Van komment?\ud83d\ude0d"
+            },
+            {
+                "name": "USER05",
+                "message": "Nagyon fullos \ud83d\ude01"
+            },
+            {
+                "name": "USER01",
+                "message": "bizony \ud83d\ude0c"
+            },
+            {
+                "name": "USER01",
+                "message": "azta, \u00faj feature\u00f6k!\ud83d\ude09"
+            },
+            {
+                "name": "USER06",
+                "message": "ez megint nem USER06"
+            }
+        ]
+    }
+}

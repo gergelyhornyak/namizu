@@ -1,0 +1,52 @@
+{
+    "Q1": {
+        "Type": "single,range,anonym",
+        "Theme": "default",
+        "Question": "What is the best age?",
+        "Pollster": "X",
+        "Options": {
+            "mintext": "01234567890123456789",
+            "maxtext": "01234567890123456789",
+            "minvalue": 1,
+            "maxvalue": 10
+        },
+        "Answers": {
+            "VID1": "4",
+            "VID2": "5",
+            "VID3": "8",
+            "VID4": "5",
+            "VID5": "5"
+        },
+        "Status": 0
+    },
+    "Q2": {
+        "Type": "single,anonym,names",
+        "Question": "hello",
+        "Options": {
+            "option1": "USER02",
+            "option2": "USER03",
+            "option3": "USER01",
+            "option4": "USER04",
+            "option5": "USER05",
+            "option6": "USER06",
+            "option7": "USER07"
+        },
+        "Pollster": "USER01",
+        "Theme": "default"
+    },
+    "Q3": {
+        "Type": "single,public,names",
+        "Question": "Who is the oldest?",
+        "Options": {
+            "option1": "USER02",
+            "option2": "USER03",
+            "option3": "USER01",
+            "option4": "USER04",
+            "option5": "USER05",
+            "option6": "USER06",
+            "option7": "USER07"
+        },
+        "Pollster": "USER01",
+        "Theme": "default"
+    }
+}

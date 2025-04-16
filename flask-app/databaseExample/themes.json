@@ -1,0 +1,27 @@
+{
+    "default_day":{
+        "mainBG1":"#",
+        "mainBG2":"#",
+        "bannerBG1":"#",
+        "bannerBG2":"#",
+        "bannerTXT":"#",
+        "tilesBG":"#",
+        "tilesBRD":"#",
+        "tilesTXT":"#",
+        "event1BG":"#",
+        "event1TXT":"#",
+        "event2BG":"#",
+        "event2TXT":"#",
+        "notice1BG":"#",
+        "notice1BRD":"#",
+        "notice1TXT":"#",
+        "notice2BG":"#",
+        "notice2BRD":"#",
+        "notice2TXT":"#",
+        "buttonsBG":"#",
+        "buttonsBRD":"#",
+        "buttonsTXT":"#",
+        "footerBG":"#",
+        "footerTXT":"#"
+    }
+}
