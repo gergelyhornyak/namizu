@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>naMizu Login</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #3a5d6c;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column; /* Stack items vertically */
+            align-items: center; /* Center items horizontally */
+            justify-content: center; /* Center items vertically */
+            height: 100vh;
+        }
+        body h1 {
+            font-size: 46px;
+            margin: 16px;
+            text-align: center;
+            color: #fff;
+        }
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            position: relative;
+            padding: 20px;
+            background-color: #2f4f55; /* Letterbox cabinet color */
+            border-radius: 10px;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .options button {
+            background: #f4e1c1; /* Parcel color */
+            color: #242223;
+            border: 1px solid #b4a7a7;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s;
+            width: 100%;
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-container {
+            margin-top: 10px; /* Position below the button */
+            display: flex;
+            justify-content: center;
+        }
+
+        .options input {
+            background: #f4e1c1;
+            color: #242223;
+            border: 1px solid #b4a7a7;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 38px;
+            text-align: center;
+            width: 200px;
+            box-sizing: border-box;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Log in (7 days)</h1>
+    
+    <div class="options">
+        <form method="POST">
+            {% for uid, userdata in userDataPacket.items() %}
+
+            <div style="position: relative; margin-bottom: 2%;">
+                <button type="button" onclick="showInputField(this)" name="uid" value="{{ uid }}">{{ userdata.uname }}
+                    {% if userdata.streak %}
+                    <!--&nbsp;🔥{{ userdata.streak }} -->
+                    &nbsp;<img src="{{ url_for('static', filename='img/easter-egg2.png') }}" width="36px" alt="EXIT">{{ userdata.streak }}
+                    {% endif %}
+                </button>
+            </div>
+
+            {% endfor %}
+        </form>
+    </div>
+
+    <script>
+        function showInputField(button) {
+            // Remove existing input fields
+            const existingInput = document.querySelector('.input-container');
+            if (existingInput) existingInput.remove();
+
+            // Create a new input container
+            const inputContainer = document.createElement('div');
+            inputContainer.className = 'input-container';
+
+            // Create the input field
+            const inputField = document.createElement('input');
+            inputField.type = 'text';
+            inputField.name = 'password';
+            inputField.maxLength = 4;
+            inputField.placeholder = '****';
+            inputField.oninput = function(event) {
+                if (event.target.value.length === 4) {
+                    document.querySelector('form').submit();
+                }
+            };
+
+            inputContainer.appendChild(inputField);
+
+            // Create a hidden input field to store the button value
+            const hiddenField = document.createElement('input');
+            hiddenField.type = 'hidden';
+            hiddenField.name = 'uid';
+            hiddenField.value = button.value;
+
+            inputContainer.appendChild(hiddenField);
+
+            // Append the input container directly below the clicked button
+            button.parentNode.appendChild(inputContainer);
+
+            // Focus the new input field
+            inputField.focus();
+        }
+    </script>
+
+</body>
+</html>
