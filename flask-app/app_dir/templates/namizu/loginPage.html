@@ -77,7 +77,7 @@
     <div class="options">
         <form method="POST">
             {% for uid, userdata in userDataPacket.items() %}
-
+            
             <div style="position: relative; margin-bottom: 2%;">
                 <button type="button" onclick="showInputField(this)" name="uid" value="{{ uid }}">{{ userdata.uname }}
                     {% if userdata.streak %}
