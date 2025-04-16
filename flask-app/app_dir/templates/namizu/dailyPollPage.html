@@ -305,9 +305,13 @@ footer {
   <div class="container">
 
     <header>
-      <div class="nav-icon">&#127968;</div>
+      <a href="{{ url_for('namizu.landingPage') }}">
+          <div class="nav-icon">&#127968;</div>
+      </a>
       <h1>naMizu DailyPoll</h1>
-      <div class="nav-icon">&#128197;</div>
+      <a href="{{ url_for('namizu.calendarApp') }}">
+          <div class="nav-icon">&#128197;</div>
+      </a>
     </header>
 
     <section class="question-section">
@@ -320,6 +324,7 @@ footer {
     </section>
     
     {% if not pollSubmitted %}
+    <form method="POST" id="mainForm">
 
         <section class="instruction">
           {% if qTypeDescr.multichoice %}
@@ -341,7 +346,7 @@ footer {
 
         {% if qTypeDescr.buttons %}
 
-          {% if qTypeDescr.single %}
+          {% if qTypeDescr.singlechoice %}
           <section class="vote-box">
               {% for oid, option in optionsBody.items() %}
                   <button class="vote-btn" type="submit" name="{{ oid }}" value="{{ option }}">{{ option }}</button>
@@ -358,6 +363,7 @@ footer {
               {% endfor %}
           </section>
           {% endif %}
+
         {% endif %}
 
         {% if qTypeDescr.range %}
@@ -367,21 +373,23 @@ footer {
                   <div>{{ optionsBody.maxtext }}</div>
               </div>
               <input type="range" min="{{ optionsBody.minvalue }}" max="{{ optionsBody.maxvalue }}" value="{{ optionsBody.minvalue }}" class="slider" id="myRange">
+              <span id="slider-output" style="color: #fff;font-weight: bold;"></span>
+              <input type="hidden" id="rangeValue" name="range_value" value="{{ optionsBody.minvalue }}">
           </section>
+                        
         {% endif %}
 
         {% if qTypeDescr.ranking %}
         <section class="vote-box" style="display:block;">
             <!--ranking-->
-            <form id="rankingForm" method="POST">
-                <ul id="sortable-list" class="ranking-list">
-                    {% for option in optionsBody %}
-                    <li data-value="{{ loop.index }}">{{ option }}</li>
-                    {% endfor %}
-                </ul>
-                <input type="hidden" name="ranked_list" id="rankedInput">
-                <button class="submit-btn" type="submit">Submit rankings</button>
-            </form>
+            
+            <ul id="sortable-list" class="ranking-list">
+                {% for option in optionsBody.values() %}
+                <li data-value="{{ option }}">{{ option }}</li>
+                {% endfor %}
+            </ul>
+            <input type="hidden" name="ranked_list" id="rankedInput">
+        
         </section>
         {% endif %}
 
@@ -389,11 +397,15 @@ footer {
         <section class="vote-box">
             <div class="prompt-box">
                 <input type="text" id="prompt" name="promptMessage" placeholder="Write your answer here..." >
-                <input type="submit" id="promptSubmit" value="Submit">
             </div>
         </section>
         {% endif %}
 
+        {% if qTypeDescr.prompt or qTypeDescr.range or qTypeDescr.ranking or (qTypeDescr.buttons and qTypeDescr.multichoice) %}
+            <button type="submit">Submit</button>
+        {% endif %}
+
+    </form>
     {% else %}
     <!-- if player already submitted poll -->
 
@@ -445,25 +457,49 @@ footer {
           //elem.parentNode.style.backgroundColor = (elem.checked) ? ' #a2a2a2' : '#ffffff';
           // when checked, reduce margin and increase border - to keep gap same size
           elem.parentNode.style.border = (elem.checked) ? '3px solid red' : '0px solid #ddd';
-          
           }
+          
+          {% if qTypeDescr.ranking %}
 
-          const sortable = new Sortable(document.getElementById('sortable-list'), {
-              animation: 300,
-              ghostClass: 'ghost',       // Hide the original item
-              chosenClass: 'chosen',     // Style the lifted item
-              onStart: () => document.body.style.overflow = 'hidden',
-              onEnd: () => document.body.style.overflow = 'auto',
-          });
-
-          const form = document.getElementById('rankingForm');
+            const sortable = new Sortable(document.getElementById('sortable-list'), {
+                animation: 300,
+                ghostClass: 'ghost',       // Hide the original item
+                chosenClass: 'chosen',     // Style the lifted item
+                onStart: () => document.body.style.overflow = 'hidden',
+                onEnd: () => {
+                  document.body.style.overflow = 'auto',
+                  saveOrder();
+                  },
+            });
+          
           const input = document.getElementById('rankedInput');
 
-          form.addEventListener('submit', function (e) {
+           // Function to save the current order of the list into the hidden input field
+          function saveOrder() {
               const items = document.querySelectorAll('#sortable-list li');
               const ordered = Array.from(items).map(item => item.dataset.value);
-              input.value = JSON.stringify(ordered);
+              input.value = JSON.stringify(ordered);  // Store the ordered list as a JSON string
+          }
+
+          {% endif %}
+
+          {% if qTypeDescr.range %}
+
+          const slider = document.getElementById("myRange");
+          const output = document.getElementById("slider-output");
+          const rangeValue = document.getElementById('rangeValue');
+
+          // Set initial value
+          output.textContent = slider.value;
+
+          // Update as user moves the slider
+          slider.addEventListener("input", () => {
+              output.textContent = slider.value;
+              rangeValue.value = slider.value;
           });
+
+          {% endif %}
+    
       </script>
 
 
