@@ -113,6 +113,7 @@ Type,
 Theme,
 Question,
 Pollster,
+Options,
 Answers
 Status,
 DateTime
