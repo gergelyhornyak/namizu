@@ -10,7 +10,7 @@
     <title>naMizu daily poll</title>
     <style>
 :root {
-    --bg-color: {{ theme.mainBG }};
+    --bg-color: {{ theme.mainBG1 }};
 }
 
 body {
@@ -298,6 +298,68 @@ footer {
     font-weight: bold;
 }
 
+.podium-container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .podium {
+      flex: 1 1 80px;
+      max-width: 120px;
+      background-color: #98c1d9;
+      color: white;
+      border-radius: 12px 12px 0 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .podium-1 { height: 180px; background-color: #ee6c4d; }
+    .podium-2 { height: 140px; background-color: #3d5a80; }
+    .podium-3 { height: 120px; background-color: #293241; }
+
+    .podium-rank {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .podium-name {
+      font-size: 1rem;
+      padding: 10px 0;
+    }
+
+    .others {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 0;
+      list-style: none;
+    }
+
+    .other-item {
+      background-color: #fff;
+      margin: 10px 0;
+      padding: 12px 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      display: flex;
+      justify-content: start;
+      align-items: center;
+    }
+
+    .other-rank {
+      font-weight: bold;
+      color: #ee6c4d;
+      margin-right: 15px;
+      font-size: 1.1rem;
+    }
+
 
   </style>
 </head>
@@ -331,7 +393,7 @@ footer {
           MULTI-CHOICE 
           {% endif %}
 
-          {% if qTypeDescr.single %}
+          {% if qTypeDescr.singlechoice %}
           SINGLE-CHOICE 
           {% endif %}
 
@@ -342,6 +404,10 @@ footer {
           {% if qTypeDescr.prompt %}
           PROMPT 
           {% endif %}
+
+          {% if qTypeDescr.ranking %}
+          RANKING
+          {% endif %}
         </section>
 
         {% if qTypeDescr.buttons %}
@@ -349,7 +415,7 @@ footer {
           {% if qTypeDescr.singlechoice %}
           <section class="vote-box">
               {% for oid, option in optionsBody.items() %}
-                  <button class="vote-btn" type="submit" name="{{ oid }}" value="{{ option }}">{{ option }}</button>
+                  <button class="vote-btn" type="submit" name="vote" value="{{ option }}">{{ option }}</button>
               {% endfor %}
           </section>
 
@@ -384,8 +450,8 @@ footer {
             <!--ranking-->
             
             <ul id="sortable-list" class="ranking-list">
-                {% for option in optionsBody.values() %}
-                <li data-value="{{ option }}">{{ option }}</li>
+                {% for oid, option in optionsBody.items() %}
+                <li value="{{ option }}">{{ option }}</li>
                 {% endfor %}
             </ul>
             <input type="hidden" name="ranked_list" id="rankedInput">
@@ -396,7 +462,7 @@ footer {
         {% if qTypeDescr.prompt %}
         <section class="vote-box">
             <div class="prompt-box">
-                <input type="text" id="prompt" name="promptMessage" placeholder="Write your answer here..." >
+                <input type="text" id="prompt" name="prompt_message" placeholder="Write your answer here..." >
             </div>
         </section>
         {% endif %}
@@ -411,7 +477,7 @@ footer {
 
         {{ kudosMessage }} <br>
         {{ voterStat.voteSum }} of {{ voterStat.voterSum }} people have voted already
-        {% if qTypeDescr.ranking or qTypeDescr.names or qTypeDescr.openended %}
+        {% if qTypeDescr.yesorno or qTypeDescr.names or qTypeDescr.openended %}
         <div id="chart-container">
             {% for label, details in answersProcessed.items() %}  
                 <div class="bar-wrapper">
@@ -422,6 +488,27 @@ footer {
                 </div>
             {% endfor %}
         </div>
+        {% endif %}
+
+        {% if qTypeDescr.ranking %}
+
+          <div class="podium-container">
+            {% for rank, name in top_three.items() %}
+            <div class="podium podium-{{ rank }}">
+              <div class="podium-rank">{{ rank }}</div>
+              <div class="podium-name">{{ name }}</div>
+            </div>
+            {% endfor %}
+          </div>
+        
+          <ul class="others">
+            {% for rank, name in others.items() %}
+            <li class="other-item">
+              <span class="other-rank">{{ rank }}.</span> {{ name }}
+            </li>
+            {% endfor %}
+          </ul>
+
         {% endif %}
 
         <section class="comments-box">
@@ -445,7 +532,7 @@ footer {
     {% endif %}
 
     <footer>
-      <p>© 2025 naMizu™. Built with care for the community.</p>
+      <p>{{ footerText }}</p>
     </footer>
 
   </div>
