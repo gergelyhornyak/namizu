@@ -200,6 +200,30 @@ Users can log out of course anytime, their session restarts
 
 Session keeps track of: username, webpage/app/state they were in, 
 
+---
+
+new users db structure:
+
+```json
+"IDX": 
+{
+    "name": "NAME",
+    "passw": "PASSW",
+    "profpic": "PICNAME.png",
+    "streak": 4,
+    "loggedin": 1,
+    "voted": {
+        "dailyPoll":1,
+        "story":0,
+        "sidequest":0
+    },
+    "lastlogin":"DATETIME",
+    "admin":1,
+},
+```
+
+---
+
 ### DailyPoll page
 
 #### Pre-choice state
@@ -232,15 +256,15 @@ Session keeps track of: username, webpage/app/state they were in,
 ### EventEditor page
 
 1) Banner - app name
-2) Back button
+2) Back button or More pages button : sideQuest/story editor, raw json editor
 3) Advanced mode
 4) Question body
 5) Event Category
-6) Written answer or not switch
 7) Single or Multichoice switch   
 8) Anonym or Public switch
-9) Names or Options or Range switch
-10) Yes/No or open-ended switch
+9) Names or Options or Range
+10) Yes/No or open-ended
+11) Teams, prompt
 11) Tutorial button
 12) Preview button
 13) Preview window
