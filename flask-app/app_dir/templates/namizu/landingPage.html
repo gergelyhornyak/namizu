@@ -7,13 +7,38 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <title>naMizu</title>
     <style>
-        /* 
-        #b8dae8
-        #717472
-        #dcded1
-        #9a9481
-        
-        */
+
+        :root {
+            --bg-colour1: {{ theme.mainBG1 }};
+            --bg-colour2: {{ theme.mainBG2 }};
+
+            --banner-colour1: {{ theme.bannerBG1 }};
+            --banner-colour2: {{ theme.bannerBG2 }};
+            --banner-text: {{ theme.bannerTXT }};
+
+            --tiles-colour: {{ theme.tilesBG }};
+            --tiles-text: {{ theme.tilesTXT }};
+
+            --event1-colour: {{ theme.event1BG }};
+            --event1-text: {{ theme.event1TXT }};
+            --event2-colour: {{ theme.event2BG }};
+            --event2-text: {{ theme.event2TXT }};
+
+            --notice1-colour: {{ theme.notice1BG }};
+            --notice1-border: {{ theme.notice1BRD }};
+            --notice1-text: {{ theme.notice1TXT }};
+
+            --notice2-colour: {{ theme.notice2BG }};
+            --notice2-border: {{ theme.notice2BRD }};
+            --notice2-text: {{ theme.notice2TXT }};
+
+            --tiles-buttons-colour: {{ theme.buttonsBG }};
+            --tiles-buttons-border: {{ theme.buttonsBRD }};
+            --tiles-buttons-text: {{ theme.buttonsTXT }};
+            --footer-colour: {{ theme.footerBG }};
+            --footer-text: {{ theme.footerTXT }};
+        }
+
         /* General Styles */
         body {
             font-family: 'Arial', sans-serif;
@@ -164,12 +189,18 @@
         <img src="https://media1.giphy.com/media/Ov09jGgEThFKpxZ9eC/200w.gif?cid=6c09b952vn57zav2tc8oxsqxnew1fyopnp6rd6e8hsrrd6y5&ep=v1_gifs_search&rid=200w.gif&ct=g" width="200px" style="border: thick ridge steelblue; border-radius: 18%;">
     </div>
 -->
-<!--
+
     <div class="feature-card">
         <h4 style="font-size: large;">naMizu is looking for witty subtitles!</h4>
-        <p>If you have one in mind, click here to submit.</p>
+        <p>If you have one in mind, 
+            <a href="{{ url_for('namizu.wittyBannerText') }}">click here</a></p>
     </div>
--->
+
+
+    <div class="feature-card">
+        <p>{{ dailyJoke }}</p>
+    </div>
+
     
     {% if sideQuestStatus %}
     <div class="feature-card">
@@ -181,8 +212,7 @@
     {% endif %}
 
     <div class="feature-card">
-        
-        <h3>Ready for a fun poll?</h3>
+        <h3>Ready for a daily poll?</h3>
         <div class="cta">
             <a href="{{ url_for('namizu.dailyPollApp') }}">naMizu DailyPoll</a>
         </div>
@@ -199,9 +229,6 @@
             <a href="{{ url_for('namizu.sketcherApp') }}">naMizu<br>Sketcher</a> &ensp; 
             <a href="{{ url_for('namizu.galleryApp') }}">naMizu<br>Gallery</a>
         </p>
-        {% if not alreadyLoggedIn %}
-        <p style="margin: 1% 1%;">(you need to be signed in)</p>
-        {% endif %}
     </div>
 
     <div class="feature-card">
@@ -211,9 +238,8 @@
         <h3>Zero Data Collection</h3>
     </div>
     
-
     <div class="feature-card">
-        <h3>Special Thanks 👏</h3>
+        <h3>Special Thanks 👏</h3>  
         <p style="margin: 1% 0%;">to the testers <strong>Bella</strong> and <strong>Márk</strong>, who made sure the app runs smoothly.</p>
     </div>
 </section>
