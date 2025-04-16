@@ -190,6 +190,45 @@
     color: #fff;
     }
 
+    /* Basic styling for the popup */
+    #flash-popup {
+      display: none;
+      position: fixed;
+      top: 30%;
+      left: 35%;
+      transform: translate(-25%, -50%);
+      padding: 10px;
+      background-color: #f6caa9; /* Dark teal */
+      color: #000;
+      border-radius: 8px;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      text-align: center;
+      font-size: larger;
+    }
+
+    #flash-popup button {
+      margin-top: 10px;
+      padding: 8px 15px;
+      background-color: #3a5d6c; /* Light orange */
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: medium;
+    }
+    #overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent black */
+      z-index: 1000;
+      backdrop-filter: blur(4px);
+    }
+
   </style>
 </head>
 <body>
@@ -198,6 +237,14 @@
         <h1>naMizu Editor</h1>
         <div class="nav-icon">&#128197;</div>
     </header>
+
+    <div id="overlay"></div>
+    <!-- Flash Popup -->
+    <div id="flash-popup">
+        <p id="flash-message"></p>
+        <button onclick="closeFlashPopup()">Close</button>
+    </div>
+
     <div class="editor-container">
 
         <form id="editor-form" method="POST">
@@ -276,7 +323,7 @@
             <div class="form-group answers" id="openended_answers" style="display: none;">
                 <label class="section-label">Open-Ended Options:</label>
                 <div class="answer-input">
-                    <input type="text" class="answer_oe" name="answer-1" placeholder="Type an answer..." maxlength="96">
+                    <input type="text" class="answer_openended" name="answer_openended-1" placeholder="Type an answer..." maxlength="96">
                     <button type="button" class="add-answer">+</button>
                 </div>
             </div>
@@ -284,7 +331,7 @@
             <div class="form-group answers" id="ranking_answers" style="display: none;">
                 <label class="section-label">Ranking Options:</label>
                 <div class="answer-input">
-                    <input type="text" class="answer_rk" name="answer-1" placeholder="Type an answer..." maxlength="96">
+                    <input type="text" class="answer_ranking" name="answer_ranking-1" placeholder="Type an answer..." maxlength="96">
                     <button type="button" class="add-answer">+</button>
                 </div>
             </div>
@@ -292,17 +339,17 @@
             <div class="form-group answers" id="range_answers" style="display: none;">
                 <label class="section-label">Range Options:</label>
                 <div class="answer-input">
-                    <input type="text" class="answer_rg" name="answer-1" placeholder="Start Label" maxlength="20">
-                    <input type="text" class="answer_rg" name="answer-2" placeholder="End Label" maxlength="20">
-                    <input type="text" class="answer_rg" name="answer-3" placeholder="Scale Size" maxlength="2">
+                    <input type="text" class="answer_range" name="answer_range-1" placeholder="Start Label" maxlength="20">
+                    <input type="text" class="answer_range" name="answer_range-2" placeholder="End Label" maxlength="20">
+                    <input type="text" class="answer_range" name="answer_range-3" placeholder="Scale Size" maxlength="2">
                 </div>
             </div>
 
             <div class="form-group answers" id="teams_answers" style="display: none;">
                 <label class="section-label">Teams Options:</label>
                 <div class="answer-input">
-                    <input type="text" class="answer_ts" name="answer-1" placeholder="Team A" maxlength="96">
-                    <input type="text" class="answer_ts" name="answer-2" placeholder="Team B" maxlength="96">
+                    <input type="text" class="answer_teams" name="answer_teams-1" placeholder="Team A" maxlength="96">
+                    <input type="text" class="answer_teams" name="answer_teams-2" placeholder="Team B" maxlength="96">
                 </div>
             </div>
 
@@ -400,7 +447,7 @@
         const newAnswerDiv = document.createElement('div');
         newAnswerDiv.classList.add('answer-input');
         newAnswerDiv.innerHTML = `
-          <input type="text" class="answer_oe" name="answer-${answerCounter}" placeholder="Type an answer..." maxlength="96">
+          <input type="text" class="answer_openended" name="answer_openended-${answerCounter}" placeholder="Type an answer..." maxlength="96">
           <button type="button" class="delete-answer">—</button>
         `;
         answersDiv.appendChild(newAnswerDiv);
@@ -420,7 +467,7 @@
         const newAnswerDiv = document.createElement('div');
         newAnswerDiv.classList.add('answer-input');
         newAnswerDiv.innerHTML = `
-          <input type="text" class="answer_rk" name="answer-${rankAnswerCounter}" placeholder="Type an answer..." maxlength="96">
+          <input type="text" class="answer_ranking" name="answer_ranking-${rankAnswerCounter}" placeholder="Type an answer..." maxlength="96">
           <button type="button" class="delete-answer">—</button>
         `;
         ranksDiv.appendChild(newAnswerDiv);
@@ -440,22 +487,22 @@
       const question = document.getElementById('question').value;
       let answers = [];
       if (selectedOption == 'openended') {
-          answers = Array.from(document.querySelectorAll('.answer_oe'))
+          answers = Array.from(document.querySelectorAll('.answer_openended'))
           .map(input => input.value)
           .filter(Boolean);
       } 
       else if (selectedOption == 'ranking') {
-          answers = Array.from(document.querySelectorAll('.answer_rk'))
+          answers = Array.from(document.querySelectorAll('.answer_ranking'))
           .map(input => input.value)
           .filter(Boolean);
       } 
       else if (selectedOption == 'range') {
-        answers = Array.from(document.querySelectorAll('.answer_rg'))
+        answers = Array.from(document.querySelectorAll('.answer_range'))
           .map(input => input.value)
           .filter(Boolean);
       }
       else if (selectedOption == 'teams') {
-        answers = Array.from(document.querySelectorAll('.answer_ts'))
+        answers = Array.from(document.querySelectorAll('.answer_teams'))
           .map(input => input.value)
           .filter(Boolean);
       }
@@ -484,6 +531,31 @@
       }
       previewDiv.style.display = 'block';
     });
+
+    // JavaScript to handle the flash popup
+    function showFlashPopup(message) {
+      const popup = document.getElementById('flash-popup');
+      const messageElement = document.getElementById('flash-message');
+      const overlay = document.getElementById('overlay');
+
+      messageElement.textContent = message; // Set the flash message
+      popup.style.display = 'block'; // Show the popup
+      overlay.style.display = 'block'; // Show the overlay
+    }
+
+    function closeFlashPopup() {
+      const popup = document.getElementById('flash-popup');
+      const overlay = document.getElementById('overlay');
+
+      popup.style.display = 'none'; // Hide the popup
+      overlay.style.display = 'none'; // Hide the overlay
+    }
+
+    // Get the flash message from Flask (if any)
+    const flashMessage = {{ get_flashed_messages()|tojson|safe }};
+    if (flashMessage.length > 0) {
+      showFlashPopup(flashMessage[0]); // Show the first flash message
+    }
 
   </script>
 </body>
