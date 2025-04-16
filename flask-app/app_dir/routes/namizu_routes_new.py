@@ -5,6 +5,7 @@ import base64
 import json
 import os
 import re
+import requests
 
 bp = Blueprint('namizu', __name__, template_folder='templates')
 
@@ -25,6 +26,173 @@ def page_not_found400(e):
     return render_template('namizu/400.html'), 400
 
 #* SMALL FUNCTIONS
+
+testPolls = {
+    "range1": 
+    {
+        "Type": "singlechoice,range,anonym",
+        "Theme": "default_day",
+        "Question": "What is the best age?",
+        "Pollster": "X",
+        "Options": {
+            "mintext":"01234567890123456789",
+            "maxtext":"01234567890123456789",
+            "minvalue":1,
+            "maxvalue":10,
+        },
+        "Answers": {
+            "VID1": "4",
+            "VID2": "5",
+            "VID3": "8",
+            "VID4": "5",
+            "VID5": "5",
+        },
+        "Status": 0
+    },
+    "yesorno1": {
+        "Type": "singlechoice,yesorno,anonym",
+        "Theme": "default_day",
+        "Question": "Do you like driving?",
+        "Pollster": "X",
+        "Options": {
+            "option1":"Definitely!",
+            "option2":"Yes",
+            "option3":"No",
+            "option4":"Never!",
+        },
+        "Answers": {
+            "VID1": ["option1"],
+            "VID2": ["option2"],
+            "VID3": ["option1"],
+            "VID4": ["option3"],
+            "VID5": ["option1"],
+        },
+        "Status": 0
+    },
+    "names1": 
+    {
+        "Type": "multichoice,names,anonym",
+        "Theme": "default_day",
+        "Question": "Who is the tallest?",
+        "Pollster": "Lajos",
+        "Options": {
+            "o1":"Bálint",
+            "o2":"Bella",
+            "o3":"Geri",
+            "o4":"Herczi",
+            "o5":"Hanna",
+            "o6":"Koppány",
+            "o7":"Márk"
+        },
+        "Answers": {
+            "VID1": ["o1","o5"],
+            "VID2": ["o1","o5"],
+            "VID3": ["o2"],
+            "VID4": ["o5"],
+            "VID5": ["o7"],
+        },
+        "Status": 0
+    },
+    "names2": 
+    {
+        "Type": "singlechoice,names,anonym",
+        "Theme": "default_day",
+        "Question": "Who is the tallest?",
+        "Pollster": "Lajos",
+        "Options": {
+            "o1":"Bálint",
+            "o2":"Bella",
+            "o3":"Geri",
+            "o4":"Herczi",
+            "o5":"Hanna",
+            "o6":"Koppány",
+            "o7":"Márk"
+        },
+        "Answers": {
+            "VID1": ["o1"],
+            "VID2": ["o6"],
+            "VID3": ["o3"],
+            "VID4": ["o6"],
+        },
+        "Status": 0
+    },
+    "ranking1": {
+        "Type": "multichoice,ranking,anonym",
+        "Theme": "default_day",
+        "Question": "Rank the following places!",
+        "Pollster": "Geri",
+        "Options": {
+            "option1": "Budapest",
+            "option2": "Debrecen",
+            "option3": "P\u00e9cs",
+            "option4": "G\u00f6d"
+        },
+        "Answers": {
+            "VID1": ["option2","option1","option4","option3"],
+            "VID2": ["option4","option2","option1","option3"],
+            "VID3": ["option1","option2","option4","option3"],
+            "VID4": ["option3","option2","option1","option4"],
+        },
+        "Status": 0
+    },
+    "prompt1": 
+    {
+        "Type": "singlechoice,prompt,anonym",
+        "Theme": "default_day",
+        "Question": "Describe your best day.",
+        "Pollster": "Lajos",
+        "Options": {},
+        "Answers": {
+            "VID1": "jndkj dajsndjka sdkj naskjdn ajkdk ksa nd",
+            "VID2": "odsao jaso jd oia sjd oi jwo idcnqincq cwqc",
+            "VID3": "dn idjasc di cha sbhd csha chjd cj d",
+            "VID4": "po pfdsfpoiswejc bhjc whd uqwuch qwuxn u wc éőéő",
+            "VID5": "haha nope",
+        },
+        "Status": 0
+    },
+    "openended1": 
+    {
+        "Type": "singlechoice,openended,public",
+        "Theme": "default_day",
+        "Question": "Who would you pick?",
+        "Pollster": "Lajos",
+        "Options": {
+            "option1": "Dog",
+            "option2": "Cat",
+            "option3": "Horse",
+            "option4": "Goldfish",
+            "option5": "Dinosaur"
+        },
+        "Answers": {
+            "VID1": ["option2","option1"],
+            "VID2": ["option5"],
+            "VID3": ["option1","option5"],
+            "VID4": ["option3","option2","option1","option4"],
+            "VID5": ["option5","option1"]
+        },
+        "Status": 0
+    },
+    "teams1": 
+    {
+        "Type": "singlechoice,teams,public",
+        "Theme": "default_day",
+        "Question": "Who would you pick?",
+        "Pollster": "Lajos",
+        "Options": {
+            "teamA": "Dog",
+            "teamB": "Cat",
+        },
+        "Answers": {
+            "VID1": ["teamA"],
+            "VID2": ["teamB"],
+            "VID3": ["teamB"],
+            "VID4": ["teamB"],
+            "VID5": ["teamA"]
+        },
+        "Status": 0
+    }
+}
 
 def check_user_logged_in(funcName) -> tuple[bool, str]:
     print(f"{session = }")
@@ -104,11 +272,22 @@ def findByID(uid:str) -> str:
             users_db = json.load(f)
     except Exception as e:
         print(e)
+
     try:
         username = users_db[uid]["uname"]
     except KeyError:
         print("User cannot be found.\n")
     return username
+
+def queryTheme(themename:str)->dict:
+    themes = {}
+    try:
+        with open('database/themes.json', 'r') as f:
+            themes = json.load(f)
+    except Exception as e:
+        print(e)
+    return themes[themename]
+    
 
 #* PAGEs and APPs
 
@@ -146,6 +325,12 @@ def loginPage():
 @bp.route("/")
 def landingPage():
 
+    # Set the headers to accept plain text response
+    headers = {"Accept": "text/plain"}
+    # Perform the GET request to the dad joke API
+    response = requests.get("https://icanhazdadjoke.com/", headers=headers)
+    # Store the joke text
+    dailyJoke = response.text
     user_db = {}#loadAllUserInfo()
     with open('database/user_db.json', 'r') as f:
         user_db = json.load(f)
@@ -154,24 +339,25 @@ def landingPage():
     userID = ""
     if "userID" in session:
         userID = session["userID"]    
-        session['url'] = "landingpage"
     else:
         # prompt for login
         return redirect(url_for(f"namizu.loginPage"))
     
     banner = "NaMizu"
     userName = findByID(userID)
-    notices = ["notice 1","notice 2"]
-    storyStatus = False
-    sideQuestStatus = False
+    notices = ["notice 1","notice 2"] #queryNotices
+    storyStatus = False # queryStory
+    sideQuestStatus = False # querySideQ
     footerText = "2025 naMizu. Version 3.0 alpha (1481dfb), Built with care for the community."
     activeUsers = 3
     funnyMessage = "Not the restaurant"
+    theme = queryTheme("default_day")
     renderPacket = {}
     return render_template('/namizu/landingPage.html', 
                            banner=banner, notices=notices, funnyMessage=funnyMessage,
                            userName=userName, sideQuestStatus=sideQuestStatus,
-                           activeUsers=activeUsers, footerText=footerText)
+                           activeUsers=activeUsers, footerText=footerText,
+                           dailyJoke=dailyJoke, theme=theme)
 
 @bp.route('/logout')
 def logout():
@@ -180,196 +366,153 @@ def logout():
 
 @bp.route("/dailypoll", methods=['GET', 'POST'])
 def dailyPollApp():
-    banner = ""
-    dailyPoll = {}#getDailyPoll()
-    ## test scenarios
 
-    dailyPollRange = {
-        "Type": "single,range,anonym",
-        "Theme": "1",
-        "Question": "What is the best age?",
-        "Pollster": "X",
-        "Options": {
-            "mintext":"01234567890123456789",
-            "maxtext":"01234567890123456789",
-            "minvalue":1,
-            "maxvalue":10,
-        },
-        "Answers": {
-            "VID1": "4",
-            "VID2": "5",
-            "VID3": "8",
-            "VID4": "5",
-            "VID5": "5",
-        },
-        "Status": 0
-    }
+    session['url'] = "dailyPollApp"
+    userID = session['userID']
 
-    dailyPollMulti = {
-        "Type": "multichoice,names,anonym",
-        "Theme": "1",
-        "Question": "Who is the tallest?",
-        "Pollster": "Lajos",
-        "Options": {
-            "o1":"Bálint",
-            "o2":"Bella",
-            "o3":"Geri",
-            "o4":"Herczi",
-            "o5":"Hanna",
-            "o6":"Koppány",
-            "o7":"Márk"
-        },
-        "Answers": {
-            "VID1": ["o1","o5"],
-            "VID2": ["o1","o5"],
-            "VID3": ["o2"],
-            "VID4": ["o5"],
-            "VID5": ["o7"],
-        },
-        "Status": 0
-    }
-
-    dailyPollSingle = {
-        "Type": "singlechoice,names,anonym",
-        "Theme": "1",
-        "Question": "Who is the tallest?",
-        "Pollster": "Lajos",
-        "Options": {
-            "o1":"Bálint",
-            "o2":"Bella",
-            "o3":"Geri",
-            "o4":"Herczi",
-            "o5":"Hanna",
-            "o6":"Koppány",
-            "o7":"Márk"
-        },
-        "Answers": {
-            "VID1": ["o1"],
-            "VID2": ["o6"],
-            "VID3": ["o3"],
-            "VID4": ["o6"],
-        },
-        "Status": 0
-    }
-
-    dailyPollRank = {
-        "Type": "multichoice,ranking,anonym",
-        "Theme": "default",
-        "Question": "Rank the following places!",
-        "Pollster": "Geri",
-        "Options": {
-            "option1": "Budapest",
-            "option2": "Debrecen",
-            "option3": "P\u00e9cs",
-            "option4": "G\u00f6d"
-        },
-        "Answers": {
-            "VID1": ["option2","option1","option4","option3"],
-            "VID2": ["option4","option2","option1","option3"],
-            "VID3": ["option1","option2","option4","option3"],
-            "VID4": ["option3","option2","option1","option4"],
-        },
-        "Status": 0
-    }
-
-    dailyPollPrompt = {
-        "Type": "single,prompt,anonym",
-        "Theme": "1",
-        "Question": "Describe your best day.",
-        "Pollster": "Lajos",
-        "Options": {},
-        "Answers": {
-            "VID1": "jndkj dajsndjka sdkj naskjdn ajkdk ksa nd",
-            "VID2": "odsao jaso jd oia sjd oi jwo idcnqincq cwqc",
-            "VID3": "dn idjasc di cha sbhd csha chjd cj d",
-            "VID4": "po pfdsfpoiswejc bhjc whd uqwuch qwuxn u wc éőéő",
-            "VID5": "haha nope",
-        },
-        "Status": 0
-    }
-
-    dailyPoll = dailyPollSingle#dailyPollPrompt#dailyPollRank#dailyPollSingle#dailyPollMulti#dailyPollRange
+    #dailyPoll = testPolls["names2"]#getDailyPoll()
+    with open('database/today_poll.json', 'r') as f:
+        dailyPoll = json.load(f)
     questionBody = dailyPoll["Question"]
     pollster = dailyPoll["Pollster"]
     questionType = dailyPoll["Type"]
-    theme = dailyPoll["Theme"]
-    theme = {
-        "mainBG":"#bfe5f7",
-        "bannerBG":"#50bbf3",
-        "bannerTXT":"#000000",
-        "questionBG":"#7bcdf6",
-        "questionTXT":"#000000",
-        "infoTXT":"#000000",
-        "voteboxBG":"#dcded1",
-        "voteboxTXT":"#000000"
-    }
+    theme = queryTheme(dailyPoll["Theme"])
     optionsBody = dailyPoll["Options"]
     qTypeDescr = typeParser(questionType)
+    answersBody = dailyPoll["Answers"]
+    todayComments = {} # getTodayComments
+
     voterStat = {
-        "voteSum":2,
+        "voteSum":0,
         "voterSum":7
     }
-    answersBody = dailyPoll["Answers"]
     answersProcessed = {}
-
-    if(not qTypeDescr["range"] and not qTypeDescr["prompt"]):
-        # create unique list of choices
-        for uid, oList in answersBody.items(): # optionList
-            for oid in oList:
-                option = optionsBody[oid] # get actual choice by ID
-                if option not in answersProcessed:
-                    answersProcessed[option] = {}
-                    answersProcessed[option]["value"] = 1
-                    answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
-                    answersProcessed[option]["voters"] = [uid]
-                else:
-                    answersProcessed[option]["value"] += 1
-                    answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
-                    if(uid not in answersProcessed[option]["voters"]):
-                        answersProcessed[option]["voters"].append(uid)
-
-    if(qTypeDescr["range"]):
-        for uid, option in answersBody.items():
-            if option not in answersProcessed:
-                answersProcessed[option] = {}
-                answersProcessed[option]["value"] = 1
-                answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
-                answersProcessed[option]["voters"] = [uid]
-            else:
-                answersProcessed[option]["value"] += 1
-                answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
-                if(uid not in answersProcessed[option]["voters"]):
-                    answersProcessed[option]["voters"].append(uid)
-
-    if(qTypeDescr["prompt"]):
-        pass
-
-    if(qTypeDescr["names"] or qTypeDescr["ranking"] or qTypeDescr["openended"]):
-        pass
+    rankingProcessed = {}
+    sidesProcessed = {}
+    answersDict = {}
+    answersList = []
+    answersValue = None
     
-    prettyPrintJson(answersProcessed)
-
+    pollSubmitted = False   
+    banner = ""
     kudosMessage = "Grats!"
-    comments = {}
-    version = "3.0"
+    footerText = "© 2025 naMizu™. Version 3.X . Built with care for the community."
 
     if request.method == 'GET':    
         pass        
 
     elif request.method == 'POST':
-        print(f"{request.form = }")
-        # [('ranked_list', '["Göd","Budapest","Pécs","Debrecen"]')]
-        # [('range_value', '3')]
-        # [('promptMessage', 'jdassk jdnd kasd kas ndkka dsa ')]
-        # MULTI [('o3', 'Geri'), ('o5', 'Hanna'), ('o6', 'Koppány')]
-        # SINGLE [('o2', 'Geri')]
+
+        if 'comment' not in request.form:
+            print(f"{request.form = }")
+
+            if(qTypeDescr["ranking"]):
+                answersList = request.form["ranked_list"]
+                answersList = json.loads(answersList)
+            elif(qTypeDescr["range"]):
+                answersValue = request.form["range_value"]
+            elif(qTypeDescr["prompt"]):
+                answersList = request.form["promptMessage"]
+            elif( (qTypeDescr["singlechoice"] and qTypeDescr["names"]) or
+                  (qTypeDescr["singlechoice"] and qTypeDescr["openended"]) or
+                    qTypeDescr["yesorno"] or qTypeDescr["teams"] ):
+                answersValue = request.form["vote"]
+            elif( (qTypeDescr["multichoice"] and qTypeDescr["openended"]) or 
+                  (qTypeDescr["multichoice"] and qTypeDescr["names"]) ): 
+                for value in request.form.values():
+                    answersList.append(value)
+
+            print(f"{answersValue = }\n{answersList = }\n")
+
+            if(answersValue):
+                answersBody[userID] = answersValue
+            elif(answersList):
+                answersBody[userID] = answersList
+            
+            prettyPrintJson(answersBody)        
+
+            if( qTypeDescr["range"] or qTypeDescr["prompt"] or 
+                (qTypeDescr["singlechoice"] and qTypeDescr["names"]) or
+                (qTypeDescr["singlechoice"] and qTypeDescr["openended"]) ):
+
+                for uid, option in answersBody.items(): # option is a value
+                    if option not in answersProcessed:
+                        answersProcessed[option] = {}
+                        answersProcessed[option]["value"] = 1
+                        answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
+                        answersProcessed[option]["voters"] = [uid]
+                    else:
+                        answersProcessed[option]["value"] += 1
+                        answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
+                        if(uid not in answersProcessed[option]["voters"]):
+                            answersProcessed[option]["voters"].append(uid)
+
+            elif(qTypeDescr["ranking"]):
+                for uid, options in answersBody.items(): # options is a list
+                    top_three = {f"{i+1}": val for i, val in enumerate(options[:3])}
+                    others = {f"{i+4}": val for i, val in enumerate(options[3:])}
+                    rankingProcessed[uid] = {
+                        "top_three":top_three,
+                        "others":others
+                    }
+
+            elif(qTypeDescr["teams"]):
+                for sideName, value in optionsBody.items():
+                    sidesProcessed[sideName] = 0
+                for uid, option in answersBody.items(): # options is a value
+                    sidesProcessed[option] += 1
+            
+            elif(qTypeDescr["yesorno"]):
+                sidesProcessed["Yes"] = 0
+                sidesProcessed["No"] = 0
+                for uid, option in answersBody.items(): # options is a value
+                    if(option.lower()=="yes"):
+                        sidesProcessed["Yes"] += 1
+                    elif(option.lower()=="definitely"):
+                        sidesProcessed["Yes"] += 1*3 # yesornoMultiplier
+                    elif(option.lower()=="no"):
+                        sidesProcessed["No"] += 1
+                    elif(option.lower()=="never"):
+                        sidesProcessed["No"] += 1*3 # yesornoMultiplier
+
+            elif( (qTypeDescr["multichoice"] and qTypeDescr["names"]) or
+                  (qTypeDescr["multichoice"] and qTypeDescr["openended"]) ):
+                for uid, options in answersBody.items(): # option is a list
+                    for option in options:
+                        if option not in answersProcessed:
+                            answersProcessed[option] = {}
+                            answersProcessed[option]["value"] = 1
+                            answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
+                            answersProcessed[option]["voters"] = [uid]
+                        else:
+                            answersProcessed[option]["value"] += 1
+                            answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
+                            if(uid not in answersProcessed[option]["voters"]):
+                                answersProcessed[option]["voters"].append(uid)
+
+            pollSubmitted = True
+
+        else:
+            comment = request.form['comment']
+            current_date = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+            appID = 1
+            
+            todayComments[current_date] = {
+                "userID": userID,
+                "appID": appID,
+                "text":comment
+            }           
+            with open('database/comments.json', 'w') as f:
+                json.dump(todayComments, f, indent=4)
+
+    print(f"Daily Poll DEBUG:\n{qTypeDescr = }\n{answersProcessed = }\n{sidesProcessed = }\n{rankingProcessed = }\n{optionsBody = }\n")
 
     return render_template('namizu/dailyPollPage.html', 
                            banner=banner,qTypeDescr=qTypeDescr,answersProcessed=answersProcessed,
                            theme=theme, optionsBody=optionsBody,voterStat=voterStat,kudosMessage=kudosMessage,
-                           questionBody=questionBody, pollster=pollster, pollSubmitted=False
+                           questionBody=questionBody, pollster=pollster, pollSubmitted=pollSubmitted,
+                           footerText=footerText
                            )
-
 
 @bp.route("/sidequest", methods=['GET', 'POST'])
 def sideQuestApp():
@@ -378,6 +521,10 @@ def sideQuestApp():
     if not alreadyLoggedIn:
         return redirect(url_for('namizu.login'))
     
+@bp.route("/wittybanner", methods=["GET","POST"])
+def wittyBannerText():
+    return 0
+
 @bp.route('/editor', methods=['GET', 'POST'])
 def editorApp():
     namesList = ["Bálint","Bella","Geri","Herczi","Hanna","Koppány","Márk"]
@@ -450,17 +597,26 @@ def editorApp():
         ## ERROR CHECKING
 
         if("multichoice" in pollBody["Type"] and "yesorno" in pollBody["Type"]):
+            restartEditor = True
             flash("Cannot be yes-or-no and multi-choice at the same time. Session restarted")
         if("multichoice" in pollBody["Type"] and "range" in pollBody["Type"]):
+            restartEditor = True
             flash("Cannot be range and multi-choice at the same time. Session restarted")
         if("multichoice" in pollBody["Type"] and "teams" in pollBody["Type"]):
+            restartEditor = True
             flash("Cannot be teams and multi-choice at the same time. Session restarted")
         if("multichoice" in pollBody["Type"] and "prompt" in pollBody["Type"]):
+            restartEditor = True
             flash("Cannot be prompt and multi-choice at the same time. Session restarted")
         if("singlechoice" in pollBody["Type"] and "ranking" in pollBody["Type"]):
+            restartEditor = True
             flash("Cannot be ranking and single-choice at the same time. Session restarted")
         if("anonym" in pollBody["Type"] and "teams" in pollBody["Type"]):
+            restartEditor = True
             flash("Cannot be anonym and teams at the same time. Session restarted")
+        if("anonym" in pollBody["Type"] and "ranking" in pollBody["Type"]):
+            restartEditor = True
+            flash("Cannot be anonym and ranking at the same time. Session restarted")
 
         if pollBody["Question"] == "":
             restartEditor = True
