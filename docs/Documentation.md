@@ -27,6 +27,12 @@ the events have the following components:
 
 events can be: Story / SideQuest / DailyPoll
 
+apps ids: 
+
+- DailyPoll: 1
+- SideQuest: 2
+- Story: 3
+
 ## Question Types
 
 All polls fall under the following categories:
@@ -72,7 +78,7 @@ Task: haiku battle
     - <names,range,yesorno,openended,prompt,teams>
     - Names: The names of the voters are the answers
     - Range: The pollster can set a range for the voters to select from - on a slider possibly
-    - YesOrNo: excludes multichoice, since yes is the opposite of no
+    - YesOrNo: excludes multichoice, since yes is the opposite of no - consider using one variable, so it can go plus (yes) or minus (no)
     - Open-ended: The pollster can create custom options to vote for
     - Prompt: extra text from users, users need to submit a short answer
     - Teams: show which team you have ended up, only 2 choices are accepted
@@ -95,6 +101,7 @@ anonym X teams
 ranking X prompt
 ranking X yesorno
 ranking X teams
+ranking X anonym - because ranking will be shown for each voter
 
 
 ---
@@ -143,6 +150,9 @@ DateTime
     "Status": 0
   }
 ```
+
+**options define the choices voters can pick**
+**and answers store the userID and their choice (value)**
 
 ---
 
@@ -250,6 +260,25 @@ new users db structure:
     - messages
     - input field
 9) Version log
+
+---
+
+new comments structure:
+
+```json
+comments = 
+{
+    "CID":
+    {
+        "uid":"UID",
+        "appID":"APPID",
+        "datetime":"DATETIME",
+        "text":"TXT"
+    }
+}
+```
+
+---
 
 ### SideQuest page
 
