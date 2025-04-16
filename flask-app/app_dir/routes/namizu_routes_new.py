@@ -105,27 +105,71 @@ def findByID(uid:str) -> str:
     except Exception as e:
         print(e)
     try:
-        username = users_db[uid]["name"]
+        username = users_db[uid]["uname"]
     except KeyError:
         print("User cannot be found.\n")
     return username
 
-#* LANDING PAGE
+#* PAGEs and APPs
+
+@bp.route('/login', methods=['GET', 'POST'])
+def loginPage():  
+    wrongPasswCounter = 0
+    userData = {}
+    with open('database/user_db.json', 'r') as f:
+        userData = json.load(f)
+
+    if request.method == "POST":
+        uid = request.form["uid"]
+        passw = request.form["password"]
+        if( userData[uid]["passw"] == passw):
+            print(f"Successful authentication. Welcome {userData[uid]['uname']}!")
+            session["userID"] = uid
+            session.modified = True
+            userData[uid]["loggedin"] = 1
+            userData[uid]["lastlogin"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            with open('database/user_db.json', 'w') as f:
+                json.dump(userData, f,indent=4)
+            if 'url' in session:
+                print(f"Redirecting back to {session['url']}.")
+                return redirect(url_for(f"namizu.{session['url']}"))
+        else:
+            wrongPasswCounter+=1
+            if(  wrongPasswCounter >= 3 ):
+                print(f"Wrong password three times. Banned.")
+            print(f"Wrong password. Try again.")
+            
+    return render_template('namizu/loginPage.html',userDataPacket=userData)
 
 @bp.route("/landingpage")
+@bp.route("/index")
 @bp.route("/")
 def landingPage():
-    loggedin = True
+
+    user_db = {}#loadAllUserInfo()
+    with open('database/user_db.json', 'r') as f:
+        user_db = json.load(f)
+
+    session['url'] = "landingPage"
+    userID = ""
+    if "userID" in session:
+        userID = session["userID"]    
+        session['url'] = "landingpage"
+    else:
+        # prompt for login
+        return redirect(url_for(f"namizu.loginPage"))
+    
     banner = "NaMizu"
-    userName = check_user_logged_in("landingPage")
+    userName = findByID(userID)
     notices = ["notice 1","notice 2"]
     storyStatus = False
     sideQuestStatus = False
     footerText = "2025 naMizu. Version 3.0 alpha (1481dfb), Built with care for the community."
     activeUsers = 3
+    funnyMessage = "Not the restaurant"
     renderPacket = {}
     return render_template('/namizu/landingPage.html', 
-                           banner=banner, notices=notices, 
+                           banner=banner, notices=notices, funnyMessage=funnyMessage,
                            userName=userName, sideQuestStatus=sideQuestStatus,
                            activeUsers=activeUsers, footerText=footerText)
 
@@ -319,7 +363,6 @@ def dailyPollApp():
         # [('promptMessage', 'jdassk jdnd kasd kas ndkka dsa ')]
         # MULTI [('o3', 'Geri'), ('o5', 'Hanna'), ('o6', 'Koppány')]
         # SINGLE [('o2', 'Geri')]
-
 
     return render_template('namizu/dailyPollPage.html', 
                            banner=banner,qTypeDescr=qTypeDescr,answersProcessed=answersProcessed,
