@@ -6,6 +6,7 @@ import json
 import os
 import re
 import requests
+import numpy as np
 
 bp = Blueprint('namizu', __name__, template_folder='templates')
 
@@ -289,6 +290,15 @@ def queryTheme(themename:str)->dict:
     return themes[themename]
     
 
+def getTodayComments() -> dict:
+    try:
+        with open('database/comments.json', 'r') as f:
+            return json.load(f)
+    except json.decoder.JSONDecodeError:
+        return {}    
+    except Exception as e:
+        print(e)
+
 #* PAGEs and APPs
 
 @bp.route('/login', methods=['GET', 'POST'])
@@ -325,6 +335,8 @@ def loginPage():
 @bp.route("/")
 def landingPage():
 
+    session['url'] = "landingPage"
+
     # Set the headers to accept plain text response
     headers = {"Accept": "text/plain"}
     # Perform the GET request to the dad joke API
@@ -335,7 +347,7 @@ def landingPage():
     with open('database/user_db.json', 'r') as f:
         user_db = json.load(f)
 
-    session['url'] = "landingPage"
+    
     userID = ""
     if "userID" in session:
         userID = session["userID"]    
@@ -370,6 +382,13 @@ def dailyPollApp():
     session['url'] = "dailyPollApp"
     userID = session['userID']
 
+    pollSubmitted = False   
+    with open('database/user_db.json', 'r') as f:
+        users_db = json.load(f)
+    if(users_db[userID]["voted"]["dailyPoll"] == 1): # true
+        pollSubmitted = True
+    
+
     #dailyPoll = testPolls["names2"]#getDailyPoll()
     with open('database/today_poll.json', 'r') as f:
         dailyPoll = json.load(f)
@@ -380,20 +399,20 @@ def dailyPollApp():
     optionsBody = dailyPoll["Options"]
     qTypeDescr = typeParser(questionType)
     answersBody = dailyPoll["Answers"]
-    todayComments = {} # getTodayComments
-
+    todayComments = getTodayComments()
+    voteSum = np.sum([user["voted"]["dailyPoll"] for user in users_db.values()])
     voterStat = {
-        "voteSum":0,
+        "voteSum":voteSum,
         "voterSum":7
     }
     answersProcessed = {}
     rankingProcessed = {}
+    romanNumbers = []
     sidesProcessed = {}
-    answersDict = {}
     answersList = []
     answersValue = None
     
-    pollSubmitted = False   
+    
     banner = ""
     kudosMessage = "Grats!"
     footerText = "© 2025 naMizu™. Version 3.X . Built with care for the community."
@@ -402,116 +421,140 @@ def dailyPollApp():
         pass        
 
     elif request.method == 'POST':
+        if not pollSubmitted:
+            if 'comment' not in request.form:
+                print(f"{request.form = }")
 
-        if 'comment' not in request.form:
-            print(f"{request.form = }")
+                if(qTypeDescr["ranking"]):
+                    answersList = request.form["ranked_list"]
+                    answersList = json.loads(answersList)
+                elif(qTypeDescr["range"]):
+                    answersValue = request.form["range_value"]
+                elif(qTypeDescr["prompt"]):
+                    answersList = request.form["prompt_message"]
+                elif( (qTypeDescr["singlechoice"] and qTypeDescr["names"]) or
+                    (qTypeDescr["singlechoice"] and qTypeDescr["openended"]) or
+                        qTypeDescr["yesorno"] or qTypeDescr["teams"] ):
+                    answersValue = request.form["vote"]
+                elif( (qTypeDescr["multichoice"] and qTypeDescr["openended"]) or 
+                    (qTypeDescr["multichoice"] and qTypeDescr["names"]) ): 
+                    for value in request.form.values():
+                        answersList.append(value)
 
-            if(qTypeDescr["ranking"]):
-                answersList = request.form["ranked_list"]
-                answersList = json.loads(answersList)
-            elif(qTypeDescr["range"]):
-                answersValue = request.form["range_value"]
-            elif(qTypeDescr["prompt"]):
-                answersList = request.form["promptMessage"]
-            elif( (qTypeDescr["singlechoice"] and qTypeDescr["names"]) or
-                  (qTypeDescr["singlechoice"] and qTypeDescr["openended"]) or
-                    qTypeDescr["yesorno"] or qTypeDescr["teams"] ):
-                answersValue = request.form["vote"]
-            elif( (qTypeDescr["multichoice"] and qTypeDescr["openended"]) or 
-                  (qTypeDescr["multichoice"] and qTypeDescr["names"]) ): 
-                for value in request.form.values():
-                    answersList.append(value)
+                if(answersValue):
+                    answersBody[userID] = answersValue
+                elif(answersList):
+                    answersBody[userID] = answersList
 
-            print(f"{answersValue = }\n{answersList = }\n")
+                pollSubmitted = True
 
-            if(answersValue):
-                answersBody[userID] = answersValue
-            elif(answersList):
-                answersBody[userID] = answersList
-            
-            prettyPrintJson(answersBody)        
+                # update user vote info
+                users_db[userID]["voted"]["dailyPoll"] = 1
+                with open('database/user_db.json', 'w') as f:
+                    json.dump(users_db,f,indent=4)     
 
-            if( qTypeDescr["range"] or qTypeDescr["prompt"] or 
-                (qTypeDescr["singlechoice"] and qTypeDescr["names"]) or
-                (qTypeDescr["singlechoice"] and qTypeDescr["openended"]) ):
-
-                for uid, option in answersBody.items(): # option is a value
-                    if option not in answersProcessed:
-                        answersProcessed[option] = {}
-                        answersProcessed[option]["value"] = 1
-                        answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
-                        answersProcessed[option]["voters"] = [uid]
-                    else:
-                        answersProcessed[option]["value"] += 1
-                        answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
-                        if(uid not in answersProcessed[option]["voters"]):
-                            answersProcessed[option]["voters"].append(uid)
-
-            elif(qTypeDescr["ranking"]):
-                for uid, options in answersBody.items(): # options is a list
-                    top_three = {f"{i+1}": val for i, val in enumerate(options[:3])}
-                    others = {f"{i+4}": val for i, val in enumerate(options[3:])}
-                    rankingProcessed[uid] = {
-                        "top_three":top_three,
-                        "others":others
-                    }
-
-            elif(qTypeDescr["teams"]):
-                for sideName, value in optionsBody.items():
-                    sidesProcessed[sideName] = 0
-                for uid, option in answersBody.items(): # options is a value
-                    sidesProcessed[option] += 1
-            
-            elif(qTypeDescr["yesorno"]):
-                sidesProcessed["Yes"] = 0
-                sidesProcessed["No"] = 0
-                for uid, option in answersBody.items(): # options is a value
-                    if(option.lower()=="yes"):
-                        sidesProcessed["Yes"] += 1
-                    elif(option.lower()=="definitely"):
-                        sidesProcessed["Yes"] += 1*3 # yesornoMultiplier
-                    elif(option.lower()=="no"):
-                        sidesProcessed["No"] += 1
-                    elif(option.lower()=="never"):
-                        sidesProcessed["No"] += 1*3 # yesornoMultiplier
-
-            elif( (qTypeDescr["multichoice"] and qTypeDescr["names"]) or
-                  (qTypeDescr["multichoice"] and qTypeDescr["openended"]) ):
-                for uid, options in answersBody.items(): # option is a list
-                    for option in options:
-                        if option not in answersProcessed:
-                            answersProcessed[option] = {}
-                            answersProcessed[option]["value"] = 1
-                            answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
-                            answersProcessed[option]["voters"] = [uid]
-                        else:
-                            answersProcessed[option]["value"] += 1
-                            answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
-                            if(uid not in answersProcessed[option]["voters"]):
-                                answersProcessed[option]["voters"].append(uid)
-
-            pollSubmitted = True
+                # add new answer to today poll
+                dailyPoll["Answers"] = answersBody
+                users_db[userID]["voted"]["dailyPoll"] = 1
+                with open('database/today_poll.json', 'w') as f:
+                    json.dump(dailyPoll,f,indent=4)              
 
         else:
-            comment = request.form['comment']
-            current_date = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
-            appID = 1
+            if 'comment' in request.form:
+                comment = request.form['comment']
+                current_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                appID = 1
+                
+                todayComments[current_date] = {
+                    "userID": userID,
+                    "appID": appID,
+                    "text":comment,
+                    "username":findByID(userID)
+                }           
+                with open('database/comments.json', 'w') as f:
+                    json.dump(todayComments, f, indent=4)
+                return redirect(url_for('namizu.dailyPollApp'))
             
-            todayComments[current_date] = {
-                "userID": userID,
-                "appID": appID,
-                "text":comment
-            }           
-            with open('database/comments.json', 'w') as f:
-                json.dump(todayComments, f, indent=4)
+    
+    if( qTypeDescr["range"] or 
+        (qTypeDescr["singlechoice"] and qTypeDescr["names"]) or
+        (qTypeDescr["singlechoice"] and qTypeDescr["openended"]) ):
 
-    print(f"Daily Poll DEBUG:\n{qTypeDescr = }\n{answersProcessed = }\n{sidesProcessed = }\n{rankingProcessed = }\n{optionsBody = }\n")
+        for uid, option in answersBody.items(): # option is a value
+            if option not in answersProcessed:
+                answersProcessed[option] = {}
+                answersProcessed[option]["value"] = 1
+                answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
+                answersProcessed[option]["voters"] = [uid]
+            else:
+                answersProcessed[option]["value"] += 1
+                answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
+                if(uid not in answersProcessed[option]["voters"]):
+                    answersProcessed[option]["voters"].append(uid)
+                    
+    elif(qTypeDescr["prompt"]):
+        for uid, text in answersBody.items(): # option is a value
+            answersProcessed[uid] = {
+                "username":findByID(uid),
+                "text": text
+            }
+    elif(qTypeDescr["ranking"]):
+        romanNumbers = ["I","II","III","IV","V","VI","VII","VIII","IX","X"]
+        for uid, options in answersBody.items(): # options is a list
+
+            #top_three = dict(zip(romanNumbers[:3], options[:3]))
+            #top_three = {f"{i+1}": val for i, val in enumerate(options[:3])}
+            top_three = {f"{i+1}": {"roman":romanNumbers[i], "name":val} for i, val in enumerate(options[:3]) }
+            #others = dict(zip(romanNumbers[3:], options[3:]))
+            #others = {f"{i+4}": val for i, val in enumerate(options[3:])}
+            others = {f"{i+4}": {"roman":romanNumbers[i+3], "name":val} for i, val in enumerate(options[3:]) }
+            rankingProcessed[uid] = {
+                "username": findByID(uid),
+                "top_three": top_three,
+                "others": others
+            }
+
+    elif(qTypeDescr["teams"]):
+        for sideName, value in optionsBody.items():
+            sidesProcessed[sideName] = 0
+        for uid, option in answersBody.items(): # options is a value
+            sidesProcessed[option] += 1
+    
+    elif(qTypeDescr["yesorno"]):
+        sidesProcessed["Yes"] = 0
+        sidesProcessed["No"] = 0
+        for uid, option in answersBody.items(): # options is a value
+            if(option.lower()=="yes"):
+                sidesProcessed["Yes"] += 1
+            elif(option.lower()=="definitely"):
+                sidesProcessed["Yes"] += 1*3 # yesornoMultiplier
+            elif(option.lower()=="no"):
+                sidesProcessed["No"] += 1
+            elif(option.lower()=="never"):
+                sidesProcessed["No"] += 1*3 # yesornoMultiplier
+
+    elif( (qTypeDescr["multichoice"] and qTypeDescr["names"]) or
+        (qTypeDescr["multichoice"] and qTypeDescr["openended"]) ):
+        for uid, options in answersBody.items(): # option is a list
+            for option in options:
+                if option not in answersProcessed:
+                    answersProcessed[option] = {}
+                    answersProcessed[option]["value"] = 1
+                    answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
+                    answersProcessed[option]["voters"] = [uid]
+                else:
+                    answersProcessed[option]["value"] += 1
+                    answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
+                    if(uid not in answersProcessed[option]["voters"]):
+                        answersProcessed[option]["voters"].append(uid)        
+
+    print(f"Daily Poll DEBUG:\n{pollSubmitted = }\n")
 
     return render_template('namizu/dailyPollPage.html', 
-                           banner=banner,qTypeDescr=qTypeDescr,answersProcessed=answersProcessed,
+                           banner=banner,qTypeDescr=qTypeDescr,answersProcessed=answersProcessed,rankingProcessed=rankingProcessed,
                            theme=theme, optionsBody=optionsBody,voterStat=voterStat,kudosMessage=kudosMessage,
                            questionBody=questionBody, pollster=pollster, pollSubmitted=pollSubmitted,
-                           footerText=footerText
+                           footerText=footerText,todayComments=todayComments,roman=romanNumbers
                            )
 
 @bp.route("/sidequest", methods=['GET', 'POST'])
@@ -527,25 +570,37 @@ def wittyBannerText():
 
 @bp.route('/editor', methods=['GET', 'POST'])
 def editorApp():
-    namesList = ["Bálint","Bella","Geri","Herczi","Hanna","Koppány","Márk"]
+    session['url'] = "editorApp"
+    users_db = {}
+    with open('database/user_db.json', 'r') as f:
+        users_db = json.load(f)
+
+    namesList = [user["uname"] for user in users_db.values()]
+
     restartEditor = False
-    session.pop('_flashes', None)
+    
+    userID = session['userID']
+    
     pollBody = {
         "Type":"",
-        "Question":"",
-        "Options":{},
-        "Pollster":"",
-        "Theme":""
+        "Options":{}
     }
     if request.method == "POST":
+        session.pop('_flashes', None)
         #print(f"{request.form = }")
         pollBody["Question"] = request.form["question"]
         pollBody["Type"] = request.form["selectionType"] + "," + request.form["privacyType"] + "," + request.form["optionsType"]
-        pollBody["Pollster"] = findByID("ID3")
-        pollBody["Theme"] = "default"
+        pollBody["Pollster"] = findByID(userID)
+        pollBody["Theme"] = "default_day"
+        pollBody["Status"] = 0
+        pollBody["Answers"] = {}
+        pollBody["Datetime"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
         
         ## process Options
 
+        if(request.form["optionsType"] == "prompt"):
+            pollBody["Options"] = {"shape":"cloud"}
         if(request.form["optionsType"] == "yesorno"):
             pollBody["Options"] = {f"option{i+1}": val for i, val in enumerate(['Definitely!', 'Yes', 'No', 'Never!'])}
         if(request.form["optionsType"] == "names"):
@@ -614,9 +669,6 @@ def editorApp():
         if("anonym" in pollBody["Type"] and "teams" in pollBody["Type"]):
             restartEditor = True
             flash("Cannot be anonym and teams at the same time. Session restarted")
-        if("anonym" in pollBody["Type"] and "ranking" in pollBody["Type"]):
-            restartEditor = True
-            flash("Cannot be anonym and ranking at the same time. Session restarted")
 
         if pollBody["Question"] == "":
             restartEditor = True
@@ -625,6 +677,11 @@ def editorApp():
         if not pollBody["Options"]:
             restartEditor = True
             flash("No answers included. Session restarted")
+
+        # if options are matching
+        if( len(set(pollBody["Options"].values())) != len(pollBody["Options"].values()) ):
+            restartEditor = True
+            flash("Some options are identical. Please add unique options. Session restarted")    
 
         for option in pollBody["Options"].values():
             if option == "":
@@ -646,6 +703,9 @@ def editorApp():
             with open('database/questions_bank.json', 'w') as f:
                 json.dump(questions_bank, f, indent=4)
             flash("Poll submitted successfully.")
+
+        return redirect(url_for('namizu.editorApp'))
+        
     
     return render_template('namizu/editorPage.html',namesList=namesList)
 
