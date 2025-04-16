@@ -1,328 +1,363 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Joti+One&family=VT323&display=swap" rel="stylesheet">
-    
-    <title>naMizu daily poll</title>
-    <style>
-:root {
-    --bg-color: {{ theme.mainBG1 }};
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Joti+One&family=VT323&display=swap" rel="stylesheet">
 
-body {
-  margin: 0;
-  background-color: var(--bg-color);
-  color: #333;
-}
+  <title>naMizu daily poll</title>
+  <style>
+    :root {
+      --bg-color: {{theme.mainBG1}};
+    }
 
-.container {
-  max-width: 480px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  border: 1px solid #ccc;
-  background-color: var(--bg-color);
-}
+    body {
+      margin: 0;
+      background-color: var(--bg-color);
+      color: #333;
+    }
 
-header {
-  background: #2b4f5b;
-  color: #fff;
-  padding: 12px 16px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      border: 1px solid #ccc;
+      background-color: var(--bg-color);
+    }
 
-header h1 {
-  font-size: 1.5rem;
-  margin: 0;
-}
+    header {
+      background: #2b4f5b;
+      color: #fff;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-.nav-icon {
-  font-size: 1.6rem;
-  background-color: #fae5c9; 
-  border-radius: 50%; 
-  padding: 8px;
-}
+    header h1 {
+      font-size: 1.5rem;
+      margin: 0;
+    }
 
-/* Poll question styling */
-.question-section {
-  background: #3e6d7d;
-  color: #fff;
-  padding: 8px;
-  text-align: center;
-  font-style: italic;
-  border-bottom-left-radius: 25px;
-  border-bottom-right-radius: 25px;
-  font-size: 1.1rem;
-  line-height: 1;
-}
+    .nav-icon {
+      font-size: 1.6rem;
+      background-color: #fae5c9;
+      border-radius: 50%;
+      padding: 8px;
+    }
 
-.pollster {
-    font-style:normal;
-    font-size: 1rem;
-    margin-block-start: 0.3em;
-}
+    /* Poll question styling */
+    .question-section {
+      background: #3e6d7d;
+      color: #fff;
+      padding: 8px;
+      text-align: center;
+      font-style: italic;
+      border-bottom-left-radius: 25px;
+      border-bottom-right-radius: 25px;
+      font-size: 1.1rem;
+      line-height: 1;
+    }
 
+    .pollster {
+      font-style: normal;
+      font-size: 1rem;
+      margin-block-start: 0.3em;
+    }
 
-.instruction {
-  text-align: center;
-  padding: 4px;
-  font-weight: bold;
-  font-size: 1rem;
-  margin: 2%;
-}
+    .podium-title {
+      font-style: normal;
+      font-size: 1rem;
+      margin-block-start: 0.3em;
+      margin: 2% 2% 7%;
+      text-align: center;
+    }
 
-/* Voting area */
-.vote-box {
-  display: flex;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
-  background: #3e6d7d;
-  margin: 0 12px;
-  padding: 20px;
-  border-radius: 12px;
-  border: 2px solid #3e6d7d;
-}
+    .instruction {
+      text-align: center;
+      padding: 4px;
+      font-weight: bold;
+      font-size: 1rem;
+      margin: 2%;
+    }
 
-.vote-btn {
-  max-width: 250px;
-  padding: 8px;
-  background: #dbdbdb;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  font-size: 1rem;
-  cursor: pointer;
-}
+    /* Voting area */
+    .vote-box {
+      display: flex;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      background: #3e6d7d;
+      margin: 0 12px;
+      padding: 20px;
+      border-radius: 12px;
+      border: 2px solid #3e6d7d;
+    }
 
-/* Footer */
-footer {
-  margin-top: auto;
-  text-align: center;
-  padding: 15px;
-  font-size: 0.85rem;
-  background: #dbdbdb;
-  color: #000000;
-}
+    .vote-btn {
+      max-width: 250px;
+      padding: 8px;
+      background: #dbdbdb;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+    }
 
-.slider {
-  -webkit-appearance: none;
-  width: 100%;
-  height: 15px;
-  border-radius: 5px;
-  background: #d3d3d3;
-  outline: none;
-  opacity: 1;
-}
-.slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 25px;
-  height: 25px;
-  border-radius: 50%;
-  background: #04AA6D;
-  cursor: pointer;
-}
+    /* Footer */
+    footer {
+      margin-top: auto;
+      text-align: center;
+      padding: 15px;
+      font-size: 0.85rem;
+      background: #dbdbdb;
+      color: #000000;
+    }
 
-.slider::-moz-range-thumb {
-  width: 25px;
-  height: 25px;
-  border-radius: 50%;
-  background: #04AA6D;
-  cursor: pointer;
-}
+    .slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 15px;
+      border-radius: 5px;
+      background: #d3d3d3;
+      outline: none;
+      opacity: 1;
+    }
 
-.prompt-box {
-    display: flex;
-    border-top: 1px solid #3a5d6c;
-}
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      background: #04AA6D;
+      cursor: pointer;
+    }
 
-.prompt-box #prompt{
-    flex: 1;
-    padding: 10px;
-    border: none;
-    border-radius: 0;
-    outline: none;
-    font-size: 1em;
-}
+    .slider::-moz-range-thumb {
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      background: #04AA6D;
+      cursor: pointer;
+    }
 
-.prompt-box #promptSubmit{
-    padding: 10px 15px;
-    background-color: #f5c199;
-    border: none;
-    color:  #3a5d6c;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 1em;
-}
+    .prompt-box {
+      display: flex;
+      border-top: 1px solid #3a5d6c;
+    }
 
-.comments-box {
-    background-color: #2c5b66;
-    border-radius: 10px;
-    max-width: 400px;
-    padding: 20px;
-    color: #333;
-    margin: 5% 2% 2%;
-}
+    .prompt-box #prompt {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 0;
+      outline: none;
+      font-size: 1em;
+    }
 
-.comments-header {
-    background-color: #f7dfb5;
-    text-align: center;
-    padding: 10px;
-    font-weight: bold;
-    font-size: 18px;
-    border-radius: 6px;
-    margin-bottom: 15px;
-}
+    .prompt-box #promptSubmit {
+      padding: 10px 15px;
+      background-color: #f5c199;
+      border: none;
+      color: #3a5d6c;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 1em;
+    }
 
-.range-text {
-  width: 100%;
-  font-size: 0.8rem;
-  color: #fff;  
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+    .comments-box {
+      background-color: #2c5b66;
+      border-radius: 10px;
+      max-width: 400px;
+      padding: 20px;
+      color: #333;
+      margin: 5% 2% 2%;
+    }
 
-.checkboxx {
-  background-color: #d3d3d3;
-  padding: 2%;
-}
+    .comments-header {
+      background-color: #f7dfb5;
+      text-align: center;
+      padding: 10px;
+      font-weight: bold;
+      font-size: 18px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+    }
 
-.ranking-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
+    .range-text {
+      width: 100%;
+      font-size: 0.8rem;
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-.ranking-list li {
-    background: #fff;
-    padding: 14px 18px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    cursor: grab;
-    font-size: 18px;
-    user-select: none;
-    touch-action: none; /* Prevent accidental scroll */
-}
+    .checkboxx {
+      background-color: #d3d3d3;
+      padding: 2%;
+    }
 
-.ghost {
-    opacity: 0;
-}
+    .ranking-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
 
-.chosen {
-    background-color: #e0ffe0;
-    transform: scale(1.01);
-    box-shadow: 0 4px 12px rgba(0,0,0);
-    z-index: 1000;
-}
+    .ranking-list li {
+      background: #fff;
+      padding: 14px 18px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      cursor: grab;
+      font-size: 18px;
+      user-select: none;
+      touch-action: none;
+      /* Prevent accidental scroll */
+    }
 
-.submit-btn {
-    width: 100%;
-    padding: 14px;
-    background-color: #4CAF50;
-    color: white;
-    font-size: 18px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    margin-top: 20px;
-}
+    .ghost {
+      opacity: 0;
+    }
 
-#chart-container {
-    width: 90%;
-    max-width: 600px;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    margin-left: 2%;
-}
+    hr {
+      margin: 0% 1%;
+      border: 6px solid lightgoldenrodyellow;
+    }
 
-.bar-wrapper {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-}
+    .chosen {
+      background-color: #e0ffe0;
+      transform: scale(1.01);
+      box-shadow: 0 4px 12px rgba(0, 0, 0);
+      z-index: 1000;
+    }
 
-.bar {
-    position: relative;
-    background-color: #bf4222;
-    border-radius: 20px;
-    border-top-left-radius: 0%;
-    border-bottom-left-radius: 0%;
-    display: flex;
-    align-items: center;
-    overflow: hidden;
-    flex-wrap: wrap;
-    word-wrap: break-word;
-    padding: 1% 0%;
-}
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      background-color: #4CAF50;
+      color: white;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
 
-.bar .value {
-    color: #fff;
-    font-weight: bold;
-    font-size: medium;
-    white-space: normal;
-    overflow-wrap: break-word;
-    padding-left: 10px;
-    padding-right: 10px;
-    max-width: 100%;
-    text-align: right;
-    align-self: flex-end; /* Align value to the bottom right */
-    display: inline-block;
-}
+    #chart-container {
+      width: 90%;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-left: 2%;
+    }
 
-.bar .label {
-    font-size: 16px;
-    font-weight: normal;
-    text-align: left;
-    color: #333;
-    padding-left: 10px;
-    width: 100%; /* Ensure label spans the full width */
-}
+    .bar-wrapper {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
 
-/* Optional: Style for bar container to ensure it wraps neatly */
-.bar-wrapper .label {
-    font-weight: bold;
-}
+    .bar {
+      position: relative;
+      background-color: #bf4222;
+      border-radius: 20px;
+      border-top-left-radius: 0%;
+      border-bottom-left-radius: 0%;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      flex-wrap: wrap;
+      word-wrap: break-word;
+      padding: 1% 0%;
+    }
 
-.podium-container {
+    .bar .value {
+      color: #fff;
+      font-weight: bold;
+      font-size: medium;
+      white-space: normal;
+      overflow-wrap: break-word;
+      padding-left: 10px;
+      padding-right: 10px;
+      max-width: 100%;
+      text-align: right;
+      align-self: flex-end;
+      /* Align value to the bottom right */
+      display: inline-block;
+    }
+
+    .bar .label {
+      font-size: 16px;
+      font-weight: normal;
+      text-align: left;
+      color: #333;
+      padding-left: 10px;
+      width: 100%;
+      /* Ensure label spans the full width */
+    }
+
+    /* Optional: Style for bar container to ensure it wraps neatly */
+    .bar-wrapper .label {
+      font-weight: bold;
+    }
+
+    .podium-section {
+      border: 4px solid navy;
+      background-color: #68D2E8;
+      border-radius: 12px;
+      padding: 24px;
+      margin: 4% 12%;
+    }
+
+    .podium-container {
       display: flex;
       justify-content: center;
       align-items: flex-end;
       gap: 10px;
       flex-wrap: wrap;
-      margin-bottom: 40px;
     }
 
     .podium {
       flex: 1 1 80px;
-      max-width: 120px;
-      background-color: #98c1d9;
+      max-width: 90px;
+      background-color: #6EACDA;
       color: white;
       border-radius: 12px 12px 0 0;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
       align-items: center;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-    .podium-1 { height: 180px; background-color: #ee6c4d; }
-    .podium-2 { height: 140px; background-color: #3d5a80; }
-    .podium-3 { height: 120px; background-color: #293241; }
+    .podium-1 {
+      height: 180px;
+      background-color: #E3651D;
+    }
+
+    .podium-2 {
+      height: 140px;
+      background-color: #750E21;
+    }
+
+    .podium-3 {
+      height: 120px;
+      background-color: #3E4377;
+    }
 
     .podium-rank {
       font-size: 1.2rem;
@@ -333,11 +368,12 @@ footer {
     .podium-name {
       font-size: 1rem;
       padding: 10px 0;
+      margin: 6%;
     }
 
     .others {
-      max-width: 400px;
-      margin: 0 auto;
+      max-width: 80%;
+      margin: 4px;
       padding: 0;
       list-style: none;
     }
@@ -347,7 +383,7 @@ footer {
       margin: 10px 0;
       padding: 12px 20px;
       border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
       display: flex;
       justify-content: start;
       align-items: center;
@@ -360,175 +396,255 @@ footer {
       font-size: 1.1rem;
     }
 
+    .chat-messages {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      border-bottom: 1px solid #3a5d6c;
+      word-wrap: break-word;
+    }
 
+    .message {
+      margin-bottom: 10px;
+    }
+
+    .message .text {
+      background-color: #fae5c9;
+      color: #3a5d6c;
+      padding: 8px;
+      border-radius: 5px;
+      display: inline-block;
+      word-break: break-word;
+      font-weight: bold;
+    }
+
+    .note-container {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .sticky-note {
+      width: 170px;
+      min-height: 170px;
+      background: #fff9aa;
+      box-shadow: -3px 11px 12px 1px rgba(0, 0, 0, 0.2);
+      padding: 16px;
+      transform: rotate(-2deg);
+      border: 1px solid #e1d25f;
+      border-radius: 8px;
+      border-bottom-right-radius: 12%;
+      font-size: 14px;
+      color: #333;
+      position: relative;
+    }
+
+    .sticky-note h3 {
+      margin: 0%;
+    }
   </style>
 </head>
+
 <body>
   <div class="container">
 
     <header>
       <a href="{{ url_for('namizu.landingPage') }}">
-          <div class="nav-icon">&#127968;</div>
+        <div class="nav-icon">&#127968;</div>
       </a>
       <h1>naMizu DailyPoll</h1>
       <a href="{{ url_for('namizu.calendarApp') }}">
-          <div class="nav-icon">&#128197;</div>
+        <div class="nav-icon">&#128197;</div>
       </a>
     </header>
 
     <section class="question-section">
       {% if qTypeDescr.public %}
-          <p class="pollster">{{ pollster }}'s question:</p>  
+      <p class="pollster">{{ pollster }}'s question:</p>
       {% endif %}
       <p class="question-text">
         {{ questionBody }}
       </p>
     </section>
-    
+
     {% if not pollSubmitted %}
     <form method="POST" id="mainForm">
 
-        <section class="instruction">
-          {% if qTypeDescr.multichoice %}
-          MULTI-CHOICE 
-          {% endif %}
+      <section class="instruction">
+        {% if qTypeDescr.multichoice %}
+        MULTI-CHOICE
+        {% endif %}
 
-          {% if qTypeDescr.singlechoice %}
-          SINGLE-CHOICE 
-          {% endif %}
-
-          {% if qTypeDescr.range %}
-          RANGE 
-          {% endif %}
-
-          {% if qTypeDescr.prompt %}
-          PROMPT 
-          {% endif %}
-
-          {% if qTypeDescr.ranking %}
-          RANKING
-          {% endif %}
-        </section>
-
-        {% if qTypeDescr.buttons %}
-
-          {% if qTypeDescr.singlechoice %}
-          <section class="vote-box">
-              {% for oid, option in optionsBody.items() %}
-                  <button class="vote-btn" type="submit" name="vote" value="{{ option }}">{{ option }}</button>
-              {% endfor %}
-          </section>
-
-          {% elif qTypeDescr.multichoice %}
-          <section class="vote-box">
-              {% for oid, option in optionsBody.items() %}
-              <label class="checkboxx">
-                <input class="checkboxx_input" type="checkbox" name="{{ oid }}" style="display: none;" value="{{ option }}" onchange="isChecked(this,'')"/>
-                <div class="checkboxx_label">{{ option }}</div>
-              </label>
-              {% endfor %}
-          </section>
-          {% endif %}
-
+        {% if qTypeDescr.singlechoice %}
+        SINGLE-CHOICE
         {% endif %}
 
         {% if qTypeDescr.range %}
-          <section class="vote-box">
-              <div class="range-text">
-                  <div>{{ optionsBody.mintext }}</div>
-                  <div>{{ optionsBody.maxtext }}</div>
-              </div>
-              <input type="range" min="{{ optionsBody.minvalue }}" max="{{ optionsBody.maxvalue }}" value="{{ optionsBody.minvalue }}" class="slider" id="myRange">
-              <span id="slider-output" style="color: #fff;font-weight: bold;"></span>
-              <input type="hidden" id="rangeValue" name="range_value" value="{{ optionsBody.minvalue }}">
-          </section>
-                        
-        {% endif %}
-
-        {% if qTypeDescr.ranking %}
-        <section class="vote-box" style="display:block;">
-            <!--ranking-->
-            
-            <ul id="sortable-list" class="ranking-list">
-                {% for oid, option in optionsBody.items() %}
-                <li value="{{ option }}">{{ option }}</li>
-                {% endfor %}
-            </ul>
-            <input type="hidden" name="ranked_list" id="rankedInput">
-        
-        </section>
+        RANGE
         {% endif %}
 
         {% if qTypeDescr.prompt %}
-        <section class="vote-box">
-            <div class="prompt-box">
-                <input type="text" id="prompt" name="prompt_message" placeholder="Write your answer here..." >
-            </div>
-        </section>
+        PROMPT
         {% endif %}
 
-        {% if qTypeDescr.prompt or qTypeDescr.range or qTypeDescr.ranking or (qTypeDescr.buttons and qTypeDescr.multichoice) %}
-            <button type="submit">Submit</button>
+        {% if qTypeDescr.ranking %}
+        RANKING
         {% endif %}
+      </section>
+
+      {% if qTypeDescr.buttons %}
+
+      {% if qTypeDescr.singlechoice %}
+      <section class="vote-box">
+        {% for oid, option in optionsBody.items() %}
+        <button class="vote-btn" type="submit" name="vote" value="{{ option }}">{{ option }}</button>
+        {% endfor %}
+      </section>
+
+      {% elif qTypeDescr.multichoice %}
+      <section class="vote-box">
+        {% for oid, option in optionsBody.items() %}
+        <label class="checkboxx">
+          <input class="checkboxx_input" type="checkbox" name="{{ oid }}" style="display: none;" value="{{ option }}"
+            onchange="isChecked(this,'')" />
+          <div class="checkboxx_label">{{ option }}</div>
+        </label>
+        {% endfor %}
+      </section>
+      {% endif %}
+
+      {% endif %}
+
+      {% if qTypeDescr.range %}
+      <section class="vote-box">
+        <div class="range-text">
+          <div>{{ optionsBody.mintext }}</div>
+          <div>{{ optionsBody.maxtext }}</div>
+        </div>
+        <input type="range" min="{{ optionsBody.minvalue }}" max="{{ optionsBody.maxvalue }}"
+          value="{{ optionsBody.minvalue }}" class="slider" id="myRange">
+        <span id="slider-output" style="color: #fff;font-weight: bold;"></span>
+        <input type="hidden" id="rangeValue" name="range_value" value="{{ optionsBody.minvalue }}">
+      </section>
+
+      {% endif %}
+
+      {% if qTypeDescr.ranking %}
+      <section class="vote-box" style="display:block;">
+        <!--ranking-->
+
+        <ul id="sortable-list" class="ranking-list">
+          {% for oid, option in optionsBody.items() %}
+          <li data-value="{{ option }}">{{ option }}</li>
+          {% endfor %}
+        </ul>
+        <input type="hidden" name="ranked_list" id="rankedInput">
+
+      </section>
+      {% endif %}
+
+      {% if qTypeDescr.prompt %}
+      <section class="vote-box">
+        <div class="prompt-box">
+          <input type="text" id="prompt" name="prompt_message" placeholder="Write your answer here...">
+        </div>
+      </section>
+      {% endif %}
+
+      {% if qTypeDescr.prompt or qTypeDescr.range or qTypeDescr.ranking or (qTypeDescr.buttons and
+      qTypeDescr.multichoice) %}
+      <button type="submit">Submit</button>
+      {% endif %}
 
     </form>
     {% else %}
     <!-- if player already submitted poll -->
 
-        {{ kudosMessage }} <br>
-        {{ voterStat.voteSum }} of {{ voterStat.voterSum }} people have voted already
-        {% if qTypeDescr.yesorno or qTypeDescr.names or qTypeDescr.openended %}
-        <div id="chart-container">
-            {% for label, details in answersProcessed.items() %}  
-                <div class="bar-wrapper">
-                    <div class="label">{{ label }}</div>
-                    <div class="bar" style="width: {{ details.width }}%;">
-                        <span class="value" >{{ details.value }}</span>
-                    </div>
-                </div>
-            {% endfor %}
+    <!--<div class="instruction">{{ kudosMessage }}</div>-->
+    <div class="instruction">{{ voterStat.voteSum }} of {{ voterStat.voterSum }} people have voted already</div>
+
+    {% if qTypeDescr.yesorno or qTypeDescr.names or qTypeDescr.openended %}
+    <div id="chart-container">
+      {% for label, details in answersProcessed.items() %}
+      <div class="bar-wrapper">
+        <div class="label">{{ label }}</div>
+        <div class="bar" style="width: {{ details.width }}%;">
+          <span class="value">{{ details.value }}</span>
         </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if qTypeDescr.ranking %}
+
+    {% for uid, details in rankingProcessed.items() %}
+    <section class="podium-section">
+      {% if qTypeDescr.public %}
+      <div class="podium-title">{{ details.username }}'s tier list</div>
+      {% endif %}
+      <div class="podium-container">
+        {% for rank, roman_and_name in details.top_three.items() %}
+        <div class="podium podium-{{ rank }}">
+          <div class="podium-rank">{{ roman_and_name.roman }}.</div>
+          <div class="podium-name">{{ roman_and_name.name }}</div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <hr>
+
+      <ul class="others">
+        {% for rank, roman_and_name in details.others.items() %}
+        <li class="other-item">
+          <span class="other-rank">{{ roman_and_name.roman }}.</span> {{ roman_and_name.name }}
+        </li>
+        {% endfor %}
+      </ul>
+    </section>
+
+    {% endfor %}
+
+    {% endif %}
+
+    {% if qTypeDescr.prompt %}
+    <div class="note-container">
+      {% for uid, details in answersProcessed.items() %}
+      <div class="sticky-note">
+
+        {% if qTypeDescr.public %}
+        <h3>{{ details.username }}</h3>
         {% endif %}
 
-        {% if qTypeDescr.ranking %}
+        <p>{{ details.text }}</p>
 
-          <div class="podium-container">
-            {% for rank, name in top_three.items() %}
-            <div class="podium podium-{{ rank }}">
-              <div class="podium-rank">{{ rank }}</div>
-              <div class="podium-name">{{ name }}</div>
-            </div>
-            {% endfor %}
-          </div>
-        
-          <ul class="others">
-            {% for rank, name in others.items() %}
-            <li class="other-item">
-              <span class="other-rank">{{ rank }}.</span> {{ name }}
-            </li>
-            {% endfor %}
-          </ul>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
 
+    <section class="comments-box">
+      <div class="comments-header">Comments</div>
+
+      <div class="chat-messages" id="chatMessages">
+        {% if todayComments %}
+        {% for comment in todayComments.values() %}
+        <div class="message">
+          <div class="text"><strong>{{ comment.username }}:</strong> {{ comment.text }}</div>
+        </div>
+        {% endfor %}
         {% endif %}
+      </div>
 
-        <section class="comments-box">
-            <div class="comments-header">Comments</div>
-            {% if comments %}
-                {% for comment in comments %}
-                    <div class="comment">
-                        <div class="text"><strong>{{ comment["name"] }}:</strong> {{ comment["message"] }}</div>
-                    </div>  
-                {% endfor %}
-            {% endif %}
+      <form method="POST">
+        <div class="prompt-box">
+          <input type="text" id="prompt" name="comment" placeholder="Type a message...">
+          <input type="submit" id="promptSubmit" value="Submit">
+        </div>
+      </form>
+    </section>
 
-            <form method="POST">
-                <div class="prompt-box">
-                    <input type="text" id="prompt" name="comment" placeholder="Type a message..." >
-                    <input type="submit" id="promptSubmit" value="Submit">
-                </div>
-            </form>
-        </section>
-        
     {% endif %}
 
     <footer>
@@ -537,58 +653,68 @@ footer {
 
   </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-      <script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <script>
+    {% if qTypeDescr.prompt %}
 
-          function isChecked(elem) {
-          //elem.parentNode.style.backgroundColor = (elem.checked) ? ' #a2a2a2' : '#ffffff';
-          // when checked, reduce margin and increase border - to keep gap same size
-          elem.parentNode.style.border = (elem.checked) ? '3px solid red' : '0px solid #ddd';
-          }
-          
-          {% if qTypeDescr.ranking %}
+    const notes = document.querySelectorAll('.sticky-note');
+    notes.forEach(note => {
+      const deg = (Math.random() * 6 - 3).toFixed(2); // Random -3 to +3
+      note.style.transform = `rotate(${deg}deg)`;
+    });
 
-            const sortable = new Sortable(document.getElementById('sortable-list'), {
-                animation: 300,
-                ghostClass: 'ghost',       // Hide the original item
-                chosenClass: 'chosen',     // Style the lifted item
-                onStart: () => document.body.style.overflow = 'hidden',
-                onEnd: () => {
-                  document.body.style.overflow = 'auto',
-                  saveOrder();
-                  },
-            });
-          
-          const input = document.getElementById('rankedInput');
 
-           // Function to save the current order of the list into the hidden input field
-          function saveOrder() {
-              const items = document.querySelectorAll('#sortable-list li');
-              const ordered = Array.from(items).map(item => item.dataset.value);
-              input.value = JSON.stringify(ordered);  // Store the ordered list as a JSON string
-          }
+    {% endif %}
+    function isChecked(elem) {
+      //elem.parentNode.style.backgroundColor = (elem.checked) ? ' #a2a2a2' : '#ffffff';
+      // when checked, reduce margin and increase border - to keep gap same size
+      elem.parentNode.style.border = (elem.checked) ? '3px solid red' : '0px solid #ddd';
+    }
 
-          {% endif %}
+    {% if qTypeDescr.ranking %}
 
-          {% if qTypeDescr.range %}
+    const sortable = new Sortable(document.getElementById('sortable-list'), {
+      animation: 300,
+      ghostClass: 'ghost',       // Hide the original item
+      chosenClass: 'chosen',     // Style the lifted item
+      onStart: () => document.body.style.overflow = 'hidden',
+      onEnd: () => {
+        document.body.style.overflow = 'auto',
+          saveOrder();
+      },
+    });
 
-          const slider = document.getElementById("myRange");
-          const output = document.getElementById("slider-output");
-          const rangeValue = document.getElementById('rangeValue');
+    const input = document.getElementById('rankedInput');
 
-          // Set initial value
-          output.textContent = slider.value;
+    // Function to save the current order of the list into the hidden input field
+    function saveOrder() {
+      const items = document.querySelectorAll('#sortable-list li');
+      const ordered = Array.from(items).map(item => item.dataset.value);
+      input.value = JSON.stringify(ordered);  // Store the ordered list as a JSON string
+    }
 
-          // Update as user moves the slider
-          slider.addEventListener("input", () => {
-              output.textContent = slider.value;
-              rangeValue.value = slider.value;
-          });
+    {% endif %}
 
-          {% endif %}
-    
-      </script>
+    {% if qTypeDescr.range %}
+
+    const slider = document.getElementById("myRange");
+    const output = document.getElementById("slider-output");
+    const rangeValue = document.getElementById('rangeValue');
+
+    // Set initial value
+    output.textContent = slider.value;
+
+    // Update as user moves the slider
+    slider.addEventListener("input", () => {
+      output.textContent = slider.value;
+      rangeValue.value = slider.value;
+    });
+
+    {% endif %}
+
+  </script>
 
 
 </body>
+
 </html>
