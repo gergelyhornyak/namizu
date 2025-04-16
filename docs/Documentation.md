@@ -101,7 +101,6 @@ anonym X teams
 ranking X prompt
 ranking X yesorno
 ranking X teams
-ranking X anonym - because ranking will be shown for each voter
 
 
 ---
