@@ -28,172 +28,6 @@ def page_not_found400(e):
 
 #* SMALL FUNCTIONS
 
-testPolls = {
-    "range1": 
-    {
-        "Type": "singlechoice,range,anonym",
-        "Theme": "default_day",
-        "Question": "What is the best age?",
-        "Pollster": "X",
-        "Options": {
-            "mintext":"01234567890123456789",
-            "maxtext":"01234567890123456789",
-            "minvalue":1,
-            "maxvalue":10,
-        },
-        "Answers": {
-            "VID1": "4",
-            "VID2": "5",
-            "VID3": "8",
-            "VID4": "5",
-            "VID5": "5",
-        },
-        "Status": 0
-    },
-    "yesorno1": {
-        "Type": "singlechoice,yesorno,anonym",
-        "Theme": "default_day",
-        "Question": "Do you like driving?",
-        "Pollster": "X",
-        "Options": {
-            "option1":"Definitely!",
-            "option2":"Yes",
-            "option3":"No",
-            "option4":"Never!",
-        },
-        "Answers": {
-            "VID1": ["option1"],
-            "VID2": ["option2"],
-            "VID3": ["option1"],
-            "VID4": ["option3"],
-            "VID5": ["option1"],
-        },
-        "Status": 0
-    },
-    "names1": 
-    {
-        "Type": "multichoice,names,anonym",
-        "Theme": "default_day",
-        "Question": "Who is the tallest?",
-        "Pollster": "Lajos",
-        "Options": {
-            "o1":"Bálint",
-            "o2":"Bella",
-            "o3":"Geri",
-            "o4":"Herczi",
-            "o5":"Hanna",
-            "o6":"Koppány",
-            "o7":"Márk"
-        },
-        "Answers": {
-            "VID1": ["o1","o5"],
-            "VID2": ["o1","o5"],
-            "VID3": ["o2"],
-            "VID4": ["o5"],
-            "VID5": ["o7"],
-        },
-        "Status": 0
-    },
-    "names2": 
-    {
-        "Type": "singlechoice,names,anonym",
-        "Theme": "default_day",
-        "Question": "Who is the tallest?",
-        "Pollster": "Lajos",
-        "Options": {
-            "o1":"Bálint",
-            "o2":"Bella",
-            "o3":"Geri",
-            "o4":"Herczi",
-            "o5":"Hanna",
-            "o6":"Koppány",
-            "o7":"Márk"
-        },
-        "Answers": {
-            "VID1": ["o1"],
-            "VID2": ["o6"],
-            "VID3": ["o3"],
-            "VID4": ["o6"],
-        },
-        "Status": 0
-    },
-    "ranking1": {
-        "Type": "multichoice,ranking,anonym",
-        "Theme": "default_day",
-        "Question": "Rank the following places!",
-        "Pollster": "Geri",
-        "Options": {
-            "option1": "Budapest",
-            "option2": "Debrecen",
-            "option3": "P\u00e9cs",
-            "option4": "G\u00f6d"
-        },
-        "Answers": {
-            "VID1": ["option2","option1","option4","option3"],
-            "VID2": ["option4","option2","option1","option3"],
-            "VID3": ["option1","option2","option4","option3"],
-            "VID4": ["option3","option2","option1","option4"],
-        },
-        "Status": 0
-    },
-    "prompt1": 
-    {
-        "Type": "singlechoice,prompt,anonym",
-        "Theme": "default_day",
-        "Question": "Describe your best day.",
-        "Pollster": "Lajos",
-        "Options": {},
-        "Answers": {
-            "VID1": "jndkj dajsndjka sdkj naskjdn ajkdk ksa nd",
-            "VID2": "odsao jaso jd oia sjd oi jwo idcnqincq cwqc",
-            "VID3": "dn idjasc di cha sbhd csha chjd cj d",
-            "VID4": "po pfdsfpoiswejc bhjc whd uqwuch qwuxn u wc éőéő",
-            "VID5": "haha nope",
-        },
-        "Status": 0
-    },
-    "openended1": 
-    {
-        "Type": "singlechoice,openended,public",
-        "Theme": "default_day",
-        "Question": "Who would you pick?",
-        "Pollster": "Lajos",
-        "Options": {
-            "option1": "Dog",
-            "option2": "Cat",
-            "option3": "Horse",
-            "option4": "Goldfish",
-            "option5": "Dinosaur"
-        },
-        "Answers": {
-            "VID1": ["option2","option1"],
-            "VID2": ["option5"],
-            "VID3": ["option1","option5"],
-            "VID4": ["option3","option2","option1","option4"],
-            "VID5": ["option5","option1"]
-        },
-        "Status": 0
-    },
-    "teams1": 
-    {
-        "Type": "singlechoice,teams,public",
-        "Theme": "default_day",
-        "Question": "Who would you pick?",
-        "Pollster": "Lajos",
-        "Options": {
-            "teamA": "Dog",
-            "teamB": "Cat",
-        },
-        "Answers": {
-            "VID1": ["teamA"],
-            "VID2": ["teamB"],
-            "VID3": ["teamB"],
-            "VID4": ["teamB"],
-            "VID5": ["teamA"]
-        },
-        "Status": 0
-    }
-}
 
 def check_user_logged_in(funcName) -> tuple[bool, str]:
     print(f"{session = }")
@@ -288,6 +122,21 @@ def queryTheme(themename:str)->dict:
     except Exception as e:
         print(e)
     return themes[themename]
+
+def queryThemeDayMode(hour)->dict:
+    themes = {}
+    try:
+        with open('database/themes.json', 'r') as f:
+            themes = json.load(f)
+    except Exception as e:
+        print(e)
+
+    if(hour > 18 or hour < 7):
+        return themes["default_night"]
+    else:
+        return themes["default_day"]
+
+    
     
 
 def getTodayComments() -> dict:
@@ -304,6 +153,8 @@ def getTodayComments() -> dict:
 @bp.route('/login', methods=['GET', 'POST'])
 def loginPage():  
     wrongPasswCounter = 0
+    theme = queryThemeDayMode(datetime.now().hour)
+    footerText = "naMizu 2025. Version 3.X"
     userData = {}
     with open('database/user_db.json', 'r') as f:
         userData = json.load(f)
@@ -328,7 +179,7 @@ def loginPage():
                 print(f"Wrong password three times. Banned.")
             print(f"Wrong password. Try again.")
             
-    return render_template('namizu/loginPage.html',userDataPacket=userData)
+    return render_template('namizu/loginPage.html',userDataPacket=userData, theme=theme, footerText=footerText)
 
 @bp.route("/landingpage")
 @bp.route("/index")
@@ -363,7 +214,7 @@ def landingPage():
     footerText = "2025 naMizu. Version 3.0 alpha (1481dfb), Built with care for the community."
     activeUsers = 3
     funnyMessage = "Not the restaurant"
-    theme = queryTheme("default_day")
+    theme = queryThemeDayMode(datetime.now().hour)
     renderPacket = {}
     return render_template('/namizu/landingPage.html', 
                            banner=banner, notices=notices, funnyMessage=funnyMessage,
@@ -395,7 +246,7 @@ def dailyPollApp():
     questionBody = dailyPoll["Question"]
     pollster = dailyPoll["Pollster"]
     questionType = dailyPoll["Type"]
-    theme = queryTheme(dailyPoll["Theme"])
+    theme = queryThemeDayMode(datetime.now().hour)
     optionsBody = dailyPoll["Options"]
     qTypeDescr = typeParser(questionType)
     answersBody = dailyPoll["Answers"]
@@ -491,7 +342,7 @@ def dailyPollApp():
                 answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
                 if(uid not in answersProcessed[option]["voters"]):
                     answersProcessed[option]["voters"].append(uid)
-                    
+
     elif(qTypeDescr["prompt"]):
         for uid, text in answersBody.items(): # option is a value
             answersProcessed[uid] = {
@@ -576,7 +427,7 @@ def editorApp():
         users_db = json.load(f)
 
     namesList = [user["uname"] for user in users_db.values()]
-
+    theme = queryThemeDayMode(datetime.now().hour)
     restartEditor = False
     
     userID = session['userID']
@@ -707,7 +558,7 @@ def editorApp():
         return redirect(url_for('namizu.editorApp'))
         
     
-    return render_template('namizu/editorPage.html',namesList=namesList)
+    return render_template('namizu/editorPage.html',namesList=namesList, theme=theme)
 
 
 @bp.route("/sketcher/canvas")
