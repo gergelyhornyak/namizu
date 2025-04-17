@@ -114,15 +114,6 @@ def findByID(uid:str) -> str:
         print("User cannot be found.\n")
     return username
 
-def queryTheme(themename:str)->dict:
-    themes = {}
-    try:
-        with open('database/themes.json', 'r') as f:
-            themes = json.load(f)
-    except Exception as e:
-        print(e)
-    return themes[themename]
-
 def queryThemeDayMode(hour)->dict:
     themes = {}
     try:
@@ -134,10 +125,7 @@ def queryThemeDayMode(hour)->dict:
     if(hour > 18 or hour < 7):
         return themes["default_night"]
     else:
-        return themes["default_day"]
-
-    
-    
+        return themes["default_day"]    
 
 def getTodayComments() -> dict:
     try:

@@ -5,22 +5,56 @@
   <title>naMizu Editor</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+
+    :root {
+        --bg-colour1: {{ theme.mainBG1 }};
+        --bg-colour2: {{ theme.mainBG2 }};
+
+        --banner-colour1: {{ theme.bannerBG1 }};
+        --banner-colour2: {{ theme.bannerBG2 }};
+        --banner-text: {{ theme.bannerTXT }};
+
+        --tiles-colour: {{ theme.tilesBG }};
+        --tiles-text: {{ theme.tilesTXT }};
+
+        --event1-colour: {{ theme.event1BG }};
+        --event1-text: {{ theme.event1TXT }};
+        --event2-colour: {{ theme.event2BG }};
+        --event2-text: {{ theme.event2TXT }};
+
+        --notice1-colour: {{ theme.notice1BG }};
+        --notice1-border: {{ theme.notice1BRD }};
+        --notice1-text: {{ theme.notice1TXT }};
+
+        --notice2-colour: {{ theme.notice2BG }};
+        --notice2-border: {{ theme.notice2BRD }};
+        --notice2-text: {{ theme.notice2TXT }};
+
+        --tiles-buttons-colour: {{ theme.buttonsBG }};
+        --tiles-buttons-border: {{ theme.buttonsBRD }};
+        --tiles-buttons-text: {{ theme.buttonsTXT }};
+        --footer-colour: {{ theme.footerBG }};
+        --footer-text: {{ theme.footerTXT }};
+        --icon-colour1: {{theme.iconBG1}};
+        --icon-colour2: {{theme.iconBG2}};
+    }
+
     body {
       margin: 0;
       font-family: 'Courier New', monospace;
-      background-color: #fce5c0;
+      background: linear-gradient(to bottom right, var(--bg-colour1), var(--bg-colour2));
+      color: var(--banner-text);
       display: block;
       justify-content: center;
     }
 
     .editor-container {
-      background-color: #fce5c0;
       padding: 2%;
     }
 
     header {
-        background: #2b4f5b;
-        color: #fff;
+        background: linear-gradient(to top, var(--banner-colour1), var(--banner-colour2));
+        color: var(--banner-text);
         padding: 12px 16px;
         margin: 0%;
         display: flex;
@@ -35,9 +69,9 @@
 
     .nav-icon {
         font-size: 1.6rem;
-        background-color: #fae5c9; 
         border-radius: 50%; 
-        padding: 8px;
+        padding: 10px;
+        background: radial-gradient(circle, var(--icon-colour1), var(--icon-colour2))
     }
 
     label.section-label {
@@ -57,9 +91,8 @@
       width: 100%;
       padding: 10px;
       margin: 10px 0px 0px;
-      border: 1px solid #3a5d6c; /* Dark teal border */
-      background-color: #ffffff; /* White input background */
-      color: #3a5d6c; /* Dark teal text */
+      background-color: #fffff0;
+      color: var(--tiles-text);
     }
 
     .button-group {
@@ -77,10 +110,9 @@
       flex: 1;
       text-align: center;
       padding: 10px;
-      border: 1px solid #2d5b68;
       border-radius: 8px;
-      background-color: white;
-      color: #2d5b68;
+      background-color: var(--tiles-colour);
+      color: var(--banner-text);
       font-weight: bold;
       cursor: pointer;
       user-select: none;
@@ -95,10 +127,9 @@
       padding: 10px 20px;
       border: none;
       border-radius: 5px;
-      background-color: #3a5d6c; /* Dark teal button */
-      color: #ffffff; /* White button text */
+      background-color: var(--tiles-buttons-colour);
+      color: var(--tiles-buttons-text);
       cursor: pointer; 
-      color: #fff;
       font-weight: bold;
       font-size: medium;
       margin: 1%;
@@ -127,8 +158,8 @@
       padding: 10px;
       border: none;
       border-radius: 6px;
-      background-color: #2d5b68;
-      color: white;
+      background-color: var(--tiles-buttons-colour);
+      color: var(--tiles-buttons-text);
       font-weight: bold;
       cursor: pointer;
     }
@@ -163,8 +194,8 @@
       margin-top: 15px;
       padding: 18px;
       border: none;
-      background-color: #2d5b68;
-      color: white;
+      background-color: var(--tiles-buttons-colour);
+      color: var(--tiles-buttons-text);
       font-weight: bold;
       font-size: medium;
       border-radius: 6px;
@@ -182,12 +213,14 @@
     }
 
     footer {
-    margin-top: auto;
-    text-align: center;
-    padding: 13px;
-    font-size: 0.8rem;
-    background: #000;
-    color: #fff;
+      margin-top: auto;
+      text-align: center;
+      padding: 15px;
+      margin-bottom: 5%;
+      font-size: 0.85rem;
+      background: var(--footer-colour);
+      color: var(--footer-text);
+      font-weight: bold;
     }
 
     /* Basic styling for the popup */
