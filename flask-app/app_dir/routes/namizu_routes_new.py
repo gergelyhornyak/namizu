@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, jsonify, url_for, session, flash, get_flashed_messages, send_from_directory
-from datetime import datetime
+from datetime import datetime, timedelta
 import random
 import base64
 import json
@@ -29,15 +29,21 @@ def page_not_found400(e):
 #* SMALL FUNCTIONS
 
 
-def check_user_logged_in(funcName) -> tuple[bool, str]:
-    print(f"{session = }")
-    userID = ""
+def updateSessionCookie(path:str):
     if "userID" in session:
-        userID = session["userID"]
-        return True,userID
+        print("userID found")
+        session['url'] = path
+        session['time'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        with open('database/user_db.json', 'r') as f:
+            users_db = json.load(f)
+        users_db[session["userID"]]["lastactive"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        with open('database/user_db.json', 'w') as f:
+            json.dump(users_db,f,indent=4)
+
     else:
-        session['url'] = funcName
-        return False,userID
+        print("userID missing, pls login")
+        session['url'] = "landingPage"
+        return redirect(url_for(f"namizu.loginPage"))
 
 def typeParser(qTypeRaw:dict) -> dict:
     """
@@ -154,6 +160,7 @@ def loginPage():
             print(f"Successful authentication. Welcome {userData[uid]['uname']}!")
             session["userID"] = uid
             session.modified = True
+            session.permanent = True
             userData[uid]["loggedin"] = 1
             userData[uid]["lastlogin"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             with open('database/user_db.json', 'w') as f:
@@ -161,6 +168,7 @@ def loginPage():
             if 'url' in session:
                 print(f"Redirecting back to {session['url']}.")
                 return redirect(url_for(f"namizu.{session['url']}"))
+            return redirect(url_for("namizu.landingPage"))
         else:
             wrongPasswCounter+=1
             if(  wrongPasswCounter >= 3 ):
@@ -173,26 +181,30 @@ def loginPage():
 @bp.route("/index")
 @bp.route("/")
 def landingPage():
+    updateSessionCookie("landingPage")
+    userID = ""
+    if "userID" in session: userID = session["userID"]    
+    else: return redirect(url_for(f"namizu.loginPage")) # prompt for login
 
-    session['url'] = "landingPage"
+    # log user activity
 
+    user_db = {}#loadAllUserInfo()
+    with open('database/user_db.json', 'r') as f:
+        user_db = json.load(f)
+    activeUsers = []
+    #user_db[userID]["lastactive"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    for uid,details in user_db.items():
+        last_active_time = datetime.strptime(details["lastactive"], "%Y-%m-%d %H:%M:%S")
+        if( datetime.now() - last_active_time < timedelta(minutes=1) ):
+            activeUsers.append(details["uname"])
+   
     # Set the headers to accept plain text response
     headers = {"Accept": "text/plain"}
     # Perform the GET request to the dad joke API
     response = requests.get("https://icanhazdadjoke.com/", headers=headers)
     # Store the joke text
     dailyJoke = response.text
-    user_db = {}#loadAllUserInfo()
-    with open('database/user_db.json', 'r') as f:
-        user_db = json.load(f)
-
-    
-    userID = ""
-    if "userID" in session:
-        userID = session["userID"]    
-    else:
-        # prompt for login
-        return redirect(url_for(f"namizu.loginPage"))
     
     banner = "NaMizu"
     userName = findByID(userID)
@@ -200,7 +212,7 @@ def landingPage():
     storyStatus = False # queryStory
     sideQuestStatus = False # querySideQ
     footerText = "2025 naMizu. Version 3.0 alpha (1481dfb), Built with care for the community."
-    activeUsers = 3
+    
     funnyMessage = "Not the restaurant"
     theme = queryThemeDayMode(datetime.now().hour)
     renderPacket = {}
@@ -212,13 +224,20 @@ def landingPage():
 
 @bp.route('/logout')
 def logout():
+    # set user to loggedout
+    with open('database/user_db.json', 'r') as f:
+        users_db = json.load(f)
+    users_db[session['userID']]["loggedin"] = 0
+    with open('database/user_db.json', 'w') as f:
+        json.dump(users_db,f,indent=4)
+    print(users_db[session['userID']]["uname"],"logged out.\n")
     session.clear()
     return redirect(url_for("namizu.landingPage"),302)
 
 @bp.route("/dailypoll", methods=['GET', 'POST'])
 def dailyPollApp():
-
-    session['url'] = "dailyPollApp"
+    
+    updateSessionCookie("dailyPollApp")
     userID = session['userID']
 
     pollSubmitted = False   
@@ -289,14 +308,16 @@ def dailyPollApp():
 
                 # update user vote info
                 users_db[userID]["voted"]["dailyPoll"] = 1
+                users_db[userID]["streak"] += 1
+                # also increase their streak
                 with open('database/user_db.json', 'w') as f:
                     json.dump(users_db,f,indent=4)     
 
                 # add new answer to today poll
                 dailyPoll["Answers"] = answersBody
-                users_db[userID]["voted"]["dailyPoll"] = 1
                 with open('database/today_poll.json', 'w') as f:
                     json.dump(dailyPoll,f,indent=4)              
+                return redirect(url_for('namizu.dailyPollApp'))
 
         else:
             if 'comment' in request.form:
@@ -395,17 +416,6 @@ def dailyPollApp():
                            questionBody=questionBody, pollster=pollster, pollSubmitted=pollSubmitted,
                            footerText=footerText,todayComments=todayComments,roman=romanNumbers
                            )
-
-@bp.route("/sidequest", methods=['GET', 'POST'])
-def sideQuestApp():
-    return 0
-    alreadyLoggedIn, userName = check_user_logged_in("sidequest")
-    if not alreadyLoggedIn:
-        return redirect(url_for('namizu.login'))
-    
-@bp.route("/wittybanner", methods=["GET","POST"])
-def wittyBannerText():
-    return 0
 
 @bp.route('/editor', methods=['GET', 'POST'])
 def editorApp():
@@ -559,4 +569,19 @@ def galleryApp():
 
 @bp.route("/calendar")
 def calendarApp():
+    return 0
+
+## Funny Apps
+
+@bp.route('/submit', methods=['POST'])
+def spellingBeeApp():
+    data = request.json
+    print("Received:", data)
+
+@bp.route("/sidequest", methods=['GET', 'POST'])
+def sideQuestApp():
+    return 0
+    
+@bp.route("/wittybanner", methods=["GET","POST"])
+def wittyBannerText():
     return 0
