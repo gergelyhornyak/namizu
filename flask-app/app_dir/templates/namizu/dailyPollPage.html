@@ -12,17 +12,45 @@
   <title>naMizu daily poll</title>
   <style>
     :root {
-      --bg-color: {{theme.mainBG1}};
+        --bg-colour1: {{ theme.mainBG1 }};
+        --bg-colour2: {{ theme.mainBG2 }};
+
+        --banner-colour1: {{ theme.bannerBG1 }};
+        --banner-colour2: {{ theme.bannerBG2 }};
+        --banner-text: {{ theme.bannerTXT }};
+
+        --tiles-colour: {{ theme.tilesBG }};
+        --tiles-text: {{ theme.tilesTXT }};
+
+        --event1-colour: {{ theme.event1BG }};
+        --event1-text: {{ theme.event1TXT }};
+        --event2-colour: {{ theme.event2BG }};
+        --event2-text: {{ theme.event2TXT }};
+
+        --notice1-colour: {{ theme.notice1BG }};
+        --notice1-border: {{ theme.notice1BRD }};
+        --notice1-text: {{ theme.notice1TXT }};
+
+        --notice2-colour: {{ theme.notice2BG }};
+        --notice2-border: {{ theme.notice2BRD }};
+        --notice2-text: {{ theme.notice2TXT }};
+
+        --tiles-buttons-colour: {{ theme.buttonsBG }};
+        --tiles-buttons-border: {{ theme.buttonsBRD }};
+        --tiles-buttons-text: {{ theme.buttonsTXT }};
+        --footer-colour: {{ theme.footerBG }};
+        --footer-text: {{ theme.footerTXT }};
+        --icon-colour1: {{theme.iconBG1}};
+        --icon-colour2: {{theme.iconBG2}};
     }
 
     body {
       margin: 0;
-      background-color: var(--bg-color);
-      color: #333;
-      font-family: Arial, sans-serif;
+      font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom right, var(--bg-colour1), var(--bg-colour2));
+      color: var(--banner-text);
       justify-content: center;
       align-items: center;
-      height: 100vh;
       flex-direction: column;
     }
 
@@ -32,12 +60,11 @@
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-      background-color: var(--bg-color);
     }
 
     header {
-      background: #2b4f5b;
-      color: #fff;
+      background: linear-gradient(to top, var(--banner-colour1), var(--banner-colour2));
+      color: var(--banner-text);
       padding: 12px 16px;
       display: flex;
       justify-content: space-between;
@@ -51,20 +78,19 @@
 
     .nav-icon {
       font-size: 1.6rem;
-      background-color: #fae5c9;
       border-radius: 50%;
-      padding: 8px;
+      padding: 10px;
+      background: radial-gradient(circle, var(--icon-colour1), var(--icon-colour2))
     }
 
     /* Poll question styling */
     .question-section {
-      background: #3e6d7d;
-      color: #fff;
-      padding: 8px;
+      background-color: var(--tiles-colour);
+      background-color: #ffffff74;
+      padding: 2%;
+      margin: 2%;
+      border-radius: 12px;
       text-align: center;
-      font-style: italic;
-      border-bottom-left-radius: 25px;
-      border-bottom-right-radius: 25px;
       font-size: 1.1rem;
       line-height: 1;
     }
@@ -122,8 +148,8 @@
       text-align: center;
       padding: 15px;
       font-size: 0.85rem;
-      background: darkred;
-      color: lightgray;
+      background: var(--footer-colour);
+      color: var(--footer-text);
       font-weight: bold;
     }
 
@@ -157,7 +183,6 @@
 
     .prompt-box {
       display: flex;
-      border-top: 1px solid #3a5d6c;
     }
 
     .prompt-box #prompt {
@@ -180,7 +205,8 @@
     }
 
     .comments-box {
-      background-color: #2c5b66;
+      background-color: var(--tiles-buttons-colour);
+      background-color: rgba(255, 255, 240, 0.535);
       border-radius: 10px;
       max-width: 400px;
       padding: 20px;
@@ -189,7 +215,6 @@
     }
 
     .comments-header {
-      background-color: #f7dfb5;
       text-align: center;
       padding: 10px;
       font-weight: bold;
@@ -405,7 +430,6 @@
       flex: 1;
       padding: 10px;
       overflow-y: auto;
-      border-bottom: 1px solid #3a5d6c;
       word-wrap: break-word;
     }
 
@@ -414,8 +438,8 @@
     }
 
     .message .text {
-      background-color: #fae5c9;
-      color: #3a5d6c;
+      background-color: var(--tiles-colour);
+      color: var(--banner-text);
       padding: 8px;
       border-radius: 5px;
       display: inline-block;
@@ -475,15 +499,15 @@
     }
 
     .submit-button {
-      width: 100%;
-      margin-top: 15px;
+      width: 50%;
+      margin: 10% 22%;
       padding: 18px;
       border: none;
-      background-color: #2d5b68;
-      color: white;
+      background-color: var(--tiles-buttons-colour);
+      color: var(--tiles-buttons-text);
       font-weight: bold;
       font-size: medium;
-      border-radius: 6px;
+      border-radius: 14px;
       cursor: pointer;
     }
   </style>
@@ -504,7 +528,7 @@
 
     <section class="question-section">
       {% if qTypeDescr.public %}
-      <p class="pollster">{{ pollster }}'s question:</p>
+      <p class="pollster"><i>{{ pollster }}'s question</i></p>
       {% endif %}
       <p class="question-text">
         {{ questionBody }}

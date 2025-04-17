@@ -5,22 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>naMizu Login</title>
     <style>
+
+        :root {
+            --bg-colour1: {{ theme.mainBG1 }};
+            --bg-colour2: {{ theme.mainBG2 }};
+
+            --banner-colour1: {{ theme.bannerBG1 }};
+            --banner-colour2: {{ theme.bannerBG2 }};
+            --banner-text: {{ theme.bannerTXT }};
+
+            --tiles-colour: {{ theme.tilesBG }};
+            --tiles-text: {{ theme.tilesTXT }};
+
+            --event1-colour: {{ theme.event1BG }};
+            --event1-text: {{ theme.event1TXT }};
+            --event2-colour: {{ theme.event2BG }};
+            --event2-text: {{ theme.event2TXT }};
+
+            --notice1-colour: {{ theme.notice1BG }};
+            --notice1-border: {{ theme.notice1BRD }};
+            --notice1-text: {{ theme.notice1TXT }};
+
+            --notice2-colour: {{ theme.notice2BG }};
+            --notice2-border: {{ theme.notice2BRD }};
+            --notice2-text: {{ theme.notice2TXT }};
+
+            --tiles-buttons-colour: {{ theme.buttonsBG }};
+            --tiles-buttons-border: {{ theme.buttonsBRD }};
+            --tiles-buttons-text: {{ theme.buttonsTXT }};
+            --footer-colour: {{ theme.footerBG }};
+            --footer-text: {{ theme.footerTXT }};
+        }
+
         body {
-            font-family: Arial, Helvetica, sans-serif;
-            background-color: #3a5d6c;
+            font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom right, var(--bg-colour1), var(--bg-colour2));
             margin: 0;
             padding: 0;
             display: flex;
             flex-direction: column; /* Stack items vertically */
             align-items: center; /* Center items horizontally */
             justify-content: center; /* Center items vertically */
-            height: 100vh;
+            color: var(--banner-text);
         }
         body h1 {
-            font-size: 46px;
-            margin: 16px;
+            width: 100%;
+            padding: 16% 1%;
+            font-size: 30px;
+            margin: 0%;
+            color: var(--banner-text);
             text-align: center;
-            color: #fff;
+            background: linear-gradient(to top, var(--banner-colour1), var(--banner-colour2));
         }
         .options {
             display: grid;
@@ -28,15 +63,14 @@
             gap: 15px;
             position: relative;
             padding: 20px;
-            background-color: #2f4f55; /* Letterbox cabinet color */
+            background-color: var(--tiles-colour);
             border-radius: 10px;
             box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
         }
 
         .options button {
-            background: #f4e1c1; /* Parcel color */
-            color: #242223;
-            border: 1px solid #b4a7a7;
+            background: var(--tiles-colour); /* Parcel color */
+            color: var(--banner-text);
             border-radius: 12px;
             padding: 16px;
             font-size: 32px;
@@ -48,6 +82,7 @@
             position: relative;
             overflow: hidden;
             box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+            border: none;
         }
 
         .input-container {
@@ -57,15 +92,24 @@
         }
 
         .options input {
-            background: #f4e1c1;
-            color: #242223;
-            border: 1px solid #b4a7a7;
+            background: var(--tiles-colour);
+            color: var(--banner-text);
             border-radius: 10px;
             padding: 10px;
             font-size: 38px;
             text-align: center;
             width: 200px;
             box-sizing: border-box;
+        }
+
+        footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 15px;
+            font-size: 0.85rem;
+            background: var(--footer-colour);
+            color: var(--footer-text);
+            font-weight: bold;
         }
 
     </style>
@@ -90,6 +134,10 @@
             {% endfor %}
         </form>
     </div>
+
+    <footer>
+        <p>{{ footerText }}</p>
+    </footer>
 
     <script>
         function showInputField(button) {

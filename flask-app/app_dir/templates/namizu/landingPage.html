@@ -41,7 +41,7 @@
 
         /* General Styles */
         body {
-            font-family: 'Arial', sans-serif;
+            font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
             color: var(--banner-text);
@@ -95,7 +95,7 @@
         }
         
         .feature-card h3 {
-            font-size: 1.8rem;
+            font-size: 1.2rem;
             margin-bottom: 2%;
             margin-top: 2%;
         }
@@ -227,6 +227,10 @@
     <div class="feature-card">
         <h3>Special Thanks 👏</h3>  
         <p style="margin: 1% 0%;">to the testers <strong>Bella</strong> and <strong>Márk</strong>, who made sure the app runs smoothly.</p>
+    </div>
+
+    <div class="feature-card">
+        <a href="{{ url_for('namizu.logout') }}">LOG OUT</a>
     </div>
 </section>
 
