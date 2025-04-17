@@ -2,6 +2,8 @@ from flask import Flask
 from .routes import main_routes, namizu_routes
 from .routes import namizu_routes_new, main_routes_new
 import logging
+from datetime import timedelta
+
 
 def create_app():
     time_format = "%Y-%m-%d %H:%M:%S"
@@ -12,6 +14,7 @@ def create_app():
     app.config['SECRET_KEY'] = stringg
     app.logger.debug("Secret key aquired")
     app.config['PERMANENT_SESSION_LIFETIME'] = 86400
+    app.permanent_session_lifetime = timedelta(weeks=1)
     app.logger.debug("Session lifetime set to 24hrs")
     # Register blueprints
     app.register_blueprint(main_routes_new.bp)

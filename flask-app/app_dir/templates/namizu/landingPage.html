@@ -72,6 +72,12 @@
             text-decoration: none;
         }
 
+        .active-users {
+            text-align: center;
+            font-size: medium;
+            font-weight: bold;
+        }
+
         /* Features Section */
         .features {
             flex-wrap: wrap;
@@ -176,6 +182,13 @@
     <p><i>{{ funnyMessage }}</i></p>
     
 </header>
+
+<section class="active-users">
+    Active users: &nbsp;
+    {% for user in activeUsers %}
+        {{ user }}, &nbsp;
+    {% endfor %}
+</section>
 
 <section class="features">
 

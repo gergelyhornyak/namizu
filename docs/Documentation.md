@@ -55,6 +55,8 @@ Task: 2 true 1 false
 Task: bet the poll outcome
 Task: hangman
 Task: haiku battle
+Task: name as many words (country, city, person) starting with a letter as possible (Country, City, Male-Female name, Plant, Animal)
+Task: guess the closest
 
 ### DailyPoll
 

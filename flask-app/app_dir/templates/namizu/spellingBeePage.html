@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Countdown Form</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 1rem;
+      margin: 0;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    #timer, #result {
+      text-align: center;
+      font-size: 1.2rem;
+      margin: 6px 4px;
+    }
+
+    #letterBox {
+      text-align: center;
+      font-weight: bold;
+      font-size: 2rem;
+      margin: 6px 4px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      font-weight: bold;
+    }
+
+    input[type="text"] {
+      padding: 0.5rem;
+      font-size: large;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      padding: 0.75rem;
+      font-size: 1rem;
+      background-color: #1d72b8;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background-color: #aaa;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 500px) {
+      body {
+        padding: 5%;
+      }
+
+      input[type="text"], button {
+        width: 100%;
+      }
+    }
+  </style>
+  <script>
+    let seconds = 30;
+    let countdownStarted = false;
+
+    function startCountdown() {
+      if (countdownStarted) return;
+      countdownStarted = true;
+
+      document.getElementById("startBtn").disabled = true;
+      document.getElementById("letterBox").style.display = 'block';
+      const timer = document.getElementById('timer');
+
+      const interval = setInterval(() => {
+        seconds--;
+        timer.textContent = `⏳ Time left: ${seconds}s`;
+
+        if (seconds <= 0) {
+          clearInterval(interval);
+          autoSubmit();
+        }
+      }, 1000);
+    }
+
+    // function autoSubmit() {
+    //   const form = document.querySelector("form");
+    //   const url = form.action;
+
+    //   const formData = {
+    //     country: document.getElementById("country").value,
+    //     city: document.getElementById("city").value,
+    //     food: document.getElementById("food").value,
+    //     animal: document.getElementById("animal").value,
+    //     person: document.getElementById("person").value
+    //   };
+
+    //   fetch(url, {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify(formData)
+    //   })
+    //   .then(data => {
+    //     if (data.redirect) {
+    //       window.location.href = data.redirect;
+    //     }
+    // });
+    // }
+    function autoSubmit() {
+      document.querySelector("form").submit();
+    }
+  </script>
+</head>
+<body>
+  <h1>Guessing Game</h1>
+
+  <button id="startBtn" onclick="startCountdown()">▶️ Start Countdown</button>
+  <div id="letterBox" style="display: none;">First letter: {{ letter }}</div>
+  <div id="timer">⏳ Time left: --</div>
+
+  <form action="{{ url_for('namizu.spellingBeeApp') }}" method="POST">
+    <label>Ország: <input type="text" name="country" id="country" /></label><br />
+    <label>Város: <input type="text" name="city" id="city" /></label><br />
+    <label>Kaja: <input type="text" name="food" id="food" /></label><br />
+    <label>Állat: <input type="text" name="animal" id="animal" /></label><br />
+    <label>Férfi név: <input type="text" name="male" id="male" /></label><br />
+    <label>Női név: <input type="text" name="female" id="female" /></label><br />
+  </form>
+
+</body>
+</html>

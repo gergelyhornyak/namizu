@@ -419,7 +419,7 @@ def dailyPollApp():
 
 @bp.route('/editor', methods=['GET', 'POST'])
 def editorApp():
-    session['url'] = "editorApp"
+    updateSessionCookie("editorApp")
     users_db = {}
     with open('database/user_db.json', 'r') as f:
         users_db = json.load(f)
@@ -554,7 +554,6 @@ def editorApp():
             flash("Poll submitted successfully.")
 
         return redirect(url_for('namizu.editorApp'))
-        
     
     return render_template('namizu/editorPage.html',namesList=namesList, theme=theme)
 
@@ -573,10 +572,40 @@ def calendarApp():
 
 ## Funny Apps
 
-@bp.route('/submit', methods=['POST'])
+@bp.route('/spellingbee',methods=['GET','POST'])
 def spellingBeeApp():
-    data = request.json
-    print("Received:", data)
+    updateSessionCookie("spellingBeeApp")
+    data = {}
+    spellingbee = {}
+    if request.method == "GET":
+        letters = ["A","B","C","D","E"]
+        return render_template('namizu/spellingBeePage.html', letter="B")
+    elif request.method == "POST":
+        userID = session['userID']
+        username = findByID(userID)
+        data = {
+            "uname": username,
+            "country": request.form.get("country"),
+            "city": request.form.get("city"),
+            "food": request.form.get("food"),
+            "animal": request.form.get("animal"),
+            "male": request.form.get("male"),
+            "female": request.form.get("female")
+        }
+        print("Received:", data)
+        with open("database/spelling_bee.json","r") as f:
+            spellingbee = json.load(f)
+        spellingbee[userID] = data
+        with open("database/spelling_bee.json","w") as f:
+            json.dump(spellingbee,f,indent=4)
+        return redirect(url_for('namizu.spellingBeeScoreBoard'))
+        #return redirect(url_for('namizu.landingPage'))
+    
+@bp.route('/spellingbee/scoreboard', methods=['GET'])
+def spellingBeeScoreBoard():
+    with open("database/spelling_bee.json","r") as f:
+        all_submissions = json.load(f)
+    return render_template('namizu/spellingBeeScoreBoard.html', submissions=all_submissions)
 
 @bp.route("/sidequest", methods=['GET', 'POST'])
 def sideQuestApp():
