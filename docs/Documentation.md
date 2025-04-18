@@ -158,6 +158,31 @@ DateTime
 
 ---
 
+old system to new conversion:
+
+    # Single choice: S
+    # Multichoice: M
+
+    # Names as options: N
+    # Custom options as options: C
+    #   Yes or no answers: Y
+    #   Open-ended answers: O
+    # 1v1 Showdown: F (fight)
+
+    # type examples: DMNX, VSFX
+
+S - singlechoice
+M - multichoice
+N - names
+CY - yesorno
+CO - openended
+F - teams
+(all of them are anonym)
+
+---
+
+---
+
 Future update: use SVG curve for Range plotting
 
 ```css
