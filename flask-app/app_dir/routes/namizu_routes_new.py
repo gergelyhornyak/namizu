@@ -197,7 +197,7 @@ def landingPage():
     for uid,details in user_db.items():
         last_active_time = datetime.strptime(details["lastactive"], "%Y-%m-%d %H:%M:%S")
         if( datetime.now() - last_active_time < timedelta(minutes=1) ):
-            activeUsers.append(details["uname"])
+            activeUsers.append(details["shortname"])
    
     # Set the headers to accept plain text response
     headers = {"Accept": "text/plain"}
@@ -345,12 +345,12 @@ def dailyPollApp():
                 answersProcessed[option] = {}
                 answersProcessed[option]["value"] = 1
                 answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
-                answersProcessed[option]["voters"] = [uid]
+                answersProcessed[option]["voters"] = [users_db[uid]["shortname"]]
             else:
                 answersProcessed[option]["value"] += 1
                 answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
                 if(uid not in answersProcessed[option]["voters"]):
-                    answersProcessed[option]["voters"].append(uid)
+                    answersProcessed[option]["voters"].append(users_db[uid]["shortname"])
 
     elif(qTypeDescr["prompt"]):
         for uid, text in answersBody.items(): # option is a value
@@ -401,14 +401,14 @@ def dailyPollApp():
                     answersProcessed[option] = {}
                     answersProcessed[option]["value"] = 1
                     answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
-                    answersProcessed[option]["voters"] = [uid]
+                    answersProcessed[option]["voters"] = [users_db[uid]["shortname"]]
                 else:
                     answersProcessed[option]["value"] += 1
                     answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
                     if(uid not in answersProcessed[option]["voters"]):
-                        answersProcessed[option]["voters"].append(uid)        
+                        answersProcessed[option]["voters"].append(users_db[uid]["shortname"])    
 
-    print(f"Daily Poll DEBUG:\n{pollSubmitted = }\n")
+    print(f"Daily Poll DEBUG:\n{answersProcessed = }\n")
 
     return render_template('namizu/dailyPollPage.html', 
                            banner=banner,qTypeDescr=qTypeDescr,answersProcessed=answersProcessed,rankingProcessed=rankingProcessed,
