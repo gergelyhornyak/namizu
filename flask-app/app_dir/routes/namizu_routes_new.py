@@ -16,18 +16,17 @@ bp = Blueprint('namizu', __name__, template_folder='templates')
 
 @bp.errorhandler(404)
 def page_not_found404(e):
-    return render_template('namizu/404.html'), 404
+    return "ERROR 404", 404
 
 @bp.errorhandler(500)
 def page_not_found500(e):
-    return render_template('namizu/500.html'), 500
+    return "ERROR 500", 500
 
 @bp.errorhandler(400)
 def page_not_found400(e):
-    return render_template('namizu/400.html'), 400
+    return "ERROR 400", 400
 
 #* SMALL FUNCTIONS
-
 
 def updateSessionCookie(path:str):
     if "userID" in session:
@@ -198,20 +197,25 @@ def landingPage():
         last_active_time = datetime.strptime(details["lastactive"], "%Y-%m-%d %H:%M:%S")
         if( datetime.now() - last_active_time < timedelta(minutes=1) ):
             activeUsers.append(details["shortname"])
-   
-    # Set the headers to accept plain text response
-    headers = {"Accept": "text/plain"}
-    # Perform the GET request to the dad joke API
-    response = requests.get("https://icanhazdadjoke.com/", headers=headers)
-    # Store the joke text
-    dailyJoke = response.text
+    
+    showDailyJoke = False
+    dailyJoke = ""
+    primeNumbers = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31]
+    if ( datetime.now().day in primeNumbers ):
+        showDailyJoke = True
+        # Set the headers to accept plain text response
+        headers = {"Accept": "text/plain"}
+        # Perform the GET request to the dad joke API
+        response = requests.get("https://icanhazdadjoke.com/", headers=headers)
+        # Store the joke text
+        dailyJoke = response.text
     
     banner = "NaMizu"
     userName = findByID(userID)
     notices = ["notice 1","notice 2"] #queryNotices
     storyStatus = False # queryStory
     sideQuestStatus = False # querySideQ
-    footerText = "2025 naMizu. Version 3.0 alpha (1481dfb), Built with care for the community."
+    footerText = "2025 naMizu. Version 3.0 alpha (1535c0d), Built with care for the community."
     
     funnyMessage = "Not the restaurant"
     theme = queryThemeDayMode(datetime.now().hour)
@@ -245,9 +249,7 @@ def dailyPollApp():
         users_db = json.load(f)
     if(users_db[userID]["voted"]["dailyPoll"] == 1): # true
         pollSubmitted = True
-    
 
-    #dailyPoll = testPolls["names2"]#getDailyPoll()
     with open('database/today_poll.json', 'r') as f:
         dailyPoll = json.load(f)
     questionBody = dailyPoll["Question"]
@@ -519,6 +521,11 @@ def editorApp():
             restartEditor = True
             flash("Cannot be anonym and teams at the same time. Session restarted")
 
+        if( "range" in pollBody["Type"] ):
+            if( not pollBody["Options"]["maxvalue"].isdigit() ):
+                restartEditor = True
+                flash("Range must be a number. Session restarted")    
+
         if pollBody["Question"] == "":
             restartEditor = True
             flash("No question included. Session restarted")
@@ -587,7 +594,7 @@ def spellingBeeApp():
             "uname": username,
             "country": request.form.get("country"),
             "city": request.form.get("city"),
-            "food": request.form.get("food"),
+            "thing": request.form.get("thing"),
             "animal": request.form.get("animal"),
             "male": request.form.get("male"),
             "female": request.form.get("female")
@@ -595,11 +602,10 @@ def spellingBeeApp():
         print("Received:", data)
         with open("database/spelling_bee.json","r") as f:
             spellingbee = json.load(f)
-        spellingbee[userID] = data
+        spellingbee["submissions"][userID] = data
         with open("database/spelling_bee.json","w") as f:
             json.dump(spellingbee,f,indent=4)
         return redirect(url_for('namizu.spellingBeeScoreBoard'))
-        #return redirect(url_for('namizu.landingPage'))
     
 @bp.route('/spellingbee/scoreboard', methods=['GET'])
 def spellingBeeScoreBoard():
