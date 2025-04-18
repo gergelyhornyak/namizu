@@ -4,11 +4,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Joti+One&family=VT323&display=swap" rel="stylesheet">
-
   <title>naMizu daily poll</title>
   <style>
     :root {
@@ -65,7 +60,7 @@
     header {
       background: linear-gradient(to top, var(--banner-colour1), var(--banner-colour2));
       color: var(--banner-text);
-      padding: 12px 16px;
+      padding: 30px 16px 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -539,6 +534,54 @@
       background-color: whitesmoke;
     }
 
+    .team-container {
+      display: flex;
+      gap: 20px;
+      max-width: 600px;
+      margin: 2%;
+      word-break: break-word;
+      hyphens: auto;
+    }
+
+    .team-card {
+      border-radius: 16px;
+      padding: 20px;
+      color: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .team-red {
+      background: linear-gradient(135deg, #af211d, #af221d7a);
+    }
+
+    .team-blue {
+      background: linear-gradient(135deg, #2d93ad, #2d93ad81);
+    }
+
+    .team-title {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .team-score {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .team-members {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .team-members li {
+      background: rgba(255,255,255,0.1);
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin-bottom: 5px;
+    }
+
   </style>
 </head>
 
@@ -716,6 +759,30 @@
           </div>
           {% endfor %}
         </div>
+    {% endif %}
+
+    {% if qTypeDescr.teams %}
+      <div class="team-container">
+        <div class="team-card team-red">
+          <div class="team-title">Team <br> {{ sidesProcessed.redteam.name }}</div>
+          <div class="team-score">Score: {{ sidesProcessed.redteam.score }}</div>
+          {% for voter in sidesProcessed.redteam.voters %}
+              <ul class="team-members">
+                <li>{{ voter }}</li>
+              </ul>
+          {% endfor %}
+        </div>
+
+        <div class="team-card team-blue">
+          <div class="team-title">Team <br> {{ sidesProcessed.blueteam.name }}</div>
+          <div class="team-score">Score: {{ sidesProcessed.blueteam.score }}</div>
+          {% for voter in sidesProcessed.blueteam.voters %}
+              <ul class="team-members">
+                <li>{{ voter }}</li>
+              </ul>
+          {% endfor %}
+        </div>
+      </div>
     {% endif %}
 
     <section class="comments-box">

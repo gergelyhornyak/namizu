@@ -182,21 +182,21 @@
     <p><i>{{ funnyMessage }}</i></p>
     
 </header>
-
+<!--
 <section class="active-users">
     Active users: &nbsp;
     {% for user in activeUsers %}
         {{ user }}, &nbsp;
     {% endfor %}
 </section>
-
+-->
 <section class="features">
 
     <div class="feature-card">
         <h4 style="font-size: large;margin: 3%;">naMizu is looking for witty subtitles!</h4>
-        <a href="{{ url_for('namizu.wittyBannerText') }}">I have one in mind</a>
+        <a href="{{ url_for('namizu.funnyBannerApp') }}">I have one in mind</a>
     </div>
-    
+
     {% if dailyJoke %}
     <div class="feature-card">
         <p style="margin: 1%;"><i>{{ dailyJoke }}</i></p>
