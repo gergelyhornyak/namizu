@@ -127,11 +127,10 @@
       flex-wrap: wrap;
       align-items: center;
       gap: 12px;
-      background: #3e6d7d;
+      background: var(--tiles-colour);
       margin: 0 12px;
       padding: 20px;
       border-radius: 12px;
-      border: 2px solid #3e6d7d;
     }
 
     .vote-btn {
@@ -172,7 +171,7 @@
       width: 25px;
       height: 25px;
       border-radius: 50%;
-      background: #04AA6D;
+      background: var(--tiles-buttons-colour);
       cursor: pointer;
     }
 
@@ -180,7 +179,7 @@
       width: 25px;
       height: 25px;
       border-radius: 50%;
-      background: #04AA6D;
+      background: var(--tiles-buttons-colour);
       cursor: pointer;
     }
 
@@ -228,7 +227,6 @@
     .range-text {
       width: 100%;
       font-size: 0.8rem;
-      color: #fff;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -622,7 +620,7 @@
         </div>
         <input type="range" min="{{ optionsBody.minvalue }}" max="{{ optionsBody.maxvalue }}"
           value="{{ optionsBody.minvalue }}" class="slider" id="myRange">
-        <span id="slider-output" style="color: #fff;font-weight: bold;"></span>
+        <span id="slider-output" style="font-weight: bold;"></span>
         <input type="hidden" id="rangeValue" name="range_value" value="{{ optionsBody.minvalue }}">
       </section>
 
