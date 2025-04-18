@@ -157,14 +157,51 @@ DateTime
 
 ---
 
-use SVG curve for Range plotting
+Future update: use SVG curve for Range plotting
 
 ```css
+
+path {
+    fill: #4f46e5; /* Indigo-600 */
+    stroke: #1e40af; /* Indigo-900 */
+    stroke-width: 2;
+}
+svg {
+    width: 400px;
+    height: 300px;
+    background-color: white;
+}
+
   <svg viewBox="0 0 400 200">
-    <!-- Cubic Bezier Curve from (50,150) to (350,150) -->
-    <path d="M 50 150 C 150 110, 50 50, 350 150" />
+    <!-- Cubic Bezier Curve filled and closed to make a shape -->
+    <path d="
+      M 50 150
+      C 150 110, 50 50, 350 150
+      L 350 160
+      L 50 160
+      Z
+    " />
   </svg>
+
 ```
+The value of the viewBox attribute is a list of four numbers separated by whitespace and/or a comma: min-x, min-y, width, and height
+
+M (Move):
+"M" followed by coordinates (x, y) moves the drawing pen to a new starting point without drawing a line.
+
+L (Line):
+"L" followed by coordinates (x, y) draws a straight line from the current pen position to the specified point.
+
+C (Curve):
+"C" followed by six coordinates (x1, y1, x2, y2, x, y) draws a Bézier curve. The curve is defined by the current pen position, the two control points (x1, y1 and x2, y2), and the endpoint (x, y).
+
+Z (ClosePath):
+"Z" closes the current path by drawing a line from the current pen position back to the starting point of the path.
+
+so first move the pen to how many 1s have been submitted
+
+then 
+
 ---
 
 *LEGACY TYPES:*
