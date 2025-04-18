@@ -46,6 +46,7 @@ All polls fall under the following categories:
 ### SideQuest
 
 very similar to dailypoll, but extreme
+every 5 days, or prime numbers
 
 Task: Create a meme, sketch, or drawing ( based on a weird prompt )
 Task: Trivia
