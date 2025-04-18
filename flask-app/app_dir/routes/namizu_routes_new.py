@@ -30,7 +30,6 @@ def page_not_found400(e):
 
 def updateSessionCookie(path:str):
     if "userID" in session:
-        print("userID found")
         session['url'] = path
         session['time'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         with open('database/user_db.json', 'r') as f:
@@ -217,7 +216,14 @@ def landingPage():
     sideQuestStatus = False # querySideQ
     footerText = "2025 naMizu. Version 3.0 alpha (1535c0d), Built with care for the community."
     
-    funnyMessage = "Not the restaurant"
+    funnyMessages = {}
+    with open('database/funny_banners.json', 'r') as f:
+        funnyMessages = json.load(f)
+    random.seed(datetime.now().day)
+    number = random.randint(1, len(funnyMessages))
+    
+    funnyMessage = funnyMessages[f"B{str(number)}"]
+    funnyMessage = "I Solemnly Swear I’m Up to Polling Good"
     theme = queryThemeDayMode(datetime.now().hour)
     renderPacket = {}
     return render_template('/namizu/landingPage.html', 
@@ -377,10 +383,17 @@ def dailyPollApp():
             }
 
     elif(qTypeDescr["teams"]):
+        sidesProcessed = {}
         for sideName, value in optionsBody.items():
-            sidesProcessed[sideName] = 0
-        for uid, option in answersBody.items(): # options is a value
-            sidesProcessed[option] += 1
+            sidesProcessed[sideName] = {
+                "score":0,
+                "name":value,
+                "voters":[]
+            }
+            for uid, option in answersBody.items():
+                if (option == value):
+                    sidesProcessed[sideName]["score"] += 1
+                    sidesProcessed[sideName]["voters"].append(findByID(uid))
     
     elif(qTypeDescr["yesorno"]):
         sidesProcessed["Yes"] = 0
@@ -416,7 +429,7 @@ def dailyPollApp():
                            banner=banner,qTypeDescr=qTypeDescr,answersProcessed=answersProcessed,rankingProcessed=rankingProcessed,
                            theme=theme, optionsBody=optionsBody,voterStat=voterStat,kudosMessage=kudosMessage,
                            questionBody=questionBody, pollster=pollster, pollSubmitted=pollSubmitted,
-                           footerText=footerText,todayComments=todayComments,roman=romanNumbers
+                           footerText=footerText,todayComments=todayComments,roman=romanNumbers, sidesProcessed=sidesProcessed
                            )
 
 @bp.route('/editor', methods=['GET', 'POST'])
@@ -438,7 +451,8 @@ def editorApp():
     }
     if request.method == "POST":
         session.pop('_flashes', None)
-        #print(f"{request.form = }")
+        print(f"{request.form = }")
+
         pollBody["Question"] = request.form["question"]
         pollBody["Type"] = request.form["selectionType"] + "," + request.form["privacyType"] + "," + request.form["optionsType"]
         pollBody["Pollster"] = findByID(userID)
@@ -465,8 +479,8 @@ def editorApp():
             }
         if(request.form["optionsType"] == "teams"):
             pollBody["Options"] = {            
-                "Team A": request.form["teams-1"],
-                "Team B": request.form["teams-2"],
+                "redteam": request.form["answer_teams-1"],
+                "blueteam": request.form["answer_teams-2"],
             }
         if(request.form["optionsType"] == "ranking"):
             rankingAnswers = [value for key, value in request.form.items() if key.startswith('answer_ranking')]
@@ -617,6 +631,35 @@ def spellingBeeScoreBoard():
 def sideQuestApp():
     return 0
     
-@bp.route("/wittybanner", methods=["GET","POST"])
-def wittyBannerText():
-    return 0
+@bp.route("/funnybanner", methods=["GET","POST"])
+def funnyBannerApp():
+    updateSessionCookie("funnyBannerApp")
+    bannerTexts = {}
+    # max char len: 40
+    if request.method == "GET":
+        return render_template('namizu/funnyBannerPage.html')
+    elif request.method == "POST":
+        bannerText = request.form.get("bannertext")
+        # check text for links
+        if( "www" in bannerText or ".com" in bannerText or 
+           bannerText == ""):
+            return redirect(url_for('namizu.funnyBannerApp'))
+        with open("database/funny_banners.json","r") as f:
+            bannerTexts = json.load(f)
+        bannerTexts[f"B{len(bannerTexts)+1}"] = bannerText
+        with open("database/funny_banners.json","w") as f:
+            json.dump(bannerTexts,f,indent=4)
+        return redirect(url_for('namizu.landingPage'))
+
+
+@bp.route("/admin")
+def adminApp():
+    updateSessionCookie("adminApp")
+    # visit count
+    # active users
+    # currently logged in
+    # dailyPoll completed
+    # sideQuest completed
+    # all questions/events count
+    # unused questions/events count
+    # list of questions
