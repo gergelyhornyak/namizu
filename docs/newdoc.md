@@ -1,9 +1,5 @@
 # naMizu Documentation
 
-https://img.shields.io/badge/version-3.0.1-blue
-https://img.shields.io/badge/release-develop-orange
-https://img.shields.io/badge/stack-python-yellow
-
 ## Overview
 
 naMizu is a dynamic event-based polling application, where users interact through various events like DailyPolls, SideQuests, and Story-based adventures. It supports rich customization, anonymity, and 
