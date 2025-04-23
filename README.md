@@ -1,11 +1,8 @@
 # naMizu App
 
-https://img.shields.io/badge/version-3.0.1-blue
-https://img.shields.io/badge/release-develop-orange
-https://img.shields.io/badge/stack-python-yellow
+![Version](https://img.shields.io/badge/version-3.0.1-green) ![Release](https://img.shields.io/badge/release-develop-orange) ![Python](https://img.shields.io/badge/python-3.10-yellow)
 
 ![banner](./docs/img/banner.png)
-
 
 naMizu daily poll app inspired by askUs.
 
