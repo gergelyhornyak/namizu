@@ -1,15 +1,17 @@
-from flask import Blueprint, render_template, request, redirect, jsonify, url_for, session, flash, get_flashed_messages, send_from_directory
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from datetime import datetime, timedelta
-import random
-import base64
-import json
-import os
-import re
-import string
-import requests
+import random, json, re, string
 import numpy as np
 
 bp = Blueprint('namizu', __name__, template_folder='templates')
+
+EVENTS_BANK = "database/events_bank.json"
+USERS_DB = "database/users_db.json"
+COMMENTS_CACHE = "database/comments.json"
+SPELLING_BEE_BANK = "database/spelling_bee.json"
+DAILY_POLL_CACHE = "database/daily_poll.json"
+FUNNY_BANNERS_BANK = "database/funny_banners.json"
+THEMES_BANK = "database/themes.json"
 
 # session: userID,lastURL
 
@@ -33,10 +35,10 @@ def updateSessionCookie(path:str):
     if "userID" in session:
         session['url'] = path
         session['time'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        with open('database/user_db.json', 'r') as f:
+        with open(USERS_DB, 'r') as f:
             users_db = json.load(f)
         users_db[session["userID"]]["lastactive"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        with open('database/user_db.json', 'w') as f:
+        with open(USERS_DB, 'w') as f:
             json.dump(users_db,f,indent=4)
 
     else:
@@ -108,7 +110,7 @@ def prettyPrintJson(jsonFile:dict) -> None:
 def findByID(uid:str) -> str:
     users_db = {}
     try:
-        with open('database/user_db.json', 'r') as f:
+        with open(USERS_DB, 'r') as f:
             users_db = json.load(f)
     except Exception as e:
         print(e)
@@ -122,11 +124,10 @@ def findByID(uid:str) -> str:
 def queryThemeDayMode(hour)->dict:
     themes = {}
     try:
-        with open('database/themes.json', 'r') as f:
+        with open(THEMES_BANK, 'r') as f:
             themes = json.load(f)
     except Exception as e:
         print(e)
-
     if(hour > 18 or hour < 7):
         return themes["default_night"]
     else:
@@ -134,7 +135,7 @@ def queryThemeDayMode(hour)->dict:
 
 def getTodayComments() -> dict:
     try:
-        with open('database/comments.json', 'r') as f:
+        with open(COMMENTS_CACHE, 'r') as f:
             return json.load(f)
     except json.decoder.JSONDecodeError:
         return {}    
@@ -149,7 +150,7 @@ def loginPage():
     theme = queryThemeDayMode(datetime.now().hour)
     footerText = "naMizu 2025. Version 3.X"
     userData = {}
-    with open('database/user_db.json', 'r') as f:
+    with open(USERS_DB, 'r') as f:
         userData = json.load(f)
 
     if request.method == "POST":
@@ -162,7 +163,7 @@ def loginPage():
             session.permanent = True
             userData[uid]["loggedin"] = 1
             userData[uid]["lastlogin"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            with open('database/user_db.json', 'w') as f:
+            with open(USERS_DB, 'w') as f:
                 json.dump(userData, f,indent=4)
             if 'url' in session:
                 return redirect(url_for(f"namizu.{session['url']}"))
@@ -187,7 +188,7 @@ def landingPage():
     # log user activity
 
     user_db = {}#loadAllUserInfo()
-    with open('database/user_db.json', 'r') as f:
+    with open(USERS_DB, 'r') as f:
         user_db = json.load(f)
     activeUsers = []
     #user_db[userID]["lastactive"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -217,7 +218,7 @@ def landingPage():
     footerText = "2025 naMizu. Version 3.0 alpha (1535c0d), Built with care for the community."
     
     funnyMessages = {}
-    with open('database/funny_banners.json', 'r') as f:
+    with open(FUNNY_BANNERS_BANK, 'r') as f:
         funnyMessages = json.load(f)
     random.seed(datetime.now().day)
     number = random.randint(1, len(funnyMessages))
@@ -235,10 +236,10 @@ def landingPage():
 @bp.route('/logout')
 def logout():
     # set user to loggedout
-    with open('database/user_db.json', 'r') as f:
+    with open(USERS_DB, 'r') as f:
         users_db = json.load(f)
     users_db[session['userID']]["loggedin"] = 0
-    with open('database/user_db.json', 'w') as f:
+    with open(USERS_DB, 'w') as f:
         json.dump(users_db,f,indent=4)
     print(users_db[session['userID']]["uname"],"logged out.\n")
     session.clear()
@@ -251,12 +252,12 @@ def dailyPollApp():
     userID = session['userID']
 
     pollSubmitted = False   
-    with open('database/user_db.json', 'r') as f:
+    with open(USERS_DB, 'r') as f:
         users_db = json.load(f)
     if(users_db[userID]["voted"]["dailyPoll"] == 1): # true
         pollSubmitted = True
 
-    with open('database/today_poll.json', 'r') as f:
+    with open(DAILY_POLL_CACHE, 'r') as f:
         dailyPoll = json.load(f)
     questionBody = dailyPoll["Question"]
     pollster = dailyPoll["Pollster"]
@@ -317,12 +318,12 @@ def dailyPollApp():
                 users_db[userID]["voted"]["dailyPoll"] = 1
                 users_db[userID]["streak"] += 1
                 # also increase their streak
-                with open('database/user_db.json', 'w') as f:
+                with open(USERS_DB, 'w') as f:
                     json.dump(users_db,f,indent=4)     
 
                 # add new answer to today poll
                 dailyPoll["Answers"] = answersBody
-                with open('database/today_poll.json', 'w') as f:
+                with open(DAILY_POLL_CACHE, 'w') as f:
                     json.dump(dailyPoll,f,indent=4)              
                 return redirect(url_for('namizu.dailyPollApp'))
 
@@ -338,7 +339,7 @@ def dailyPollApp():
                     "text":comment,
                     "username":findByID(userID)
                 }           
-                with open('database/comments.json', 'w') as f:
+                with open(COMMENTS_CACHE, 'w') as f:
                     json.dump(todayComments, f, indent=4)
                 return redirect(url_for('namizu.dailyPollApp'))
             
@@ -433,9 +434,9 @@ def dailyPollApp():
 def editorApp():
     updateSessionCookie("editorApp")
     users_db = {}
-    with open('database/user_db.json', 'r') as f:
+    with open(USERS_DB, 'r') as f:
         users_db = json.load(f)
-
+    events_bank = {}
     namesList = [user["uname"] for user in users_db.values()]
     theme = queryThemeDayMode(datetime.now().hour)
     restartEditor = False
@@ -456,7 +457,7 @@ def editorApp():
         pollBody["Status"] = 0
         pollBody["Answers"] = {}
         pollBody["Datetime"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
+        pollBody["Duedate"] = ""
         
         ## process Options
 
@@ -553,9 +554,9 @@ def editorApp():
                 restartEditor = True
                 flash("Some options are empty. Session restarted")    
 
-        with open('database/questions_bank.json', 'r') as f:
-            questions_bank =  json.load(f)
-        for details in questions_bank.values():
+        with open(EVENTS_BANK, 'r') as f:
+            events_bank =  json.load(f)
+        for details in events_bank.values():
             # chances are low
             if details["Question"] == pollBody["Question"] and details["Options"] == pollBody["Options"] and details["Type"] == pollBody["Type"]:
                 restartEditor = True
@@ -563,16 +564,15 @@ def editorApp():
                 break
 
         if not restartEditor:
-            qid = "Q"+str(len(questions_bank)+1)
-            questions_bank[qid] = pollBody
-            with open('database/questions_bank.json', 'w') as f:
-                json.dump(questions_bank, f, indent=4)
-            flash("Poll submitted successfully.")
+            qid = "E"+str(len(events_bank)+1)
+            events_bank[qid] = pollBody
+            with open(EVENTS_BANK, 'w') as f:
+                json.dump(events_bank, f, indent=4)
+            flash("DailyPoll submitted successfully.")
 
         return redirect(url_for('namizu.editorApp'))
     
     return render_template('namizu/editorPage.html',namesList=namesList, theme=theme)
-
 
 @bp.route("/sketcher/canvas")
 def sketcherApp():
@@ -668,17 +668,17 @@ def spellingBeeApp():
                 data["female"]["correct"] = 1
                 data["female"]["colour"] = "greenyellow"
             
-        with open("database/spelling_bee.json","r") as f:
+        with open(SPELLING_BEE_BANK,"r") as f:
             spellingbee = json.load(f)
         spellingbee["submissions"][userID] = data
         #cellColour = "greenyellow","tomato"
-        with open("database/spelling_bee.json","w") as f:
+        with open(SPELLING_BEE_BANK,"w") as f:
             json.dump(spellingbee,f,indent=4)
         return redirect(url_for('namizu.spellingBeeScoreBoard'))
     
 @bp.route('/spellingbee/scoreboard', methods=['GET'])
 def spellingBeeScoreBoard():
-    with open("database/spelling_bee.json","r") as f:
+    with open(SPELLING_BEE_BANK,"r") as f:
         all_submissions = json.load(f)
     print(all_submissions)
     #darkseagreen
@@ -702,10 +702,10 @@ def funnyBannerApp():
         if( "www" in bannerText or ".com" in bannerText or 
            bannerText == ""):
             return redirect(url_for('namizu.funnyBannerApp'))
-        with open("database/funny_banners.json","r") as f:
+        with open(FUNNY_BANNERS_BANK,"r") as f:
             bannerTexts = json.load(f)
         bannerTexts[f"B{len(bannerTexts)+1}"] = bannerText
-        with open("database/funny_banners.json","w") as f:
+        with open(FUNNY_BANNERS_BANK,"w") as f:
             json.dump(bannerTexts,f,indent=4)
         return redirect(url_for('namizu.landingPage'))
 
