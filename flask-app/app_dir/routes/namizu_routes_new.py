@@ -639,15 +639,12 @@ def spellingBeeApp():
             }
         with open("database/words.txt","r") as f:
             words = [line.strip().lower() for line in f if line.strip()]
-        with open("database/cities.txt","r") as f:
-            cities = [line.strip().lower() for line in f if line.strip()]
-
-        for city in cities:
-            if( data["city"]["answer"] == city ):
+            
+        for word in words:
+            if( data["city"]["answer"] == word ):
                 data["city"]["correct"] = 1
                 data["city"]["colour"] = "greenyellow"
 
-        for word in words:
             if( data["country"]["answer"] == word ):
                 data["country"]["correct"] = 1
                 data["country"]["colour"] = "greenyellow"
