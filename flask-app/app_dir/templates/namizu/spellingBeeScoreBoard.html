@@ -41,7 +41,7 @@
 <body>
   <h1>📝 Submissions</h1>
 
-  {% if submissions %}
+  {% if all_submissions %}
     <table>
       <thead>
         <tr>
@@ -55,15 +55,15 @@
         </tr>
       </thead>
       <tbody>
-        {% for entry in submissions.values() %}
+        {% for entry in all_submissions.submissions.values() %}
         <tr>
           <td>{{ entry.uname }}</td>
-          <td>{{ entry.country }}</td>
-          <td>{{ entry.city }}</td>
-          <td>{{ entry.thing }}</td>
-          <td>{{ entry.animal }}</td>
-          <td>{{ entry.male }}</td>
-          <td>{{ entry.female }}</td>
+          <td style="background-color: {{ entry.country.colour }};"> {{ entry.country.answer }} </td>
+          <td style="background-color: {{ entry.city.colour }};"> {{ entry.city.answer }}    </td>
+          <td style="background-color: {{ entry.thing.colour }};"> {{ entry.thing.answer }}   </td>
+          <td style="background-color: {{ entry.animal.colour }};"> {{ entry.animal.answer }}  </td>
+          <td style="background-color: {{ entry.male.colour }};"> {{ entry.male.answer }}    </td>
+          <td style="background-color: {{ entry.female.colour }};"> {{ entry.female.answer }}  </td>
         </tr>
         {% endfor %}
       </tbody>

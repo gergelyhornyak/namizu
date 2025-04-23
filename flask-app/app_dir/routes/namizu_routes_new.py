@@ -5,6 +5,7 @@ import base64
 import json
 import os
 import re
+import string
 import requests
 import numpy as np
 
@@ -164,7 +165,6 @@ def loginPage():
             with open('database/user_db.json', 'w') as f:
                 json.dump(userData, f,indent=4)
             if 'url' in session:
-                print(f"Redirecting back to {session['url']}.")
                 return redirect(url_for(f"namizu.{session['url']}"))
             return redirect(url_for("namizu.landingPage"))
         else:
@@ -205,9 +205,9 @@ def landingPage():
         # Set the headers to accept plain text response
         headers = {"Accept": "text/plain"}
         # Perform the GET request to the dad joke API
-        response = requests.get("https://icanhazdadjoke.com/", headers=headers)
+        #response = requests.get("https://icanhazdadjoke.com/", headers=headers)
         # Store the joke text
-        dailyJoke = response.text
+        dailyJoke = "DAILY_JOKE"#response.text
     
     banner = "NaMizu"
     userName = findByID(userID)
@@ -223,7 +223,7 @@ def landingPage():
     number = random.randint(1, len(funnyMessages))
     
     funnyMessage = funnyMessages[f"B{str(number)}"]
-    funnyMessage = "I Solemnly Swear I’m Up to Polling Good"
+    #funnyMessage = "I Solemnly Swear I’m Up to Polling Good"
     theme = queryThemeDayMode(datetime.now().hour)
     renderPacket = {}
     return render_template('/namizu/landingPage.html', 
@@ -289,7 +289,6 @@ def dailyPollApp():
     elif request.method == 'POST':
         if not pollSubmitted:
             if 'comment' not in request.form:
-                print(f"{request.form = }")
 
                 if(qTypeDescr["ranking"]):
                     answersList = request.form["ranked_list"]
@@ -423,8 +422,6 @@ def dailyPollApp():
                     if(uid not in answersProcessed[option]["voters"]):
                         answersProcessed[option]["voters"].append(users_db[uid]["shortname"])    
 
-    print(f"Daily Poll DEBUG:\n{answersProcessed = }\n")
-
     return render_template('namizu/dailyPollPage.html', 
                            banner=banner,qTypeDescr=qTypeDescr,answersProcessed=answersProcessed,rankingProcessed=rankingProcessed,
                            theme=theme, optionsBody=optionsBody,voterStat=voterStat,kudosMessage=kudosMessage,
@@ -451,7 +448,6 @@ def editorApp():
     }
     if request.method == "POST":
         session.pop('_flashes', None)
-        print(f"{request.form = }")
 
         pollBody["Question"] = request.form["question"]
         pollBody["Type"] = request.form["selectionType"] + "," + request.form["privacyType"] + "," + request.form["optionsType"]
@@ -512,7 +508,6 @@ def editorApp():
                 print("No more names to pop out.\n")
             pollBody["Question"] = result
 
-        prettyPrintJson(pollBody)
 
         ## ERROR CHECKING
 
@@ -597,26 +592,86 @@ def calendarApp():
 def spellingBeeApp():
     updateSessionCookie("spellingBeeApp")
     data = {}
+    words = []
+    cities = []
     spellingbee = {}
     if request.method == "GET":
-        letters = ["A","B","C","D","E"]
-        return render_template('namizu/spellingBeePage.html', letter="B")
+        # Get all lowercase letters
+        alphabet = string.ascii_uppercase
+        # Select a random letter
+        random_letter = random.choice(alphabet)
+        return render_template('namizu/spellingBeePage.html', letter=random_letter)
     elif request.method == "POST":
         userID = session['userID']
         username = findByID(userID)
         data = {
             "uname": username,
-            "country": request.form.get("country"),
-            "city": request.form.get("city"),
-            "thing": request.form.get("thing"),
-            "animal": request.form.get("animal"),
-            "male": request.form.get("male"),
-            "female": request.form.get("female")
-        }
-        print("Received:", data)
+            "country": {
+                "answer":request.form.get("country").lower(),
+                "correct":0,
+                "colour":"transparent"
+                },
+            "city": {
+                "answer": request.form.get("city").lower(),
+                "correct":0,
+                "colour":"transparent"
+                },
+            "thing": {
+                "answer": request.form.get("thing").lower(),
+                "correct":0,
+                "colour":"transparent"
+                },
+            "animal": {
+                "answer": request.form.get("animal").lower(),
+                "correct":0,
+                "colour":"transparent"
+                },
+            "male": {
+                "answer": request.form.get("male").lower(),
+                "correct":0,
+                "colour":"transparent"
+                },
+            "female": {
+                "answer": request.form.get("female").lower(),
+                "correct":0,
+                "colour":"transparent"
+                }
+            }
+        with open("database/words.txt","r") as f:
+            words = [line.strip().lower() for line in f if line.strip()]
+        with open("database/cities.txt","r") as f:
+            cities = [line.strip().lower() for line in f if line.strip()]
+
+        for city in cities:
+            if( data["city"]["answer"] == city ):
+                data["city"]["correct"] = 1
+                data["city"]["colour"] = "greenyellow"
+
+        for word in words:
+            if( data["country"]["answer"] == word ):
+                data["country"]["correct"] = 1
+                data["country"]["colour"] = "greenyellow"
+
+            if( data["thing"]["answer"] == word ):
+                data["thing"]["correct"] = 1
+                data["thing"]["colour"] = "greenyellow"
+
+            if( data["animal"]["answer"] == word ):
+                data["animal"]["correct"] = 1
+                data["animal"]["colour"] = "greenyellow"
+
+            if( data["male"]["answer"] == word ):
+                data["male"]["correct"] = 1
+                data["male"]["colour"] = "greenyellow"
+
+            if( data["female"]["answer"] == word ):
+                data["female"]["correct"] = 1
+                data["female"]["colour"] = "greenyellow"
+            
         with open("database/spelling_bee.json","r") as f:
             spellingbee = json.load(f)
         spellingbee["submissions"][userID] = data
+        #cellColour = "greenyellow","tomato"
         with open("database/spelling_bee.json","w") as f:
             json.dump(spellingbee,f,indent=4)
         return redirect(url_for('namizu.spellingBeeScoreBoard'))
@@ -625,7 +680,10 @@ def spellingBeeApp():
 def spellingBeeScoreBoard():
     with open("database/spelling_bee.json","r") as f:
         all_submissions = json.load(f)
-    return render_template('namizu/spellingBeeScoreBoard.html', submissions=all_submissions)
+    print(all_submissions)
+    #darkseagreen
+    ## implement scoring system - check if a user entered a unique word
+    return render_template('namizu/spellingBeeScoreBoard.html', all_submissions=all_submissions)
 
 @bp.route("/sidequest", methods=['GET', 'POST'])
 def sideQuestApp():
