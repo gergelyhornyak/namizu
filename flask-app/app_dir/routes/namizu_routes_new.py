@@ -710,6 +710,33 @@ def funnyBannerApp():
 @bp.route("/admin")
 def adminApp():
     updateSessionCookie("adminApp")
+    userID = session['userID']
+    with open("database/visit_count.json") as f:
+        visit_count = json.load(f)
+    visitCount = visit_count["total"]
+    user_db = {}#loadAllUserInfo()
+    with open(USERS_DB, 'r') as f:
+        user_db = json.load(f)
+    if(user_db[userID]["admin"]!=1):
+        print("Unauthorised user - not admin.")
+        return redirect(url_for('namizu.landingPage'))
+    activeUsers = []
+    loggedinUsers = []
+    for uid,details in user_db.items():
+        last_active_time = datetime.strptime(details["lastactive"], "%Y-%m-%d %H:%M:%S")
+        if( datetime.now() - last_active_time < timedelta(minutes=1) ):
+            activeUsers.append(details["uname"])
+        if( details["loggedin"] == 1 ):
+            loggedinUsers.append(details["uname"])
+    with open(EVENTS_BANK, 'r') as f:
+        events = json.load(f)
+    allEventsCount = len(events)
+    unusedEventsCount = np.sum([event["Status"] == 0 for event in events.values()])
+    return render_template('namizu/adminPage.html', 
+                           visitCount=visitCount,activeUsers=', '.join(activeUsers),
+                           loggedinUsers=', '.join(loggedinUsers),
+                           allEventsCount=allEventsCount,unusedEventsCount=unusedEventsCount)
+
     # visit count
     # active users
     # currently logged in
@@ -718,3 +745,7 @@ def adminApp():
     # all questions/events count
     # unused questions/events count
     # list of questions
+
+@bp.route("/admin/eventslist")
+def eventsList():
+    return redirect(url_for('namizu.landingPage'))  

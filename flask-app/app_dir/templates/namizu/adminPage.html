@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>naMizu Admin View</title>
+        <style>
+            body {
+                font-size: large;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>ADMIN INFO</h1>
+
+        <p>naMizu has been visited {{ visitCount }} times so far.</p>
+        <p>{{ loggedinUsers }} are logged in currently.</p>
+        <p>{{ activeUsers }} are might be active currently.</p>
+        <p>There are {{ allEventsCount }} events in the bank.</p>
+        <p>{{ unusedEventsCount }} events are unused yet.</p>
+        <a href="{{ url_for('namizu.eventsList') }}">
+            <p>List of events</p>
+        </a>
+    </body>
+</html>
+
