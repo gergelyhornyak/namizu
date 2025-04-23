@@ -93,7 +93,7 @@
       padding: 10px;
       margin: 10px 0px 0px;
       background-color: #fffff0;
-      color: var(--banner-text);
+      color: black;
     }
 
     .button-group {
@@ -290,16 +290,16 @@
 
             <label class="section-label" for="question">Question:</label>
                 <div class="tutorial" id="question_tutorial" style="display: none;">
-                    Question tutorial
+                    For random person(s), use {P} as placeholder. Non-English letters and emojis are supported.
                 </div>
             <textarea id="question" name="question" maxlength="256" placeholder="Type your question here..."></textarea>
 
             <label class="section-label">Selection Mode:</label>
                 <div class="tutorial" id="selection_tutorial" style="display: none;">
-                    Selection tutorial
+                    Single-choice means only one choice can be selected, while multi-choice allows multiple options to be selected within one poll.
                 </div>
             <div class="button-group">
-                <input type="radio" name="selectionType" id="singlechoice" value="singlechoice" />
+                <input type="radio" name="selectionType" id="singlechoice" value="singlechoice" checked="True"/>
                 <label for="singlechoice">Single-Choice</label>
 
                 <input type="radio" name="selectionType" id="multichoice" value="multichoice" />
@@ -308,7 +308,7 @@
 
             <label class="section-label">Voting privacy:</label>
                 <div class="tutorial" id="voting_tutorial" style="display: none;">
-                    Voting tutorial
+                    Anonym polls hide the creator and voter names, while public polls display all of the names.
                 </div>
             <div class="button-group">
                 <input type="radio" name="privacyType" id="anonym" value="anonym">
@@ -321,7 +321,13 @@
 
             <label class="section-label">Poll Type:</label>
                 <div class="tutorial" id="polltype_tutorial" style="display: none;">
-                    Poll Type tutorial
+                    Names: automatically filled with user nicknames <br>
+                    Range: Slider between two limits / choices - must be single-choice <br>
+                    Prompt: Short written answer from user - must be single-choice <br>
+                    Yes or No: 4 default answers - must be single-choice <br>
+                    Open ended: Add as many answers as you want, try to use short words. <br>
+                    Teams: users can choose between two opinions, try to use short words. - must be public and single-choice <br>
+                    Ranking: users can rank options, try to use short words. - must be single-choice <br>
                 </div>
             <div class="button-group">
 
@@ -354,7 +360,7 @@
                 <label for="ranking">Ranking</label>
 
                 <input type="radio" name="optionsType" id="chained" value="chained">
-                <label for="chained">Chained</label>
+                <label for="chained"><s>Chained</s></label>
 
             </div>
 
@@ -395,13 +401,15 @@
             <div class="preview-controls">
                 <button type="button" id="toggle-preview">Preview</button>
                 <button type="button" id="toggle-tutorial">Show Tutorial</button>
-                <button type="button">Advanced Mode</button>
+                <button type="button"><s>Advanced Mode</s></button>
             </div>
 
             <div class="poll-preview" id="preview">
                 <h2 id="preview-question">[ Poll Preview ]</h2>
                 <div id="preview-answers"></div>
               </div>
+
+            <label class="section-label" style="text-align: center;">tip: use short words for syllabils</label>
 
             <button class="submit-button" type="submit" name="submit" value="submit">Submit New Poll</button>
         </form>
