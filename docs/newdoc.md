@@ -1,119 +1,87 @@
-naMizu Documentation
-Version: 3.0
-Tech Stack: Flask · Jinja · Python 3 · CSS · Bootstrap
+# naMizu Documentation
+
+https://img.shields.io/badge/version-3.0.1-blue
+https://img.shields.io/badge/release-develop-orange
+https://img.shields.io/badge/stack-python-yellow
+
+## Overview
+
+naMizu is a dynamic event-based polling application, where users interact through various events like DailyPolls, SideQuests, and Story-based adventures. It supports rich customization, anonymity, and 
+
+Tech Stack: Flask · Jinja · Python3 · CSS · Bootstrap
+
 Backup Policy: Daily backup to a private GitHub repository
+
 Version Log: Logged in version tracker
 
-Overview
-naMizu is a dynamic event-based polling application where users interact through various poll types like DailyPolls, SideQuests, and Story-based adventures. It supports rich customization, anonymity, and game-like progression.
+## Event Structure
 
-Event Structure
 Each event contains the following components:
 
-Voter(s)
+- Unique ID
+- Voter(s) / Participants
+- Pollster / Author
+- Event Type: DailyPoll, Story, SideQuest
+- Question / Topic
+- Answers (response options)
+- Status
+- DateTime
+- Language Format: HU, EN, DE, IT, ...
+- Theme
 
-Pollster
+### Event Type IDs
 
-Unique ID
+- DailyPoll: 1
+- SideQuest: 2
+- Story: 3
 
-Event Type: DailyPoll, Story, SideQuest
+### DailyPoll Categories
 
-Question
+- Variable Support
+- Selection Type: single or multichoice
+- Visibility: anonym (default) or public
+- Answer Format: names, range, yesorno, openended, prompt, teams, ranking (answers can be ranked by preference)
+  + chained: Follow-up questions based on results.
 
-Answers (response options)
+### SideQuest
 
-Status
-
-DateTime
-
-Language Format: HU, EN, DE, IT, ...
-
-Event Type IDs
-
-Event Type	ID
-DailyPoll	1
-SideQuest	2
-Story	3
-Poll Categories
-1. DailyPoll (default)
-Variable Support:
-
-variable or novariable
-
-Selection Type:
-
-single or multichoice
-
-Visibility:
-
-anonym (default) or public
-
-Answer Format:
-
-names, range, yesorno, openended, prompt, teams
-
-Optional Features:
-
-ranking: Answers can be ranked by preference.
-
-chained: Follow-up questions based on results.
-
-theme: Custom themes for appearance.
-
-2. SideQuest
 Randomized and creative polls, typically appearing every 5 days or on prime-numbered days.
 
 Task Examples:
 
-Create memes or sketches
+1. Create memes or sketches: Draw sketch based on prompt
+2. Emoji-only responses - which one describes the best
+3. Trivia: correct or closest wins
+4. Two truths and a lie
+5. Bet on outcome: bet before answering
+6. Hangman: everyone gets 1 help
+7. Haikus
+8. Word-based games (county city names animal thing)
 
-Emoji-only responses
+## Story
 
-Trivia
-
-Two truths and a lie
-
-Bet on outcome
-
-Hangman
-
-Haiku battles
-
-Word-based games
-
-3. Story
 A multi-event narrative experience.
 
 Each new poll inherits previous answers.
 
 Designed like a branching DnD-style adventure.
 
-Question Type Format
-Formatted as:
+## Question Type Format
 
-php-template
-Copy
-Edit
-<category>,<variable>,<prompt>,<choice_type>,<visibility>,<answer_type>
-Example:
+`<category>,<variable>,<prompt>,<choice_type>,<visibility>,<answer_type>`
 
-plaintext
-Copy
-Edit
-dailypoll,variable,prompt,single,anonym,names
-Question Rules (Incompatible Combinations)
-multichoice ❌ with yesorno, range, teams, prompt, public
+`dailypoll,variable,prompt,single,anonym,names`
 
-single ❌ with ranking
+### Question Rules (Incompatible Combinations)
 
-anonym ❌ with teams
+- multichoice ❌ with yesorno, range, teams, prompt, public
+- single ❌ with ranking
+- anonym ❌ with teams
+- ranking ❌ with prompt, yesorno, teams
 
-ranking ❌ with prompt, yesorno, teams
+## Question JSON Structure
 
-Question JSON Structure
-json
-Copy
-Edit
+```json
 {
   "IDX": {
     "Type": "dailypoll,variable,prompt,single,anonym,names",
@@ -134,6 +102,8 @@ Edit
     "Status": 0
   }
 }
+```
+
 Legacy Type Format
 
 Code	Meaning
