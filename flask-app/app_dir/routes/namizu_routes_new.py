@@ -121,6 +121,21 @@ def findByID(uid:str) -> str:
         print("User cannot be found.\n")
     return username
 
+def shortnameByID(uid:str) -> str:
+    users_db = {}
+    try:
+        with open(USERS_DB, 'r') as f:
+            users_db = json.load(f)
+    except Exception as e:
+        print(e)
+
+    try:
+        shortname = users_db[uid]["uname"][:2]
+    except KeyError:
+        print("User cannot be found.\n")
+    return shortname
+
+
 def queryThemeDayMode(hour)->dict:
     themes = {}
     try:
@@ -174,7 +189,7 @@ def loginPage():
             session["userID"] = uid
             session.modified = True
             session.permanent = True
-            userData[uid]["loggedin"] = 1
+            userData[uid]["loggedin"] = 1            
             userData[uid]["lastlogin"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             with open(USERS_DB, 'w') as f:
                 json.dump(userData, f,indent=4)
@@ -206,10 +221,10 @@ def landingPage():
     activeUsers = []
     #user_db[userID]["lastactive"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    for uid,details in user_db.items():
+    for uid, details in user_db.items():
         last_active_time = datetime.strptime(details["lastactive"], "%Y-%m-%d %H:%M:%S")
         if( datetime.now() - last_active_time < timedelta(minutes=1) ):
-            activeUsers.append(details["shortname"])
+            activeUsers.append(shortnameByID(uid))
     
     showDailyJoke = False
     dailyJoke = ""
@@ -367,12 +382,12 @@ def dailyPollApp():
                 answersProcessed[option] = {}
                 answersProcessed[option]["value"] = 1
                 answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
-                answersProcessed[option]["voters"] = [users_db[uid]["shortname"]]
+                answersProcessed[option]["voters"] = [shortnameByID(uid)]
             else:
                 answersProcessed[option]["value"] += 1
                 answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
                 if(uid not in answersProcessed[option]["voters"]):
-                    answersProcessed[option]["voters"].append(users_db[uid]["shortname"])
+                    answersProcessed[option]["voters"].append(shortnameByID(uid))
 
     elif(qTypeDescr["prompt"]):
         for uid, text in answersBody.items(): # option is a value
@@ -430,12 +445,12 @@ def dailyPollApp():
                     answersProcessed[option] = {}
                     answersProcessed[option]["value"] = 1
                     answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
-                    answersProcessed[option]["voters"] = [users_db[uid]["shortname"]]
+                    answersProcessed[option]["voters"] = [shortnameByID(uid)]
                 else:
                     answersProcessed[option]["value"] += 1
                     answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
                     if(uid not in answersProcessed[option]["voters"]):
-                        answersProcessed[option]["voters"].append(users_db[uid]["shortname"])    
+                        answersProcessed[option]["voters"].append(shortnameByID(uid))    
 
     return render_template('namizu/dailyPollPage.html', 
                            banner=banner,qTypeDescr=qTypeDescr,answersProcessed=answersProcessed,rankingProcessed=rankingProcessed,
@@ -821,6 +836,12 @@ def resetDay():
     with open(USERS_DB,"w") as f:
         json.dump(usersData,f,indent=4)
 
+    ## RESET comments
+
+    with open(COMMENTS_CACHE,"w") as f:
+        json.dump({},f,indent=4)
+
+
     ## CHANGE main event - DailyPoll
 
     yesterdayPollID = ""
@@ -836,6 +857,9 @@ def resetDay():
     unusedPollIDs = [eid for eid,details in eventsBank.items() 
                      if details["Status"] == 0 and "dailypoll" in details["Type"]]
 
+    if( len(unusedPollIDs) == 1 ):
+        print("ERROR: 1 event left")
+
     # select question randomly
     newPollID = random.choice(unusedPollIDs)
     # change
@@ -847,12 +871,8 @@ def resetDay():
     with open('database/daily_poll.json', 'w') as f:
         json.dump(eventsBank[newPollID], f)
 
-    ## RESET comments
-
-    with open(COMMENTS_CACHE,"w") as f:
-        json.dump({},f,indent=4)
-
     return redirect(url_for('namizu.adminApp'))  
+    
 
     # check for sidequest
     

@@ -69,20 +69,46 @@
         }
 
         .options button {
-            background: var(--tiles-colour); /* Parcel color */
-            color: var(--banner-text);
-            border-radius: 12px;
-            padding: 16px;
-            font-size: 32px;
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s;
-            width: 100%;
-            box-sizing: border-box;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
-            border: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--tiles-colour);
+        color: var(--banner-text);
+        border-radius: 12px;
+        padding: 16px;
+        font-size: 24px;
+        cursor: pointer;
+        transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s;
+        width: 100%;
+        box-sizing: border-box;
+        border: none;
+        box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+        text-align: left;
+        gap: 16px;
+        }
+
+        .profile-pic {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        }
+
+        .btn-left,
+        .btn-middle,
+        .btn-right {
+        display: flex;
+        align-items: center;
+        }
+
+        .btn-middle {
+        flex: 1;
+        justify-content: left;
+        font-size: 28px;
+        }
+
+        .btn-right {
+        font-size: 24px;
         }
 
         .input-container {
@@ -103,7 +129,7 @@
         }
 
         footer {
-            margin-top: auto;
+            margin-top: 10%;
             text-align: center;
             padding: 15px;
             font-size: 0.85rem;
@@ -121,12 +147,19 @@
     <div class="options">
         <form method="POST">
             {% for uid, userdata in userDataPacket.items() %}
-            
             <div style="position: relative; margin-bottom: 2%;">
-                <button type="button" onclick="showInputField(this)" name="uid" value="{{ uid }}">{{ userdata.uname }}
-                    {% if userdata.streak %}
-                    &nbsp;🔥&nbsp;{{ userdata.streak }}
-                    {% endif %}
+                <button type="button" onclick="showInputField(this)" name="uid" value="{{ uid }}">
+                    <span class="btn-left">
+                        <img src="{{ url_for('static', filename='img/' + userdata.profpic) }}" alt="Profile" class="profile-pic">
+                    </span>
+                    <span class="btn-middle">
+                        {{ userdata.uname }}
+                    </span>
+                    <span class="btn-right">
+                        {% if userdata.streak %}
+                        {{ userdata.streak }}&nbsp;🔥
+                        {% endif %}
+                    </span>
                 </button>
             </div>
 
