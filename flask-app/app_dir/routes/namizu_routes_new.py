@@ -107,7 +107,7 @@ def prettyPrintJson(jsonFile:dict) -> None:
     json_formatted_str = json.dumps(jsonFile, indent=4)
     print(json_formatted_str)
 
-def findByID(uid:str) -> str:
+def usernameByID(uid:str) -> str:
     users_db = {}
     try:
         with open(USERS_DB, 'r') as f:
@@ -239,7 +239,7 @@ def landingPage():
         dailyJoke = "DAILY_JOKE"#response.text
     
     banner = "NaMizu"
-    userName = findByID(userID)
+    userName = usernameByID(userID)
     notices = ["notice 1","notice 2"] #queryNotices
     storyStatus = False # queryStory
     sideQuestStatus = False # querySideQ
@@ -366,7 +366,7 @@ def dailyPollApp():
                     "userID": userID,
                     "appID": appID,
                     "text":comment,
-                    "username":findByID(userID)
+                    "username":usernameByID(userID)
                 }           
                 with open(COMMENTS_CACHE, 'w') as f:
                     json.dump(todayComments, f, indent=4)
@@ -392,7 +392,7 @@ def dailyPollApp():
     elif(qTypeDescr["prompt"]):
         for uid, text in answersBody.items(): # option is a value
             answersProcessed[uid] = {
-                "username":findByID(uid),
+                "username":usernameByID(uid),
                 "text": text
             }
     elif(qTypeDescr["ranking"]):
@@ -406,7 +406,8 @@ def dailyPollApp():
             #others = {f"{i+4}": val for i, val in enumerate(options[3:])}
             others = {f"{i+4}": {"roman":romanNumbers[i+3], "name":val} for i, val in enumerate(options[3:]) }
             rankingProcessed[uid] = {
-                "username": findByID(uid),
+                "username": usernameByID(uid),
+                "profpic": users_db[uid]["profpic"],
                 "top_three": top_three,
                 "others": others
             }
@@ -422,7 +423,7 @@ def dailyPollApp():
             for uid, option in answersBody.items():
                 if (option == value):
                     sidesProcessed[sideName]["score"] += 1
-                    sidesProcessed[sideName]["voters"].append(findByID(uid))
+                    sidesProcessed[sideName]["voters"].append(usernameByID(uid))
     
     elif(qTypeDescr["yesorno"]):
         sidesProcessed["Yes"] = 0
@@ -476,12 +477,13 @@ def editorApp():
         "Options":{}
     }
     if request.method == "POST":
+        print(request.form)
         session.pop('_flashes', None)
 
         eventType = "dailypoll"
         pollBody["Question"] = request.form["question"]
         pollBody["Type"] = f"{eventType},{request.form['selectionType']},{request.form['privacyType']},{request.form['optionsType']}"
-        pollBody["Pollster"] = findByID(userID)
+        pollBody["Pollster"] = usernameByID(userID)
         pollBody["Theme"] = "default_day"
         pollBody["Status"] = 0
         pollBody["Answers"] = {}
@@ -622,11 +624,16 @@ def calendarApp():
 @bp.route('/spellingbee',methods=['GET','POST'])
 def spellingBeeApp():
     updateSessionCookie("spellingBeeApp")
+    userID = session['userID']
+    usersDB = getUsersDatabase()
     data = {}
     words = []
     cities = []
     spellingbee = {}
     if request.method == "GET":
+        if( usersDB[userID]["voted"]["sidequest"] == 1 ):
+            return redirect(url_for('namizu.spellingBeeScoreBoard'))
+        # check if user already played it
         # Get all lowercase letters
         alphabet = string.ascii_uppercase
         alphabet = alphabet.replace("Q","Á")
@@ -634,11 +641,12 @@ def spellingBeeApp():
         alphabet = alphabet.replace("X","Ó")
         alphabet = alphabet.replace("Y","Ú")
         # Select a random letter
+        random.seed(datetime.now().day)
         random_letter = random.choice(alphabet)
         return render_template('namizu/spellingBeePage.html', letter=random_letter)
     elif request.method == "POST":
-        userID = session['userID']
-        username = findByID(userID)
+        
+        username = usernameByID(userID)
         data = {
             "uname": username,
             "country": {
@@ -674,17 +682,20 @@ def spellingBeeApp():
             }
         with open("database/words.txt","r") as f:
             words = [line.strip().lower() for line in f if line.strip()]
+
+        with open("database/spelling_bee","r") as f:
+            spellingBee = json.load(f)
             
         for word in words:
-            if( data["city"]["answer"] == word ):
+            if( data["city"]["answer"] == word and data["city"]["answer"][0] == spellingBee["letter"] ):
                 data["city"]["correct"] = 1
                 data["city"]["colour"] = "greenyellow"
 
-            if( data["country"]["answer"] == word ):
+            if( data["country"]["answer"] == word and data["country"]["answer"][0] == spellingBee["letter"] ):
                 data["country"]["correct"] = 1
                 data["country"]["colour"] = "greenyellow"
 
-            if( data["thing"]["answer"] == word ):
+            if( data["thing"]["answer"] == word and data["thing"]["answer"][0] == spellingBee["letter"] ):
                 data["thing"]["correct"] = 1
                 data["thing"]["colour"] = "greenyellow"
 
@@ -706,6 +717,9 @@ def spellingBeeApp():
         #cellColour = "greenyellow","tomato"
         with open(SPELLING_BEE_BANK,"w") as f:
             json.dump(spellingbee,f,indent=4)
+        usersDB[userID]["voted"]["sidequest"] = 1
+        with open(USERS_DB,"w") as f:
+            json.dump(usersDB,f,indent=4)
         return redirect(url_for('namizu.spellingBeeScoreBoard'))
     
 @bp.route('/spellingbee/scoreboard', methods=['GET'])

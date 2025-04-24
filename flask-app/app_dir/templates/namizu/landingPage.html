@@ -34,7 +34,7 @@
 
             --tiles-buttons-colour: {{ theme.buttonsBG }};
             --tiles-buttons-border: {{ theme.buttonsBRD }};
-            --tiles-buttons-text: {{ theme.buttonsTXT }};
+            --tiles-buttons-text: {{ theme.buttonsTXT1 }};
             --footer-colour: {{ theme.footerBG }};
             --footer-text: {{ theme.footerTXT }};
         }
@@ -179,7 +179,7 @@
 <header>
     <!--<img src="{{ url_for('static', filename='img/cloudBunny.png') }}" width="100px" alt="">-->
     <h1>Welcome {{ userName }} to naMizu!</h1> <!-- ¿ -->
-    <p><i>{{ funnyMessage }}</i></p>
+    <p style="margin-top: 5%;"><i>{{ funnyMessage }}</i></p>
     
 </header>
 <!--
@@ -191,6 +191,11 @@
 </section>
 -->
 <section class="features">
+
+    <div class="feature-card">
+        <h3 style="font-size: large;margin: 3%;">We have a SideQuest!</h3>
+        <a href="{{ url_for('namizu.spellingBeeApp') }}">naMizu SideQuest</a>
+    </div>
 
     <div class="feature-card">
         <h4 style="font-size: large;margin: 3%;">naMizu is looking for witty subtitles!</h4>
@@ -227,7 +232,7 @@
     <div class="feature-card">
         <h3>Inspired by today's poll?</h3>
         <p style="margin: 1% 0%;">Draw a sketch, or visit the gallery<br>
-            <a href="{{ url_for('namizu.sketcherApp') }}">naMizu<br>Sketcher</a> &ensp; 
+            <a href="{{ url_for('namizu.sketcherApp') }}">naMizu<br>Canvas</a> &ensp; 
             <a href="{{ url_for('namizu.galleryApp') }}">naMizu<br>Gallery</a>
         </p>
     </div>
