@@ -192,28 +192,23 @@
 -->
 <section class="features">
 
-    <div class="feature-card">
-        <h3 style="font-size: large;margin: 3%;">We have a SideQuest!</h3>
-        <a href="{{ url_for('namizu.spellingBeeApp') }}">naMizu SideQuest</a>
+    {% if sideQuestStatus %}
+    <div class="feature-card" style="border: 8px double rgba(255, 166, 0, 0.3)">
+        <h3>Heads up!</h3>
+        <div class="cta">
+            <a href="{{ url_for('namizu.spellingBeeApp') }}">naMizu SideQuest!</a>
+        </div>
     </div>
+    {% endif %}
 
-    <div class="feature-card">
+    <div class="feature-card" style="border: 4px double rgba(39, 20, 188, 0.3)">
         <h4 style="font-size: large;margin: 3%;">naMizu is looking for witty subtitles!</h4>
         <a href="{{ url_for('namizu.funnyBannerApp') }}">I have one in mind</a>
     </div>
 
     {% if dailyJoke %}
-    <div class="feature-card">
+    <div class="feature-card" style="border: 5px double rgba(1, 0, 27, 0.234)">
         <p style="margin: 1%;"><i>{{ dailyJoke }}</i></p>
-    </div>
-    {% endif %}
-
-    {% if sideQuestStatus %}
-    <div class="feature-card">
-        <h3>Heads up!</h3>
-        <div class="cta">
-            <a href="{{ url_for('namizu.sideQuestApp') }}">naMizu SideQuest!</a>
-        </div>
     </div>
     {% endif %}
 
@@ -244,7 +239,7 @@
         <h3>No Micro-Transactions</h3>
     </div>
     
-    <div class="feature-card">
+    <div class="feature-card" style="border: 4px double rgba(222, 222, 17, 0.3)">
         <h3>Special Thanks 👏</h3>  
         <p style="margin: 1% 0%;">to the testers <strong>Bella</strong> and <strong>Márk</strong>, who made sure the app runs smoothly.</p>
     </div>

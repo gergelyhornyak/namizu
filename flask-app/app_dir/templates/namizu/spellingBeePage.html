@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Countdown Form</title>
+  <title>naMizu SpellingBee</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -128,9 +128,11 @@
 <body>
   <h1>Guessing Game</h1>
 
-  <button id="startBtn" onclick="startCountdown()">▶️ Start Countdown</button>
-  <div id="letterBox" style="display: none;">First letter: {{ letter }}</div>
-  <div id="timer">⏳ Time left: --</div>
+  <form action="{{ url_for('namizu.startCountdown') }}" method="POST">
+      <button id="startBtn" onclick="startCountdown()">▶️ Start Countdown</button>
+      <div id="letterBox" style="display: none;">First letter: {{ letter }}</div>
+      <div id="timer">⏳ Time left: --</div>
+  </form>   
 
   <form action="{{ url_for('namizu.spellingBeeApp') }}" method="POST">
     <label>Ország: <input type="text" name="country" id="country" /></label><br />
