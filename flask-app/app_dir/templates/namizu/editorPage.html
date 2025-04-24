@@ -327,7 +327,7 @@
                     Yes or No: 4 default answers - must be single-choice <br>
                     Open ended: Add as many answers as you want, try to use short words. <br>
                     Teams: users can choose between two opinions, try to use short words. - must be public and single-choice <br>
-                    Ranking: users can rank options, try to use short words. - must be single-choice <br>
+                    Ranking: users can rank options, try to use short words. - must be multi-choice <br>
                 </div>
             <div class="button-group">
 
@@ -369,7 +369,7 @@
                 <label class="section-label">Open-Ended Options:</label>
                 <div class="answer-input">
                     <input type="text" class="answer_openended" name="answer_openended-1" placeholder="Type an answer..." maxlength="96">
-                    <button type="button" class="add-answer">+</button>
+                    <button type="button" class="add-answer">➕</button>
                 </div>
             </div>
 
@@ -377,7 +377,7 @@
                 <label class="section-label">Ranking Options:</label>
                 <div class="answer-input">
                     <input type="text" class="answer_ranking" name="answer_ranking-1" placeholder="Type an answer..." maxlength="16">
-                    <button type="button" class="add-answer">+</button>
+                    <button type="button" class="add-answer">➕</button>
                 </div>
             </div>
 
@@ -495,7 +495,7 @@
         newAnswerDiv.classList.add('answer-input');
         newAnswerDiv.innerHTML = `
           <input type="text" class="answer_openended" name="answer_openended-${answerCounter}" placeholder="Type an answer..." maxlength="96">
-          <button type="button" class="delete-answer">—</button>
+          <button type="button" class="delete-answer">➖</button>
         `;
         answersDiv.appendChild(newAnswerDiv);
       } else if (e.target.classList.contains('delete-answer')) {
@@ -515,7 +515,7 @@
         newAnswerDiv.classList.add('answer-input');
         newAnswerDiv.innerHTML = `
           <input type="text" class="answer_ranking" name="answer_ranking-${rankAnswerCounter}" placeholder="Type an answer..." maxlength="96">
-          <button type="button" class="delete-answer">—</button>
+          <button type="button" class="delete-answer">➖</button>
         `;
         ranksDiv.appendChild(newAnswerDiv);
       } else if (e.target.classList.contains('delete-answer')) {
