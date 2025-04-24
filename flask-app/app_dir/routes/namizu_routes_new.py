@@ -142,6 +142,19 @@ def getTodayComments() -> dict:
     except Exception as e:
         print(e)
 
+def getUsersDatabase() -> dict:
+    with open(USERS_DB, 'r') as f:
+        return json.load(f)
+
+def getDailyPoll() -> dict:
+    with open(DAILY_POLL_CACHE, 'r') as f:
+        return json.load(f)
+    
+def getEventsBank() -> dict:
+    with open(EVENTS_BANK, 'r') as f:
+        return json.load(f)
+    
+
 #* PAGEs and APPs
 
 @bp.route('/login', methods=['GET', 'POST'])
@@ -236,8 +249,7 @@ def landingPage():
 @bp.route('/logout')
 def logout():
     # set user to loggedout
-    with open(USERS_DB, 'r') as f:
-        users_db = json.load(f)
+    users_db = getUsersDatabase()
     users_db[session['userID']]["loggedin"] = 0
     with open(USERS_DB, 'w') as f:
         json.dump(users_db,f,indent=4)
@@ -252,13 +264,10 @@ def dailyPollApp():
     userID = session['userID']
 
     pollSubmitted = False   
-    with open(USERS_DB, 'r') as f:
-        users_db = json.load(f)
+    users_db = getUsersDatabase()
     if(users_db[userID]["voted"]["dailyPoll"] == 1): # true
         pollSubmitted = True
-
-    with open(DAILY_POLL_CACHE, 'r') as f:
-        dailyPoll = json.load(f)
+    dailyPoll = getDailyPoll()
     questionBody = dailyPoll["Question"]
     pollster = dailyPoll["Pollster"]
     questionType = dailyPoll["Type"]
@@ -316,11 +325,16 @@ def dailyPollApp():
 
                 # update user vote info
                 users_db[userID]["voted"]["dailyPoll"] = 1
-                users_db[userID]["streak"] += 1
                 # also increase their streak
                 with open(USERS_DB, 'w') as f:
                     json.dump(users_db,f,indent=4)     
-
+                # also increase visits count
+                with open("database/visit_count.json", 'r') as f:
+                    visitCount = json.load(f)     
+                visitCount["total"] += 1
+                visitCount["dailypoll"] += 1
+                with open("database/visit_count.json", 'w') as f:
+                    json.dump(visitCount,f,indent=4)     
                 # add new answer to today poll
                 dailyPoll["Answers"] = answersBody
                 with open(DAILY_POLL_CACHE, 'w') as f:
@@ -434,8 +448,7 @@ def dailyPollApp():
 def editorApp():
     updateSessionCookie("editorApp")
     users_db = {}
-    with open(USERS_DB, 'r') as f:
-        users_db = json.load(f)
+    users_db = getUsersDatabase()
     events_bank = {}
     namesList = [user["uname"] for user in users_db.values()]
     theme = queryThemeDayMode(datetime.now().hour)
@@ -450,8 +463,9 @@ def editorApp():
     if request.method == "POST":
         session.pop('_flashes', None)
 
+        eventType = "dailypoll"
         pollBody["Question"] = request.form["question"]
-        pollBody["Type"] = request.form["selectionType"] + "," + request.form["privacyType"] + "," + request.form["optionsType"]
+        pollBody["Type"] = f"{eventType},{request.form['selectionType']},{request.form['privacyType']},{request.form['optionsType']}"
         pollBody["Pollster"] = findByID(userID)
         pollBody["Theme"] = "default_day"
         pollBody["Status"] = 0
@@ -568,7 +582,7 @@ def editorApp():
             events_bank[qid] = pollBody
             with open(EVENTS_BANK, 'w') as f:
                 json.dump(events_bank, f, indent=4)
-            flash("DailyPoll submitted successfully.")
+            flash(f"{eventType.upper()} submitted successfully.")
 
         return redirect(url_for('namizu.editorApp'))
     
@@ -584,7 +598,9 @@ def galleryApp():
 
 @bp.route("/calendar")
 def calendarApp():
-    return 0
+    updateSessionCookie("calendarApp")
+    theme = queryThemeDayMode(datetime.now().hour)
+    return render_template('namizu/calendarPage.html', theme=theme)
 
 ## Funny Apps
 
@@ -749,3 +765,95 @@ def adminApp():
 @bp.route("/admin/eventslist")
 def eventsList():
     return redirect(url_for('namizu.landingPage'))  
+
+@bp.route("/admin/resetday")
+def resetDay():
+    
+    ## SAVE history
+
+    eventsBank = getEventsBank()
+    dailyPollData = getDailyPoll()
+    commentsData = getTodayComments()
+    usersData = getUsersDatabase()
+    comments_packet = {}
+    yesterday = datetime.now() - timedelta(days=1)
+    yesterdayDate = yesterday.strftime("%Y-%m-%d")
+    for timestamp, details in commentsData.items():
+        if( details["appID"] == 1 ):
+            comments_packet[timestamp] = {} 
+            comments_packet[timestamp]["UID"] = details["userID"]
+            comments_packet[timestamp]["message"] = details["text"]
+
+    historyData = {
+        "DailyPoll": {
+            "Type": dailyPollData["Type"],
+            "Question": dailyPollData["Question"],
+            "Options": dailyPollData["Options"],
+            "Answers": dailyPollData["Answers"],
+            "Pollster": dailyPollData["Pollster"],
+            "Theme": dailyPollData["Theme"],
+            "Comments": comments_packet
+        }
+    }
+    
+    with open("database/history.json","r") as f:
+        historyAll = json.load(f)
+    try:
+        historyAll[yesterdayDate] = historyData
+    except:
+        print("History log already exists for this date.")
+    
+    with open("database/history.json","w") as f:
+        json.dump(historyAll,f,indent=4)
+
+    ## CHANGE streak according to events
+    
+    for uid, details in usersData.items():
+        if details["voted"]["dailyPoll"] == 1:
+            usersData[uid]["streak"] += 1
+        elif details["voted"]["dailyPoll"] == 0:
+            usersData[uid]["streak"] = 0
+
+        # reset votes
+        usersData[uid]["voted"]["dailyPoll"] = 0
+        usersData[uid]["voted"]["story"] = 0
+        usersData[uid]["voted"]["sidequest"] = 0
+
+    with open(USERS_DB,"w") as f:
+        json.dump(usersData,f,indent=4)
+
+    ## CHANGE main event - DailyPoll
+
+    yesterdayPollID = ""
+    for eid, details in eventsBank.items():
+        if "dailypoll" in details["Type"]:
+            if details["Status"] == 1:
+                yesterdayPoll = details
+                yesterdayPollID = eid
+                break
+
+    eventsBank[yesterdayPollID]["Status"] = 2
+
+    unusedPollIDs = [eid for eid,details in eventsBank.items() 
+                     if details["Status"] == 0 and "dailypoll" in details["Type"]]
+
+    # select question randomly
+    newPollID = random.choice(unusedPollIDs)
+    # change
+    eventsBank[newPollID]["Status"] = 1 # set for today's poll
+
+    with open(EVENTS_BANK,"w") as f:
+        json.dump(eventsBank,f,indent=4)
+
+    with open('database/daily_poll.json', 'w') as f:
+        json.dump(eventsBank[newPollID], f)
+
+    ## RESET comments
+
+    with open(COMMENTS_CACHE,"w") as f:
+        json.dump({},f,indent=4)
+
+    return redirect(url_for('namizu.adminApp'))  
+
+    # check for sidequest
+    
