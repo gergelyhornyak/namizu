@@ -5,9 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Funny Banner</title>
   <style>
+    :root {
+        --bg-colour1: {{ theme.mainBG1 }};
+        --bg-colour2: {{ theme.mainBG2 }};
+    }
     body {
       font-family: 'Segoe UI', sans-serif;
       background: linear-gradient(135deg, #f9f7fd, #e0e7ff);
+      background: linear-gradient(to bottom right, var(--bg-colour1), var(--bg-colour2));
       margin: 0;
       padding: 0;
       display: flex;

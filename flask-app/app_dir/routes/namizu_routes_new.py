@@ -708,7 +708,8 @@ def funnyBannerApp():
     bannerTexts = {}
     # max char len: 40
     if request.method == "GET":
-        return render_template('namizu/funnyBannerPage.html')
+        theme = queryThemeDayMode(datetime.now().hour)
+        return render_template('namizu/funnyBannerPage.html', theme=theme)
     elif request.method == "POST":
         bannerText = request.form.get("bannertext")
         # check text for links
