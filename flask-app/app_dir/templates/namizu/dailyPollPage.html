@@ -32,7 +32,8 @@
 
         --tiles-buttons-colour: {{ theme.buttonsBG }};
         --tiles-buttons-border: {{ theme.buttonsBRD }};
-        --tiles-buttons-text: {{ theme.buttonsTXT }};
+        --tiles-buttons-text1: {{ theme.buttonsTXT1 }};
+        --tiles-buttons-text2: {{ theme.buttonsTXT2 }};
         --footer-colour: {{ theme.footerBG }};
         --footer-text: {{ theme.footerTXT }};
         --icon-colour1: {{theme.iconBG1}};
@@ -103,8 +104,10 @@
       font-style: normal;
       font-size: 1.2rem;
       margin-block-start: 0.3em;
-      margin: 2% 24% 7%;
-      text-align: center;
+      margin: 2% 18% 7%;
+      justify-content: center;
+      display: flex;
+      gap: 5%;
     }
 
     .instruction {
@@ -132,7 +135,7 @@
       max-width: 250px;
       padding: 8px;
       background: var(--tiles-buttons-colour);
-      color: var(--banner-text);
+      color: var(--tiles-buttons-text2);
       border: none;
       border-radius: 8px;
       font-weight: bold;
@@ -227,7 +230,9 @@
     }
 
     .checkboxx {
-      background-color: #d3d3d3;
+      background-color: var(--tiles-buttons-colour);
+      color: var(--tiles-buttons-text1);
+      border-radius: 6px;
       padding: 2%;
     }
 
@@ -256,7 +261,7 @@
 
     hr {
       margin: 0% 0%;
-      border: 6px solid lightgoldenrodyellow;
+      border: 6px solid #ffda24;
     }
 
     .chosen {
@@ -378,7 +383,7 @@
 
     .podium-1 {
       height: 180px;
-      background-color: #E3651D;
+      background-color: #ac4d16;
     }
 
     .podium-2 {
@@ -508,9 +513,9 @@
       padding: 18px;
       border: none;
       background-color: var(--tiles-buttons-colour);
-      color: var(--tiles-buttons-text);
+      color: var(--tiles-buttons-text1);
       font-weight: bold;
-      font-size: medium;
+      font-size: 20px;
       border-radius: 14px;
       cursor: pointer;
     }
@@ -529,7 +534,7 @@
       justify-content: center;
       font-weight: bold;
       color: #000;
-      font-size: 12px;
+      font-size: 14px;
       background-color: whitesmoke;
     }
 
@@ -581,6 +586,12 @@
       border-radius: 8px;
       margin-bottom: 5px;
     }
+    .profile-pic {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        object-fit: cover;
+        }
 
   </style>
 </head>
@@ -726,7 +737,10 @@
         {% for uid, details in rankingProcessed.items() %}
         <section class="podium-section">
           {% if qTypeDescr.public %}
-          <div class="podium-title">{{ details.username }}'s tier list</div>
+          <div class="podium-title">
+              <img src="{{ url_for('static', filename='img/' + details.profpic) }}" alt="ProfilePic" class="profile-pic">
+              <div>{{ details.username }}'s tier list</div>
+          </div>
           {% endif %}
           <div class="podium-container">
             {% for rank, roman_and_name in details.top_three.items() %}
@@ -829,7 +843,7 @@
     function isChecked(elem) {
       //elem.parentNode.style.backgroundColor = (elem.checked) ? ' #a2a2a2' : '#ffffff';
       // when checked, reduce margin and increase border - to keep gap same size
-      elem.parentNode.style.border = (elem.checked) ? '3px solid red' : '0px solid #ddd';
+      elem.parentNode.style.border = (elem.checked) ? '3px solid black' : '0px solid #ddd';
     }
 
     {% if qTypeDescr.ranking %}
