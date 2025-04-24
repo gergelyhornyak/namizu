@@ -12,6 +12,8 @@ SPELLING_BEE_BANK = "database/spelling_bee.json"
 DAILY_POLL_CACHE = "database/daily_poll.json"
 FUNNY_BANNERS_BANK = "database/funny_banners.json"
 THEMES_BANK = "database/themes.json"
+DATETIME_LONG = "%Y-%m-%d %H:%M:%S"
+DATE_SHORT = "%Y-%m-%d"
 
 # session: userID,lastURL
 
@@ -34,10 +36,10 @@ def page_not_found400(e):
 def updateSessionCookie(path:str):
     if "userID" in session:
         session['url'] = path
-        session['time'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        session['time'] = datetime.now().strftime(DATETIME_LONG)
         with open(USERS_DB, 'r') as f:
             users_db = json.load(f)
-        users_db[session["userID"]]["lastactive"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        users_db[session["userID"]]["lastactive"] = datetime.now().strftime(DATETIME_LONG)
         with open(USERS_DB, 'w') as f:
             json.dump(users_db,f,indent=4)
 
@@ -143,7 +145,7 @@ def queryThemeDayMode(hour)->dict:
             themes = json.load(f)
     except Exception as e:
         print(e)
-    if(hour > 18 or hour < 7):
+    if(hour > 18 or hour < 8):
         return themes["default_night"]
     else:
         return themes["default_day"]    
@@ -190,7 +192,7 @@ def loginPage():
             session.modified = True
             session.permanent = True
             userData[uid]["loggedin"] = 1            
-            userData[uid]["lastlogin"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            userData[uid]["lastlogin"] = datetime.now().strftime(DATETIME_LONG)
             with open(USERS_DB, 'w') as f:
                 json.dump(userData, f,indent=4)
             if 'url' in session:
@@ -222,13 +224,13 @@ def landingPage():
     #user_db[userID]["lastactive"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     for uid, details in user_db.items():
-        last_active_time = datetime.strptime(details["lastactive"], "%Y-%m-%d %H:%M:%S")
+        last_active_time = datetime.strptime(details["lastactive"], DATETIME_LONG)
         if( datetime.now() - last_active_time < timedelta(minutes=1) ):
             activeUsers.append(shortnameByID(uid))
     
     showDailyJoke = False
     dailyJoke = ""
-    primeNumbers = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31]
+    primeNumbers = [2, 3, 5, 7, 11, 13, 17, 19, 23, 24, 29, 31]
     if ( datetime.now().day in primeNumbers ):
         showDailyJoke = True
         # Set the headers to accept plain text response
@@ -242,7 +244,7 @@ def landingPage():
     userName = usernameByID(userID)
     notices = ["notice 1","notice 2"] #queryNotices
     storyStatus = False # queryStory
-    sideQuestStatus = False # querySideQ
+    sideQuestStatus = True # querySideQ
     footerText = "2025 naMizu. Version 3.0 alpha (1535c0d), Built with care for the community."
     
     funnyMessages = {}
@@ -359,7 +361,7 @@ def dailyPollApp():
         else:
             if 'comment' in request.form:
                 comment = request.form['comment']
-                current_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                current_date = datetime.now().strftime(DATETIME_LONG)
                 appID = 1
                 
                 todayComments[current_date] = {
@@ -487,7 +489,7 @@ def editorApp():
         pollBody["Theme"] = "default_day"
         pollBody["Status"] = 0
         pollBody["Answers"] = {}
-        pollBody["Datetime"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        pollBody["Datetime"] = datetime.now().strftime(DATETIME_LONG)
         pollBody["Duedate"] = ""
         
         ## process Options
@@ -634,16 +636,9 @@ def spellingBeeApp():
         if( usersDB[userID]["voted"]["sidequest"] == 1 ):
             return redirect(url_for('namizu.spellingBeeScoreBoard'))
         # check if user already played it
-        # Get all lowercase letters
-        alphabet = string.ascii_uppercase
-        alphabet = alphabet.replace("Q","Á")
-        alphabet = alphabet.replace("W","É")
-        alphabet = alphabet.replace("X","Ó")
-        alphabet = alphabet.replace("Y","Ú")
-        # Select a random letter
-        random.seed(datetime.now().day)
-        random_letter = random.choice(alphabet)
-        return render_template('namizu/spellingBeePage.html', letter=random_letter)
+        with open("database/spelling_bee.json","r") as f:
+            spellingBee = json.load(f)
+        return render_template('namizu/spellingBeePage.html', letter=spellingBee["letter"])
     elif request.method == "POST":
         
         username = usernameByID(userID)
@@ -683,31 +678,31 @@ def spellingBeeApp():
         with open("database/words.txt","r") as f:
             words = [line.strip().lower() for line in f if line.strip()]
 
-        with open("database/spelling_bee","r") as f:
+        with open("database/spelling_bee.json","r") as f:
             spellingBee = json.load(f)
-            
+        todaysLetter_lower = spellingBee["letter"].lower()
         for word in words:
-            if( data["city"]["answer"] == word and data["city"]["answer"][0] == spellingBee["letter"] ):
+            if( data["city"]["answer"] == word and data["city"]["answer"][0] == todaysLetter_lower ):
                 data["city"]["correct"] = 1
                 data["city"]["colour"] = "greenyellow"
 
-            if( data["country"]["answer"] == word and data["country"]["answer"][0] == spellingBee["letter"] ):
+            if( data["country"]["answer"] == word and data["country"]["answer"][0] == todaysLetter_lower ):
                 data["country"]["correct"] = 1
                 data["country"]["colour"] = "greenyellow"
 
-            if( data["thing"]["answer"] == word and data["thing"]["answer"][0] == spellingBee["letter"] ):
+            if( data["thing"]["answer"] == word and data["thing"]["answer"][0] == todaysLetter_lower ):
                 data["thing"]["correct"] = 1
                 data["thing"]["colour"] = "greenyellow"
 
-            if( data["animal"]["answer"] == word ):
+            if( data["animal"]["answer"] == word and data["animal"]["answer"][0] == todaysLetter_lower ):
                 data["animal"]["correct"] = 1
                 data["animal"]["colour"] = "greenyellow"
 
-            if( data["male"]["answer"] == word ):
+            if( data["male"]["answer"] == word and data["male"]["answer"][0] == todaysLetter_lower ):
                 data["male"]["correct"] = 1
                 data["male"]["colour"] = "greenyellow"
 
-            if( data["female"]["answer"] == word ):
+            if( data["female"]["answer"] == word and data["female"]["answer"][0] == todaysLetter_lower ):
                 data["female"]["correct"] = 1
                 data["female"]["colour"] = "greenyellow"
             
@@ -726,10 +721,13 @@ def spellingBeeApp():
 def spellingBeeScoreBoard():
     with open(SPELLING_BEE_BANK,"r") as f:
         all_submissions = json.load(f)
-    print(all_submissions)
     #darkseagreen
     ## implement scoring system - check if a user entered a unique word
     return render_template('namizu/spellingBeeScoreBoard.html', all_submissions=all_submissions)
+
+@bp.route('/spellingbee/countdown', methods=['POST'])
+def startCountdown():
+    
 
 @bp.route("/sidequest", methods=['GET', 'POST'])
 def sideQuestApp():
@@ -805,7 +803,7 @@ def resetDay():
     usersData = getUsersDatabase()
     comments_packet = {}
     yesterday = datetime.now() - timedelta(days=1)
-    yesterdayDate = yesterday.strftime("%Y-%m-%d")
+    yesterdayDate = yesterday.strftime(DATE_SHORT)
     for timestamp, details in commentsData.items():
         if( details["appID"] == 1 ):
             comments_packet[timestamp] = {} 
@@ -884,6 +882,30 @@ def resetDay():
 
     with open('database/daily_poll.json', 'w') as f:
         json.dump(eventsBank[newPollID], f)
+
+    ## SideQuest
+
+    # Get all lowercase letters
+    alphabet = string.ascii_uppercase
+    def localizeAlphabet(alphabet:str=alphabet,lan:str="HU") -> str:
+        alphabet = alphabet.replace("Q","Á")
+        alphabet = alphabet.replace("W","É")
+        alphabet = alphabet.replace("X","Ó")
+        alphabet = alphabet.replace("Y","Ú")
+        return alphabet
+    alphabet = localizeAlphabet(alphabet,"HU")
+    # Select a random letter
+    random.seed(datetime.now().day)
+    random_letter = random.choice(alphabet)
+
+    spellingBeeBody = {
+        "Datetime": datetime.now().strftime(DATE_SHORT),
+        "letter": random_letter,
+        "submissions": {}
+    }
+
+    with open("database/spelling_bee.json","w") as f:
+        json.dump(spellingBeeBody,f,indent=4)
 
     return redirect(url_for('namizu.adminApp'))  
     
