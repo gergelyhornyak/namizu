@@ -614,6 +614,10 @@ def spellingBeeApp():
     if request.method == "GET":
         # Get all lowercase letters
         alphabet = string.ascii_uppercase
+        alphabet = alphabet.replace("Q","Á")
+        alphabet = alphabet.replace("W","É")
+        alphabet = alphabet.replace("X","Ó")
+        alphabet = alphabet.replace("Y","Ú")
         # Select a random letter
         random_letter = random.choice(alphabet)
         return render_template('namizu/spellingBeePage.html', letter=random_letter)
@@ -754,14 +758,8 @@ def adminApp():
                            loggedinUsers=', '.join(loggedinUsers),
                            allEventsCount=allEventsCount,unusedEventsCount=unusedEventsCount)
 
-    # visit count
-    # active users
-    # currently logged in
     # dailyPoll completed
     # sideQuest completed
-    # all questions/events count
-    # unused questions/events count
-    # list of questions
 
 @bp.route("/admin/eventslist")
 def eventsList():
