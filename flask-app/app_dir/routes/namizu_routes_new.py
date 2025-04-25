@@ -635,6 +635,20 @@ def spellingBeeApp():
     cities = []
     spellingBee = {}
     if request.method == "GET":
+
+        with open(SPELLING_BEE_BANK,"r") as f:
+            spellingBee = json.load(f)
+
+        ## ALL WRONG: PLACE EVERY COUNTDOWN BEGIN CHECKER UNDER `def startCountdown()`
+
+        if( spellingBee["submissions"] ):
+            if( spellingBee["submissions"][userID] ):
+                submissionDatetime = datetime.strptime(spellingBee["submissions"][userID]["begin"], DATETIME_LONG)
+                guessTime -= (datetime.now() - submissionDatetime).total_seconds()
+                guessTime = max(0,guessTime)
+                return render_template('namizu/spellingBeePage.html', 
+                                letter=spellingBee["letter"], countdown=guessTime)
+
         # check if user already played it
         if( usersDB[userID]["voted"]["sidequest"] == 1 ):
             return redirect(url_for('namizu.spellingBeeScoreBoard'))
