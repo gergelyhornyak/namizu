@@ -628,90 +628,125 @@ def spellingBeeApp():
     updateSessionCookie("spellingBeeApp")
     userID = session['userID']
     usersDB = getUsersDatabase()
+    guessTime = 30 ## seconds
+    username = usernameByID(userID)
     data = {}
     words = []
     cities = []
-    spellingbee = {}
+    spellingBee = {}
     if request.method == "GET":
+        # check if user already played it
         if( usersDB[userID]["voted"]["sidequest"] == 1 ):
             return redirect(url_for('namizu.spellingBeeScoreBoard'))
-        # check if user already played it
-        with open("database/spelling_bee.json","r") as f:
-            spellingBee = json.load(f)
-        return render_template('namizu/spellingBeePage.html', letter=spellingBee["letter"])
-    elif request.method == "POST":
-        
-        username = usernameByID(userID)
+        # else register user guess data
         data = {
             "uname": username,
+            "begin": datetime.now().strftime(DATETIME_LONG),
             "country": {
-                "answer":request.form.get("country").lower(),
+                "answer": "",
                 "correct":0,
                 "colour":"transparent"
                 },
             "city": {
-                "answer": request.form.get("city").lower(),
+                "answer": "",
                 "correct":0,
                 "colour":"transparent"
                 },
             "thing": {
-                "answer": request.form.get("thing").lower(),
+                "answer": "",
                 "correct":0,
                 "colour":"transparent"
                 },
             "animal": {
-                "answer": request.form.get("animal").lower(),
+                "answer": "",
                 "correct":0,
                 "colour":"transparent"
                 },
             "male": {
-                "answer": request.form.get("male").lower(),
+                "answer": "",
                 "correct":0,
                 "colour":"transparent"
                 },
             "female": {
-                "answer": request.form.get("female").lower(),
+                "answer": "",
                 "correct":0,
                 "colour":"transparent"
                 }
             }
+        with open(SPELLING_BEE_BANK,"r") as f:
+            spellingBee = json.load(f)
+        spellingBee["submissions"][userID] = data
+        with open(SPELLING_BEE_BANK,"w") as f:
+            json.dump(spellingBee,f,indent=4)
+        return render_template('namizu/spellingBeePage.html', 
+                               letter=spellingBee["letter"], countdown=guessTime)
+    
+    elif request.method == "POST":
+
+        with open(SPELLING_BEE_BANK,"r") as f:
+            spellingBee = json.load(f)
         with open("database/words.txt","r") as f:
             words = [line.strip().lower() for line in f if line.strip()]
 
-        with open("database/spelling_bee.json","r") as f:
-            spellingBee = json.load(f)
+        submissionDatetime = datetime.strptime(spellingBee["submissions"][userID]["begin"], DATETIME_LONG)
+        if( datetime.now() - submissionDatetime > timedelta(seconds=guessTime) ):
+            print("Spelling bee guess time error: longer guess time. Probably restarted session.")
+
+        spellingBee["submissions"][userID]["country"]["answer"] = request.form.get("country").lower()
+        spellingBee["submissions"][userID]["city"]["answer"] = request.form.get("city").lower()
+        spellingBee["submissions"][userID]["thing"]["answer"] = request.form.get("thing").lower()
+        spellingBee["submissions"][userID]["animal"]["answer"] = request.form.get("animal").lower()
+        spellingBee["submissions"][userID]["male"]["answer"] = request.form.get("male").lower()
+        spellingBee["submissions"][userID]["female"]["answer"] = request.form.get("female").lower()        
+        
         todaysLetter_lower = spellingBee["letter"].lower()
+
         for word in words:
-            if( data["city"]["answer"] == word and data["city"]["answer"][0] == todaysLetter_lower ):
-                data["city"]["correct"] = 1
-                data["city"]["colour"] = "greenyellow"
+            if( spellingBee["submissions"][userID]["country"]["answer"] == word and 
+                spellingBee["submissions"][userID]["country"]["answer"][0] == todaysLetter_lower ):
 
-            if( data["country"]["answer"] == word and data["country"]["answer"][0] == todaysLetter_lower ):
-                data["country"]["correct"] = 1
-                data["country"]["colour"] = "greenyellow"
+                spellingBee["submissions"][userID]["country"]["correct"] = 1
+                spellingBee["submissions"][userID]["country"]["colour"] = "greenyellow"
 
-            if( data["thing"]["answer"] == word and data["thing"]["answer"][0] == todaysLetter_lower ):
-                data["thing"]["correct"] = 1
-                data["thing"]["colour"] = "greenyellow"
 
-            if( data["animal"]["answer"] == word and data["animal"]["answer"][0] == todaysLetter_lower ):
-                data["animal"]["correct"] = 1
-                data["animal"]["colour"] = "greenyellow"
+            if( spellingBee["submissions"][userID]["city"]["answer"] == word and 
+                spellingBee["submissions"][userID]["city"]["answer"][0] == todaysLetter_lower ):
 
-            if( data["male"]["answer"] == word and data["male"]["answer"][0] == todaysLetter_lower ):
-                data["male"]["correct"] = 1
-                data["male"]["colour"] = "greenyellow"
+                spellingBee["submissions"][userID]["city"]["correct"] = 1
+                spellingBee["submissions"][userID]["city"]["colour"] = "greenyellow"
 
-            if( data["female"]["answer"] == word and data["female"]["answer"][0] == todaysLetter_lower ):
-                data["female"]["correct"] = 1
-                data["female"]["colour"] = "greenyellow"
-            
-        with open(SPELLING_BEE_BANK,"r") as f:
-            spellingbee = json.load(f)
-        spellingbee["submissions"][userID] = data
+
+            if( spellingBee["submissions"][userID]["thing"]["answer"] == word and 
+                spellingBee["submissions"][userID]["thing"]["answer"][0] == todaysLetter_lower ):
+
+                spellingBee["submissions"][userID]["thing"]["correct"] = 1
+                spellingBee["submissions"][userID]["thing"]["colour"] = "greenyellow"
+
+
+            if( spellingBee["submissions"][userID]["animal"]["answer"] == word and 
+                spellingBee["submissions"][userID]["animal"]["answer"][0] == todaysLetter_lower ):
+                
+                spellingBee["submissions"][userID]["animal"]["correct"] = 1
+                spellingBee["submissions"][userID]["animal"]["colour"] = "greenyellow"
+
+
+            if( spellingBee["submissions"][userID]["male"]["answer"] == word and 
+                spellingBee["submissions"][userID]["male"]["answer"][0] == todaysLetter_lower ):
+
+                spellingBee["submissions"][userID]["male"]["correct"] = 1
+                spellingBee["submissions"][userID]["male"]["colour"] = "greenyellow"
+
+
+            if( spellingBee["submissions"][userID]["female"]["answer"] == word and 
+                spellingBee["submissions"][userID]["female"]["answer"][0] == todaysLetter_lower ):
+
+                spellingBee["submissions"][userID]["female"]["correct"] = 1
+                spellingBee["submissions"][userID]["female"]["colour"] = "greenyellow"
+
+
         #cellColour = "greenyellow","tomato"
         with open(SPELLING_BEE_BANK,"w") as f:
-            json.dump(spellingbee,f,indent=4)
+            json.dump(spellingBee,f,indent=4)
         usersDB[userID]["voted"]["sidequest"] = 1
         with open(USERS_DB,"w") as f:
             json.dump(usersDB,f,indent=4)
@@ -727,7 +762,7 @@ def spellingBeeScoreBoard():
 
 @bp.route('/spellingbee/countdown', methods=['POST'])
 def startCountdown():
-    
+    return 0
 
 @bp.route("/sidequest", methods=['GET', 'POST'])
 def sideQuestApp():
