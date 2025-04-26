@@ -141,7 +141,7 @@ def queryThemeDayMode(hour:int)->dict:
             themes = json.load(f)
     except Exception as e:
         print(e)
-
+    return themes["default_day"]  
     if(hour > 18 or hour < 8):
         return themes["default_night"]
     else:

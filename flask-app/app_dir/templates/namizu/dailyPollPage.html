@@ -38,6 +38,8 @@
         --footer-text: {{ theme.footerTXT }};
         --icon-colour1: {{theme.iconBG1}};
         --icon-colour2: {{theme.iconBG2}};
+        --ranking-colour: {{theme.rankingBG}};
+        --ranking-text: {{theme.rankingTXT}};
     }
 
     body {
@@ -100,7 +102,6 @@
     .podium-title {
       padding: 2%;
       border-radius: 14px;
-      background-color: ivory;
       font-style: normal;
       font-size: 1.2rem;
       margin-block-start: 0.3em;
@@ -243,9 +244,10 @@
     }
 
     .ranking-list li {
-      background: #fff;
+      background: var(--ranking-colour);
       padding: 14px 18px;
       margin-bottom: 10px;
+      color: var(--ranking-text);
       border: 1px solid #ccc;
       border-radius: 10px;
       cursor: grab;
@@ -265,7 +267,7 @@
     }
 
     .chosen {
-      background-color: #e0ffe0;
+      background-color: var(--ranking-colour);
       transform: scale(1.01);
       box-shadow: 0 4px 12px rgba(0, 0, 0);
       z-index: 1000;
@@ -418,7 +420,7 @@
     }
 
     .other-item {
-      background-color: #fff;
+      background-color: var(--ranking-colour);
       margin: 10px 0;
       padding: 12px 20px;
       border-radius: 10px;
