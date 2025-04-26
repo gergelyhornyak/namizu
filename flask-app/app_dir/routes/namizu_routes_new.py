@@ -105,10 +105,6 @@ def typeParser(qTypeRaw:dict) -> dict:
     
     return qTypeDescr
 
-def prettyPrintJson(jsonFile:dict) -> None:
-    json_formatted_str = json.dumps(jsonFile, indent=4)
-    print(json_formatted_str)
-
 def usernameByID(uid:str) -> str:
     users_db = {}
     try:
@@ -138,13 +134,14 @@ def shortnameByID(uid:str) -> str:
     return shortname
 
 
-def queryThemeDayMode(hour)->dict:
+def queryThemeDayMode(hour:int)->dict:
     themes = {}
     try:
         with open(THEMES_BANK, 'r') as f:
             themes = json.load(f)
     except Exception as e:
         print(e)
+
     if(hour > 18 or hour < 8):
         return themes["default_night"]
     else:
@@ -187,7 +184,7 @@ def loginPage():
         uid = request.form["uid"]
         passw = request.form["password"]
         if( userData[uid]["passw"] == passw):
-            print(f"Successful authentication. Welcome {userData[uid]['uname']}!")
+            print(f"Successful authentication!")
             session["userID"] = uid
             session.modified = True
             session.permanent = True
@@ -245,7 +242,7 @@ def landingPage():
     notices = ["notice 1","notice 2"] #queryNotices
     storyStatus = False # queryStory
     sideQuestStatus = True # querySideQ
-    footerText = "2025 naMizu. Version 3.0 alpha (1535c0d), Built with care for the community."
+    footerText = "2025 naMizu. Version 3.0 alpha (aaecf03), Built with care for the community."
     
     funnyMessages = {}
     with open(FUNNY_BANNERS_BANK, 'r') as f:
@@ -681,8 +678,8 @@ def spellingBeeApp():
     updateSessionCookie("spellingBeeApp")
     userID = session['userID']
     usersDB = getUsersDatabase()
+    theme = queryThemeDayMode(datetime.now().hour)
     guessTime = 30 ## seconds
-    username = usernameByID(userID)
     data = {}
     words = []
     spellingBee = {}
@@ -691,25 +688,17 @@ def spellingBeeApp():
         with open(SPELLING_BEE_BANK,"r") as f:
             spellingBee = json.load(f)
 
-        ## ALL WRONG: PLACE EVERY COUNTDOWN BEGIN CHECKER UNDER `def startCountdown()`
+        # check if user already played it
+        if( usersDB[userID]["voted"]["sidequest"] == 1 ):
+            return redirect(url_for('namizu.spellingBeeScoreBoard'))
 
         if( userID in spellingBee["submissions"].keys() ):
             submissionDatetime = datetime.strptime(spellingBee["submissions"][userID]["begin"], DATETIME_LONG)
             guessTime -= (datetime.now() - submissionDatetime).total_seconds()
             guessTime = max(0,int(guessTime))
-            return render_template('namizu/spellingBeePage.html', 
-                            letter=spellingBee["letter"], countdown=guessTime)
 
-        # check if user already played it
-        if( usersDB[userID]["voted"]["sidequest"] == 1 ):
-            return redirect(url_for('namizu.spellingBeeScoreBoard'))
-        # else register user guess data
-        
-        #spellingBee["submissions"][userID] = data
-        #with open(SPELLING_BEE_BANK,"w") as f:
-         #   json.dump(spellingBee,f,indent=4)
         return render_template('namizu/spellingBeePage.html', 
-                               letter=spellingBee["letter"], countdown=guessTime)
+                               letter=spellingBee["letter"], countdown=guessTime, theme=theme)
     
     elif request.method == "POST":
 
@@ -719,8 +708,8 @@ def spellingBeeApp():
             words = [line.strip().lower() for line in f if line.strip()]
 
         submissionDatetime = datetime.strptime(spellingBee["submissions"][userID]["begin"], DATETIME_LONG)
-        print(f"{datetime.now() - submissionDatetime = } > {timedelta(seconds=guessTime+1) = }\n")    
-        if( datetime.now() - submissionDatetime > timedelta(seconds=guessTime+1) ):
+        print(f"{datetime.now() - submissionDatetime} > {timedelta(seconds=guessTime+4)}\n")    
+        if( datetime.now() - submissionDatetime > timedelta(seconds=guessTime+4) ):
             print("Spelling bee guess time error: longer guess time. Probably restarted session.")
             spellingBee["submissions"][userID]["cheated"] = True
 
@@ -789,10 +778,9 @@ def spellingBeeScoreBoard():
     with open(SPELLING_BEE_BANK,"r") as f:
         all_submissions = json.load(f)
     #darkseagreen
+    theme = queryThemeDayMode(datetime.now().hour)
     ## implement scoring system - check if a user entered a unique word
-    return render_template('namizu/spellingBeeScoreBoard.html', all_submissions=all_submissions)
-
-
+    return render_template('namizu/spellingBeeScoreBoard3.html', all_submissions=all_submissions, theme=theme)
 
 @bp.route("/sidequest", methods=['GET', 'POST'])
 def sideQuestApp():
@@ -855,7 +843,9 @@ def adminApp():
 
 @bp.route("/admin/eventslist")
 def eventsList():
-    return redirect(url_for('namizu.landingPage'))  
+    updateSessionCookie("eventsList")
+    events = getEventsBank()
+    return render_template('namizu/eventsbankPage.html', events=events) 
 
 @bp.route("/admin/resetday")
 def resetDay():
