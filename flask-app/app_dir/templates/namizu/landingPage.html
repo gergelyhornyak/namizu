@@ -195,15 +195,10 @@
     <div class="feature-card" style="border: 8px double rgba(255, 166, 0, 0.3)">
         <h3>Heads up!</h3>
         <div class="cta">
-            <a href="{{ url_for('namizu.spellingBeeApp') }}">naMizu SideQuest!</a>
+            <a href="{{ url_for('namizu.spellingBeeApp') }}">naMizu SideQuest</a>
         </div>
     </div>
     {% endif %}
-
-    <div class="feature-card" style="border: 5px double rgba(39, 20, 188, 0.3)">
-        <h4 style="font-size: large;margin: 3%;">naMizu is looking for witty subtitles!</h4>
-        <a href="{{ url_for('namizu.funnyBannerApp') }}">I have one in mind</a>
-    </div>
 
     {% if dailyJoke %}
     <div class="feature-card" style="border: 5px double rgba(1, 0, 27, 0.234)">
@@ -221,6 +216,11 @@
     <div class="feature-card">
         <h3>Wanna add an event?</h3>
         <p style="margin: 1% 0%;">Create your own questions using the <a href="{{ url_for('namizu.editorApp') }}">naMizu Editor</a></p>
+    </div>
+
+    <div class="feature-card" style="border: 5px double rgba(39, 20, 188, 0.3)">
+        <h4 style="font-size: large;margin: 3%;">naMizu is looking for witty subtitles!</h4>
+        <a href="{{ url_for('namizu.funnyBannerApp') }}">I have one in mind</a>
     </div>
 
     <div class="feature-card">
