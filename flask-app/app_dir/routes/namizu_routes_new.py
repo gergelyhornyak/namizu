@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, current_app
+import requests
 from datetime import datetime, timedelta
 import random, json, re, string
 import numpy as np
@@ -15,7 +16,6 @@ FUNNY_BANNERS_BANK = "database/funny_banners.json"
 THEMES_BANK = "database/themes.json"
 DATETIME_LONG = "%Y-%m-%d %H:%M:%S"
 DATE_SHORT = "%Y-%m-%d"
-
 # session: userID,lastURL
 
 #* ERROR HANDLING
@@ -142,7 +142,7 @@ def queryThemeDayMode(hour:int)->dict:
             themes = json.load(f)
     except Exception as e:
         print(e)
-    return themes["default_day"]  
+    
     if(hour > 18 or hour < 8):
         return themes["default_night"]
     else:
@@ -168,6 +168,24 @@ def getDailyPoll() -> dict:
 def getEventsBank() -> dict:
     with open(EVENTS_BANK, 'r') as f:
         return json.load(f)
+
+def querySideEventOccurance(eventName) -> bool:
+    """
+    dailyJoke, sideQuest, story
+    """
+    sideQuestNumSeq = [2,5,8,12,17,20,24,28] # 3-4-5
+    dailyJokeNumSeq = [1,5,9,13,17,21,25,28] # 4-3
+    storyNumSeq = [3,9,15,21,28] # 6
+    if(eventName == "dailyJoke"):
+        if(datetime.now().day in dailyJokeNumSeq):
+            return True
+    if(eventName == "sideQuest"):
+        if(datetime.now().day in sideQuestNumSeq):
+            return True
+    if(eventName == "story"):
+        if(datetime.now().day in storyNumSeq):
+            return True
+    return False
     
 
 #* PAGEs and APPs
@@ -224,26 +242,24 @@ def landingPage():
 
     for uid, details in user_db.items():
         last_active_time = datetime.strptime(details["lastactive"], DATETIME_LONG)
-        if( datetime.now() - last_active_time < timedelta(minutes=1) ):
+        if( datetime.now() - last_active_time < timedelta(minutes=1,seconds=30) ):
             activeUsers.append(shortnameByID(uid))
     
-    showDailyJoke = False
+    dailyJokeStatus = querySideEventOccurance("dailyJoke")
     dailyJoke = ""
-    primeNumbers = [2, 3, 5, 7, 11, 13, 17, 19, 23, 24, 29, 31]
-    if ( datetime.now().day in primeNumbers ):
-        showDailyJoke = True
+    storyStatus = querySideEventOccurance("story")
+    sideQuestStatus = querySideEventOccurance("sideQuest")
+    if(dailyJokeStatus):
         # Set the headers to accept plain text response
         headers = {"Accept": "text/plain"}
         # Perform the GET request to the dad joke API
-        #response = requests.get("https://icanhazdadjoke.com/", headers=headers)
+        response = requests.get("https://icanhazdadjoke.com/", headers=headers)
         # Store the joke text
-        dailyJoke = "DAILY_JOKE"#response.text
+        dailyJoke = response.text
     
     banner = "NaMizu"
     userName = usernameByID(userID)
     notices = ["notice 1","notice 2"] #queryNotices
-    storyStatus = False # queryStory
-    sideQuestStatus = True # querySideQ
     footerText = "2025 naMizu. Version 3.0 alpha (aaecf03), Built with care for the community."
     
     funnyMessages = {}
@@ -251,9 +267,8 @@ def landingPage():
         funnyMessages = json.load(f)
     random.seed(datetime.now().day)
     number = random.randint(1, len(funnyMessages))
-    
     funnyMessage = funnyMessages[f"B{str(number)}"]
-    #funnyMessage = "I Solemnly Swear I’m Up to Polling Good"
+
     theme = queryThemeDayMode(datetime.now().hour)
     renderPacket = {}
     return render_template('/namizu/landingPage.html', 
@@ -728,42 +743,42 @@ def spellingBeeApp():
                 spellingBee["submissions"][userID]["country"]["answer"][0] == todaysLetter_lower ):
 
                 spellingBee["submissions"][userID]["country"]["correct"] = 1
-                spellingBee["submissions"][userID]["country"]["colour"] = "greenyellow"
+                spellingBee["submissions"][userID]["country"]["colour"] = "#648f2380"
 
 
             if( spellingBee["submissions"][userID]["city"]["answer"] == word and 
                 spellingBee["submissions"][userID]["city"]["answer"][0] == todaysLetter_lower ):
 
                 spellingBee["submissions"][userID]["city"]["correct"] = 1
-                spellingBee["submissions"][userID]["city"]["colour"] = "greenyellow"
+                spellingBee["submissions"][userID]["city"]["colour"] = "#648f2380"
 
 
             if( spellingBee["submissions"][userID]["thing"]["answer"] == word and 
                 spellingBee["submissions"][userID]["thing"]["answer"][0] == todaysLetter_lower ):
 
                 spellingBee["submissions"][userID]["thing"]["correct"] = 1
-                spellingBee["submissions"][userID]["thing"]["colour"] = "greenyellow"
+                spellingBee["submissions"][userID]["thing"]["colour"] = "#648f2380"
 
 
             if( spellingBee["submissions"][userID]["animal"]["answer"] == word and 
                 spellingBee["submissions"][userID]["animal"]["answer"][0] == todaysLetter_lower ):
                 
                 spellingBee["submissions"][userID]["animal"]["correct"] = 1
-                spellingBee["submissions"][userID]["animal"]["colour"] = "greenyellow"
+                spellingBee["submissions"][userID]["animal"]["colour"] = "#648f2380"
 
 
             if( spellingBee["submissions"][userID]["male"]["answer"] == word and 
                 spellingBee["submissions"][userID]["male"]["answer"][0] == todaysLetter_lower ):
 
                 spellingBee["submissions"][userID]["male"]["correct"] = 1
-                spellingBee["submissions"][userID]["male"]["colour"] = "greenyellow"
+                spellingBee["submissions"][userID]["male"]["colour"] = "#648f2380"
 
 
             if( spellingBee["submissions"][userID]["female"]["answer"] == word and 
                 spellingBee["submissions"][userID]["female"]["answer"][0] == todaysLetter_lower ):
 
                 spellingBee["submissions"][userID]["female"]["correct"] = 1
-                spellingBee["submissions"][userID]["female"]["colour"] = "greenyellow"
+                spellingBee["submissions"][userID]["female"]["colour"] = "#648f2380"
 
 
         #cellColour = "greenyellow","tomato"
@@ -808,6 +823,119 @@ def funnyBannerApp():
             json.dump(bannerTexts,f,indent=4)
         return redirect(url_for('namizu.landingPage'))
 
+@bp.route("/drawing/canvas")    
+def drawingApp():
+    updateSessionCookie("drawingApp")
+    return render_template("namizu/drawing_canvas.html")    
+
+@bp.route("/drawing/save", methods=['GET', 'POST'])
+def drawing_save():
+    image_data = ""
+    image_title = ""
+    image_descr = ""
+    image_author = ""
+    image_date = ""
+    directory_path = "uploads"
+    if request.method == "POST":
+        image_data = request.form.get('imageData')
+        image_title = request.form.get('title')
+        image_descr = request.form.get('descr')
+        image_author = session["user"]
+        image_date = "2025" #datetime.now().strftime("%Y") #! hardcoded date
+    if image_data:
+        # Decode the base64 image
+        header, encoded = image_data.split(',', 1)
+        image_data = base64.b64decode(encoded)
+        try:
+            # List all entries in the directory
+            entries = os.listdir(directory_path)    
+            # Count files only
+            file_count = sum(1 for entry in entries if os.path.isfile(os.path.join(directory_path, entry)))
+            filename = file_count+1
+        except FileNotFoundError:
+            print(f"The directory '{directory_path}' does not exist.")
+            return 1
+        except PermissionError:
+            print(f"Permission denied to access the directory '{directory_path}'.")
+            return 2
+        file_path = os.path.join(directory_path, f'drawing_{filename}.png')
+        with open(file_path, 'wb') as f: f.write(image_data)
+        with open(f"database/drawings.json", 'r') as f:
+            imageJson =  json.load(f)        
+        full_filename = f"drawing_{filename}.png"
+        imageJson[full_filename] = {}
+        imageJson[full_filename]['filename'] = full_filename
+        imageJson[full_filename]['author'] = image_author
+        imageJson[full_filename]['title'] = image_title
+        if image_title == "":
+            imageJson[full_filename]['title'] = "Untitled"
+        imageJson[full_filename]['date'] = image_date
+        imageJson[full_filename]['descr'] = image_descr
+        imageJson[full_filename]['submitted'] = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        with open(f"database/drawings.json", 'w') as f:
+            json.dump(imageJson, f, indent=4)  
+
+        print(f"Image saved")
+        return redirect(url_for('namizu.index'))
+    return "No image data received!", 400
+
+@bp.route("/gallery/welcome")
+def gallery_welcome():
+    updateSessionCookie("gallery_welcome")
+    
+    drawing_sum = len(os.listdir("uploads"))
+    drawings = load_drawings()
+    authors = {item["author"] for item in drawings.values()}
+    authors_names = ', '.join(authors)
+    return render_template("namizu/gallery_welcome.html", drawing_sum=drawing_sum, name=userName, authors=authors_names)
+
+@bp.route("/gallery/lift")
+def gallery_lift():
+    updateSessionCookie("gallery_lift")
+    flash_message = "Select Floor"
+    #! buttons hardcoded
+    with open(f"database/drawings.json", 'r') as f:
+        drawings =  json.load(f)        
+    buttons = []
+    buttons.append({"day":"X","month":"HOME"})
+    date_saved = []
+    for drawing_id,details in drawings.items():
+        temp_date = {}
+        date_obj = datetime.strptime(details["submitted"], "%d/%m/%Y %H:%M:%S")
+        if (date_obj.day.__str__()+"-"+date_obj.month.__str__()) not in date_saved:    
+            temp_date = {"day":date_obj.day,"month":date_obj.strftime("%b").upper()}
+            date_saved.append(date_obj.day.__str__()+"-"+date_obj.month.__str__())
+            if datetime.today().day == date_obj.day and datetime.today().month == date_obj.month:
+                # is today
+                temp_date["today"] = True
+            buttons.append(temp_date)
+    
+    session.pop('_flashes', None)
+    return render_template("namizu/gallery_lift.html", buttons=buttons)
+
+@bp.route('/uploads/<filename>')
+def serve_uploads(filename):
+    return send_from_directory("../uploads", filename)
+
+@bp.route("/gallery/<target_date>")
+def gallery_day(target_date):
+    updateSessionCookie("gallery_day")
+    directory_path = "uploads"
+    date_found = False
+    drawings_dir = os.listdir(directory_path)
+    art_db = load_drawings()  
+    target_day_n_month = target_date.split("-")
+    date_str = f"{target_day_n_month[0]} {target_day_n_month[1]} 2025" #! hardcoded year
+    date_obj = datetime.strptime(date_str, "%d %b %Y")
+   
+    screenshots,date_found = get_drawings_by_matching_day(art_db,drawings_dir,date_obj,date_found)
+
+    if not date_found:
+        session.pop('_flashes', None)
+        flash(f"Floor {date_obj.day} {date_obj.strftime('%b')} is empty")
+        return redirect(url_for('namizu.gallery_lift'))
+    return render_template("namizu/gallery_swiper.html", screenshots=screenshots)
+
 
 @bp.route("/admin")
 def adminApp():
@@ -841,6 +969,8 @@ def adminApp():
 
     # dailyPoll completed
     # sideQuest completed
+
+
 
 @bp.route("/admin/eventslist")
 def eventsList():
@@ -925,9 +1055,11 @@ def resetDay():
 
     unusedPollIDs = [eid for eid,details in eventsBank.items() 
                      if details["Status"] == 0 and "dailypoll" in details["Type"]]
+    
+    print(unusedPollIDs)
 
-    if( len(unusedPollIDs) == 1 ):
-        print("ERROR: 1 event left")
+    if( len(unusedPollIDs) == 2 ):
+        current_app.logger.error("1 dailypoll event left in bank")
 
     # select question randomly
     newPollID = random.choice(unusedPollIDs)
@@ -966,10 +1098,38 @@ def resetDay():
 
     ## secure GH backup
 
-    
-
     return redirect(url_for('namizu.adminApp'))  
-    
 
-    # check for sidequest
-    
+    # check for sidequest    
+
+## ARCHIVED APPS
+
+@bp.route("/sketcher/canvas")
+def oldSketcherApp():
+    updateSessionCookie("oldSketcherApp")
+    return render_template("namizu/sketcher_canvas.html")
+
+@bp.route("/sketcher/save", methods=['GET', 'POST'])
+def sketcher_save():
+    image_data = ""
+    image_title = ""
+    image_descr = ""
+    image_author = ""
+    image_date = ""
+    directory_path = "uploads"
+    if request.method == "POST":
+        image_data = request.form.get('imageData')
+        image_title = request.form.get('title')
+        image_descr = request.form.get('descr')
+        image_author = session["user"]
+        image_date = "2025" #datetime.now().strftime("%Y") #! hardcoded date
+    if image_data:
+        # Decode the base64 image
+        header, encoded = image_data.split(',', 1)
+        image_data = base64.b64decode(encoded)
+
+        success = save_drawing(directory_path,image_data,image_author,image_title,image_date,image_descr)
+        if success == 0:
+            print(f"Image saved")
+        return redirect(url_for('namizu.index'))
+    return "No image data received!", 400
