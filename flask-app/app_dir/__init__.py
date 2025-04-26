@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask,session
 from .routes import main_routes, namizu_routes
 from .routes import namizu_routes_new, main_routes_new
 import logging
@@ -20,7 +20,7 @@ def create_app():
     app.logger.debug("Secret key aquired")
     app.config['PERMANENT_SESSION_LIFETIME'] = 86400
     app.permanent_session_lifetime = timedelta(weeks=1)
-    app.logger.debug("Session lifetime set to 24hrs")
+    app.logger.debug("Session lifetime set to 1 week")
     # Register blueprints
     app.register_blueprint(main_routes_new.bp)
     app.register_blueprint(namizu_routes_new.bp, url_prefix="/namizu")
