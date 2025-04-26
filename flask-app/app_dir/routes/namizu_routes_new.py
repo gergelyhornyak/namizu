@@ -1,7 +1,8 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash, current_app
 from datetime import datetime, timedelta
 import random, json, re, string
 import numpy as np
+import os,shutil,subprocess
 
 bp = Blueprint('namizu', __name__, template_folder='templates')
 
@@ -42,9 +43,9 @@ def updateSessionCookie(path:str):
         users_db[session["userID"]]["lastactive"] = datetime.now().strftime(DATETIME_LONG)
         with open(USERS_DB, 'w') as f:
             json.dump(users_db,f,indent=4)
-
     else:
-        print("userID missing, pls login")
+        #print("")
+        current_app.logger.error('userID missing, pls login')
         session['url'] = "landingPage"
         return redirect(url_for(f"namizu.loginPage"))
 
@@ -185,6 +186,7 @@ def loginPage():
         passw = request.form["password"]
         if( userData[uid]["passw"] == passw):
             print(f"Successful authentication!")
+            current_app.logger.info("Successful authentication!")
             session["userID"] = uid
             session.modified = True
             session.permanent = True
@@ -267,7 +269,7 @@ def logout():
     users_db[session['userID']]["loggedin"] = 0
     with open(USERS_DB, 'w') as f:
         json.dump(users_db,f,indent=4)
-    print(users_db[session['userID']]["uname"],"logged out.\n")
+    current_app.logger.info(f"User logged out.")
     session.clear()
     return redirect(url_for("namizu.landingPage"),302)
 
@@ -476,7 +478,6 @@ def editorApp():
         "Options":{}
     }
     if request.method == "POST":
-        print(request.form)
         session.pop('_flashes', None)
 
         eventType = "dailypoll"
@@ -708,9 +709,9 @@ def spellingBeeApp():
             words = [line.strip().lower() for line in f if line.strip()]
 
         submissionDatetime = datetime.strptime(spellingBee["submissions"][userID]["begin"], DATETIME_LONG)
-        print(f"{datetime.now() - submissionDatetime} > {timedelta(seconds=guessTime+4)}\n")    
+        current_app.logger.info(f"Minigame guess time: {datetime.now() - submissionDatetime} > {timedelta(seconds=guessTime+4)}")
         if( datetime.now() - submissionDatetime > timedelta(seconds=guessTime+4) ):
-            print("Spelling bee guess time error: longer guess time. Probably restarted session.")
+            current_app.logger.error("Spelling bee guess time error: longer guess time. Probably restarted session.")
             spellingBee["submissions"][userID]["cheated"] = True
 
         spellingBee["submissions"][userID]["country"]["answer"] = request.form.get("country").lower()
@@ -819,7 +820,7 @@ def adminApp():
     with open(USERS_DB, 'r') as f:
         user_db = json.load(f)
     if(user_db[userID]["admin"]!=1):
-        print("Unauthorised user - not admin.")
+        current_app.logger.error("Unauthorised user - not admin.")
         return redirect(url_for('namizu.landingPage'))
     activeUsers = []
     loggedinUsers = []
@@ -849,6 +850,7 @@ def eventsList():
 
 @bp.route("/admin/resetday")
 def resetDay():
+    current_app.logger.info(f"Reset initiated")
     
     ## SAVE history
 
@@ -961,6 +963,10 @@ def resetDay():
 
     with open("database/spelling_bee.json","w") as f:
         json.dump(spellingBeeBody,f,indent=4)
+
+    ## secure GH backup
+
+    
 
     return redirect(url_for('namizu.adminApp'))  
     
