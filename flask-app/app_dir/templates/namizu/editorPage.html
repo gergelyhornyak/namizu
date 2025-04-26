@@ -129,11 +129,13 @@
       border: none;
       border-radius: 5px;
       background-color: var(--tiles-buttons-colour);
-      color: var(--tiles-buttons-text);
       cursor: pointer; 
       font-weight: bold;
       font-size: medium;
       margin: 1%;
+    }
+    button:disabled {
+      color: var(--banner-text);
     }
 
     .answer-input {
@@ -272,9 +274,11 @@
             <div class="nav-icon">&#127968;</div>
         </a>
         <h1>naMizu Editor</h1>
+        <!--
         <a href="{{ url_for('namizu.landingPage') }}">
             <div class="nav-icon">&#128197;</div>
         </a>
+        -->
     </header>
 
     <div id="overlay"></div>

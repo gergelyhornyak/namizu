@@ -74,6 +74,26 @@
       cursor: not-allowed;
     }
 
+    .leave-button {
+      margin: 4% auto;
+      text-align: center;
+    }
+
+    .leave-button a {
+      text-decoration: none;
+      background: black;
+      color: white;
+      padding: 0.6rem 1.2rem;
+      margin-bottom: 5%;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1rem;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      display: inline-block;
+      transition: background-color 0.3s;
+    }
+
+
     @media (max-width: 500px) {
       body {
         padding: 5%;
@@ -136,6 +156,10 @@
     <label>Férfi név: <input type="text" name="male" id="male" /></label><br />
     <label>Női név: <input type="text" name="female" id="female" /></label><br />
   </form>
+
+  <div class="leave-button">
+    <a href="{{ url_for('namizu.landingPage') }}">LEAVE</a>
+  </div>
 
 </body>
 </html>
