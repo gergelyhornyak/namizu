@@ -10,6 +10,10 @@ Backup Policy: Daily backup to a private GitHub repository
 
 Version Log: Logged in version tracker
 
+## Theme - Day/Night
+
+!fix! css variables
+
 ## Event Structure
 
 Each event contains the following components:
@@ -129,85 +133,80 @@ C - Curve
 
 Z - Close path
 
-App Routes & Components
-Landing Page
-Seasonal Banner
+## App Routes & Components
 
-Logged-in Username
+### Landing Page
 
-Alert/Popup
+1) Seasonal Banner
+2) Logged-in Username
+3) Alert/Popup
+4) Active Story / SideQuest
+5) Daily Joke
+6) DailyPoll
+7) Event Editor
+8) Drawing Canvas & Gallery
+9) naMizu Info
+10) Special Thanks
+11) Login/Logout
+12) Version Log
 
-Active Story / SideQuest
+> Session lasts 1 week (604800 seconds)
+> Tracks:
+> userID, last app visited
 
-DailyPoll
+### Streak progression
 
-Event Editor
+Users will get streak, if they participate in any event
 
-Drawing Canvas & Gallery
+### Poll Pages
 
-naMizu Info
+**DailyPoll Page**
 
-Special Thanks
-
-Version Log
-
-Login/Logout
-Session lasts 1 week (604800 seconds)
-
-Tracks:
-
-userID, username, last app visited
-
-Streak progression
-
-Poll Pages
-DailyPoll Page
 Before Voting:
 
 Banner, back icon, question & answers
 
 After Voting:
 
-Stats, results, kudos, comments, version log
+Stats, results, comments, version log
 
-SideQuest Page
-EventEditor Page
+**SideQuest Page**
+
+**EventEditor Page**
+
 All poll configuration options (Advanced Mode)
 
-JSON editor
+JSON editor in advanced mode
 
 Live Preview
 
-Calendar Page
-Date-based navigation
+### Calendar Page
 
+Date-based navigation
 Today highlighted
 
-History Page
+### History Page
+
 Archive of past polls
+Could be in raw json format
 
-Admin Page
+### Admin Page
+
 User visits
-
 Voter tracking
+Event bank management
 
-Question bank management
+## Database Overview
 
-Database Overview
-Main Databases:
-user_db.json
+**Main Databases:**
 
-questions_bank.json
-
-visit_count.json
-
-history.json
-
-today_poll.json
-
-comments.json
-
-drawings.json
+- users_db.json
+- events_bank.json
+- visit_count.json
+- history.json
+- daily_poll.json
+- comments.json
+- drawings.json
 
 New User DB Format
 json
@@ -263,9 +262,10 @@ Edit
     }
   ]
 }
-Planned Features for v3.1+
-MySQL support
 
-Profile pictures
+## Planned Features for v3.1+
 
-Mobile app (Android / iOS)
+- MySQL support
+- Profile pictures
+- Mobile app (Android / iOS)
+- More minigames implemented
