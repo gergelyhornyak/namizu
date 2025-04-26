@@ -7,3 +7,5 @@ flask_secret
 BACKUP/
 lab
 ngrok
+backup_cronjob.sh
+cron_logfile.log
