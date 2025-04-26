@@ -57,7 +57,12 @@
       <tbody>
         {% for entry in all_submissions.submissions.values() %}
         <tr>
-          <td>{{ entry.uname }}</td>
+          <td>
+            {{ entry.uname }} 
+            {% if entry.cheated == True %}
+            X
+            {% endif %}
+          </td>
           <td style="background-color: {{ entry.country.colour }};"> {{ entry.country.answer }} </td>
           <td style="background-color: {{ entry.city.colour }};"> {{ entry.city.answer }}    </td>
           <td style="background-color: {{ entry.thing.colour }};"> {{ entry.thing.answer }}   </td>

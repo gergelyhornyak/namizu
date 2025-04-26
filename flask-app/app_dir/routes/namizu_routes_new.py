@@ -623,39 +623,22 @@ def calendarApp():
 
 ## Funny Apps
 
-@bp.route('/spellingbee',methods=['GET','POST'])
-def spellingBeeApp():
-    updateSessionCookie("spellingBeeApp")
+@bp.route('/spellingbee/countdown', methods=['POST'])
+def startCountdown():
     userID = session['userID']
     usersDB = getUsersDatabase()
-    guessTime = 30 ## seconds
     username = usernameByID(userID)
-    data = {}
-    words = []
-    cities = []
-    spellingBee = {}
-    if request.method == "GET":
-
+    if request.method == "POST":
         with open(SPELLING_BEE_BANK,"r") as f:
             spellingBee = json.load(f)
-
-        ## ALL WRONG: PLACE EVERY COUNTDOWN BEGIN CHECKER UNDER `def startCountdown()`
-
-        if( spellingBee["submissions"] ):
-            if( spellingBee["submissions"][userID] ):
-                submissionDatetime = datetime.strptime(spellingBee["submissions"][userID]["begin"], DATETIME_LONG)
-                guessTime -= (datetime.now() - submissionDatetime).total_seconds()
-                guessTime = max(0,guessTime)
-                return render_template('namizu/spellingBeePage.html', 
-                                letter=spellingBee["letter"], countdown=guessTime)
-
-        # check if user already played it
-        if( usersDB[userID]["voted"]["sidequest"] == 1 ):
-            return redirect(url_for('namizu.spellingBeeScoreBoard'))
-        # else register user guess data
-        data = {
+        if( userID in spellingBee["submissions"].keys() ):
+            submissionDatetime = datetime.strptime(spellingBee["submissions"][userID]["begin"], DATETIME_LONG)
+            pass
+        else:
+            userSubmission = {
             "uname": username,
             "begin": datetime.now().strftime(DATETIME_LONG),
+            "cheated": False,
             "country": {
                 "answer": "",
                 "correct":0,
@@ -687,11 +670,44 @@ def spellingBeeApp():
                 "colour":"transparent"
                 }
             }
-        with open(SPELLING_BEE_BANK,"r") as f:
-            spellingBee = json.load(f)
-        spellingBee["submissions"][userID] = data
+            spellingBee["submissions"][userID] = userSubmission
         with open(SPELLING_BEE_BANK,"w") as f:
             json.dump(spellingBee,f,indent=4)
+    return '', 204  # No Content
+        
+
+@bp.route('/spellingbee',methods=['GET','POST'])
+def spellingBeeApp():
+    updateSessionCookie("spellingBeeApp")
+    userID = session['userID']
+    usersDB = getUsersDatabase()
+    guessTime = 30 ## seconds
+    username = usernameByID(userID)
+    data = {}
+    words = []
+    spellingBee = {}
+    if request.method == "GET":
+
+        with open(SPELLING_BEE_BANK,"r") as f:
+            spellingBee = json.load(f)
+
+        ## ALL WRONG: PLACE EVERY COUNTDOWN BEGIN CHECKER UNDER `def startCountdown()`
+
+        if( userID in spellingBee["submissions"].keys() ):
+            submissionDatetime = datetime.strptime(spellingBee["submissions"][userID]["begin"], DATETIME_LONG)
+            guessTime -= (datetime.now() - submissionDatetime).total_seconds()
+            guessTime = max(0,int(guessTime))
+            return render_template('namizu/spellingBeePage.html', 
+                            letter=spellingBee["letter"], countdown=guessTime)
+
+        # check if user already played it
+        if( usersDB[userID]["voted"]["sidequest"] == 1 ):
+            return redirect(url_for('namizu.spellingBeeScoreBoard'))
+        # else register user guess data
+        
+        #spellingBee["submissions"][userID] = data
+        #with open(SPELLING_BEE_BANK,"w") as f:
+         #   json.dump(spellingBee,f,indent=4)
         return render_template('namizu/spellingBeePage.html', 
                                letter=spellingBee["letter"], countdown=guessTime)
     
@@ -703,8 +719,10 @@ def spellingBeeApp():
             words = [line.strip().lower() for line in f if line.strip()]
 
         submissionDatetime = datetime.strptime(spellingBee["submissions"][userID]["begin"], DATETIME_LONG)
-        if( datetime.now() - submissionDatetime > timedelta(seconds=guessTime) ):
+        print(f"{datetime.now() - submissionDatetime = } > {timedelta(seconds=guessTime+1) = }\n")    
+        if( datetime.now() - submissionDatetime > timedelta(seconds=guessTime+1) ):
             print("Spelling bee guess time error: longer guess time. Probably restarted session.")
+            spellingBee["submissions"][userID]["cheated"] = True
 
         spellingBee["submissions"][userID]["country"]["answer"] = request.form.get("country").lower()
         spellingBee["submissions"][userID]["city"]["answer"] = request.form.get("city").lower()
@@ -774,9 +792,7 @@ def spellingBeeScoreBoard():
     ## implement scoring system - check if a user entered a unique word
     return render_template('namizu/spellingBeeScoreBoard.html', all_submissions=all_submissions)
 
-@bp.route('/spellingbee/countdown', methods=['POST'])
-def startCountdown():
-    return 0
+
 
 @bp.route("/sidequest", methods=['GET', 'POST'])
 def sideQuestApp():

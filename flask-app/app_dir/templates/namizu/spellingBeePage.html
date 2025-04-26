@@ -82,6 +82,10 @@
       if (countdownStarted) return;
       countdownStarted = true;
 
+      const startTimeInput = document.getElementById('startTimeStamp');
+      startTimeInput.value = Date.now(); 
+      document.getElementById('countdownForm').submit();
+
       document.getElementById("startBtn").disabled = true;
       document.getElementById("letterBox").style.display = 'block';
       const timer = document.getElementById('timer');
@@ -97,44 +101,24 @@
       }, 1000);
     }
 
-    // function autoSubmit() {
-    //   const form = document.querySelector("form");
-    //   const url = form.action;
-
-    //   const formData = {
-    //     country: document.getElementById("country").value,
-    //     city: document.getElementById("city").value,
-    //     food: document.getElementById("food").value,
-    //     animal: document.getElementById("animal").value,
-    //     person: document.getElementById("person").value
-    //   };
-
-    //   fetch(url, {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify(formData)
-    //   })
-    //   .then(data => {
-    //     if (data.redirect) {
-    //       window.location.href = data.redirect;
-    //     }
-    // });
-    // }
     function autoSubmit() {
-      document.querySelector("form").submit();
+      document.getElementById('userForm').submit();
     }
   </script>
 </head>
 <body>
   <h1>Guessing Game</h1>
 
-  <form action="{{ url_for('namizu.startCountdown') }}" method="POST">
-      <button id="startBtn" onclick="startCountdown()">▶️ Start Countdown</button>
-      <div id="letterBox" style="display: none;">First letter: {{ letter }}</div>
-      <div id="timer">⏳ Time left: --</div>
+  <form id="countdownForm" action="{{ url_for('namizu.startCountdown') }}" method="POST">
+    <input type="hidden" id="startTimeStamp" name="startTimeStamp">
   </form>   
 
-  <form action="{{ url_for('namizu.spellingBeeApp') }}" method="POST">
+  <button id="startBtn" type="button" onclick="startCountdown()">▶️ Start Countdown</button>
+  <div id="letterBox" style="display: none;">First letter: {{ letter }}</div>
+  <div id="timer">⏳ Time left: --</div>
+  
+
+  <form id="userForm" action="{{ url_for('namizu.spellingBeeApp') }}" method="POST">
     <label>Ország: <input type="text" name="country" id="country" /></label><br />
     <label>Város: <input type="text" name="city" id="city" /></label><br />
     <label>Tárgy: <input type="text" name="thing" id="thing" /></label><br />
