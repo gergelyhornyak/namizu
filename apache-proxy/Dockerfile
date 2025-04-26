@@ -1,5 +1,5 @@
 # FROM ubuntu:22.04
-FROM httpd:2.4
+FROM httpd:2.4.63
 
 # Enable required Apache modules
 RUN apt-get update && apt-get install -y apache2-utils apache2 

@@ -1,10 +1,14 @@
 FROM python:3.9-slim-bullseye
 
+ENV TZ=Europe/Budapest
+
 # Set working directory
 WORKDIR /docker_app
 
 # Copy application files
 COPY . /docker_app
+
+RUN apt-get update && apt-get install -y tzdata
 
 RUN echo "$(tr -dc A-Za-z0-9 </dev/urandom | head -c 16)" > /docker_app/flask_secret
 
