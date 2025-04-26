@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>naMizu Minigame Scoreboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bg-colour1: {{ theme.mainBG1 }};
+      --bg-colour2: {{ theme.mainBG2 }};
+      --banner-colour1: {{ theme.bannerBG1 }};
+      --banner-colour2: {{ theme.bannerBG2 }};
+      --banner-text: {{ theme.bannerTXT }};
+      --tiles-colour: {{ theme.tilesBG }};
+      --tiles-text: {{ theme.tilesTXT }};
+      --tiles-buttons-colour: {{ theme.buttonsBG }};
+      --tiles-buttons-text: {{ theme.buttonsTXT1 }};
+    }
+
+    body {
+      font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+      margin: 0%;
+      padding: 0%;
+      background: linear-gradient(to bottom right, var(--bg-colour1), var(--bg-colour2));
+      color: var(--banner-text);
+      margin: auto;
+      font-size: 0.95rem;
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(to top, var(--banner-colour1), var(--banner-colour2));
+      color: var(--banner-text);
+      text-align: center;
+      padding: 6% 2% 4%;
+      border-radius: 0 0 12px 12px;
+      margin-bottom: 2%;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      letter-spacing: 1.5px;
+    }
+
+    .user-block {
+      background: var(--tiles-colour);
+      margin: 2rem 0;
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .user-name {
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: var(--banner-text);
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .submission-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .submission-table th, .submission-table td {
+      text-align: left;
+      padding: 0.6rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .submission-table th {
+      width: 40%;
+      font-weight: bold;
+      color: var(--tiles-text);
+    }
+
+    .submission-table td {
+      background-color: rgba(255, 255, 255, 0.03);
+      border-radius: 8px;
+    }
+
+    .leave-button {
+      margin: 4% auto;
+      text-align: center;
+    }
+
+    .leave-button a {
+      text-decoration: none;
+      background: var(--tiles-buttons-colour);
+      color: var(--tiles-buttons-text);
+      padding: 0.8rem 1.6rem;
+      margin-bottom: 5%;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1.2rem;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      display: inline-block;
+      transition: background-color 0.3s;
+    }
+
+    .leave-button a:hover {
+      background: var(--banner-colour2);
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 2rem;
+      }
+
+      .user-name {
+        font-size: 1.4rem;
+      }
+
+      .submission-table th, .submission-table td {
+        font-size: 0.95rem;
+        padding: 0.4rem;
+      }
+
+      .leave-button a {
+        font-size: 1rem;
+        padding: 0.6rem 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>📝 Submissions</h1>
+</header>
+
+<main>
+  {% if all_submissions %}
+    {% for entry in all_submissions.submissions.values() %}
+      <div class="user-block">
+        <div class="user-name">
+          {{ entry.uname }}
+          {% if entry.cheated == True %}
+            <span style="color: red;">✖</span>
+          {% endif %}
+        </div>
+        <table class="submission-table">
+          <tbody>
+            <tr>
+              <th>Country</th>
+              <td style="background-color: {{ entry.country.colour }};">{{ entry.country.answer }}</td>
+            </tr>
+            <tr>
+              <th>City</th>
+              <td style="background-color: {{ entry.city.colour }};">{{ entry.city.answer }}</td>
+            </tr>
+            <tr>
+              <th>Thing</th>
+              <td style="background-color: {{ entry.thing.colour }};">{{ entry.thing.answer }}</td>
+            </tr>
+            <tr>
+              <th>Animal</th>
+              <td style="background-color: {{ entry.animal.colour }};">{{ entry.animal.answer }}</td>
+            </tr>
+            <tr>
+              <th>Male</th>
+              <td style="background-color: {{ entry.male.colour }};">{{ entry.male.answer }}</td>
+            </tr>
+            <tr>
+              <th>Female</th>
+              <td style="background-color: {{ entry.female.colour }};">{{ entry.female.answer }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p style="text-align: center; margin-top: 3%;">No submissions yet. 🤷‍♂️</p>
+  {% endif %}
+</main>
+
+<div class="leave-button">
+  <a href="{{ url_for('namizu.landingPage') }}">LEAVE</a>
+</div>
+
+</body>
+</html>

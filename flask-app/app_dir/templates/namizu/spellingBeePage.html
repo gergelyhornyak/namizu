@@ -2,15 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>naMizu SpellingBee</title>
+  <title>naMizu Minigame</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+
+    :root {
+      --bg-colour1: {{ theme.mainBG1 }};
+      --bg-colour2: {{ theme.mainBG2 }};
+      --banner-text: {{ theme.bannerTXT }};
+    }
     body {
       font-family: sans-serif;
       padding: 1rem;
       margin: 0;
       margin-left: auto;
       margin-right: auto;
+      background: linear-gradient(to bottom right, var(--bg-colour1), var(--bg-colour2));
+      color: var(--banner-text);
+      min-height: 100vh;
     }
 
     h1 {
@@ -34,6 +43,7 @@
       display: flex;
       flex-direction: column;
       gap: 0.75rem;
+      max-width: 90%;
     }
 
     label {
