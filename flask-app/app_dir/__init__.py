@@ -5,10 +5,15 @@ import logging
 from datetime import timedelta
 
 
-def create_app():
-    time_format = "%Y-%m-%d %H:%M:%S"
-    #logging.basicConfig(filename='database/logfile.log', level=logging.DEBUG, format='[%(asctime)s] %(levelname)s %(name)s : %(message)s', datefmt=time_format)
+def create_app():   
     app = Flask(__name__)
+    file_handler = logging.FileHandler('database/logfile.log')
+    file_handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('[%(asctime)s] %(levelname)s: %(message)s (in %(pathname)s:%(lineno)d)')
+    file_handler.setFormatter(formatter)
+    app.logger.addHandler(file_handler)
+    app.logger.setLevel(logging.DEBUG)
+
     with open("flask_secret","r") as f:
         stringg = f.readline()
     app.config['SECRET_KEY'] = stringg
