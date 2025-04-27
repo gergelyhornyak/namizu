@@ -188,13 +188,16 @@ def querySideEventOccurance(eventName) -> bool:
     dailyJokeNumSeq = [1,5,9,13,17,21,25,28] # 4-3
     storyNumSeq = [3,9,15,21,28] # 6
     if(eventName == "dailyJoke"):
-        if(datetime.now().day in dailyJokeNumSeq):
+        if((datetime.now().day in dailyJokeNumSeq and datetime.now().hour > 5) or
+           (datetime.now().day-1 in dailyJokeNumSeq and datetime.now().hour < 5)):
             return True
     if(eventName == "sideQuest"):
-        if(datetime.now().day in sideQuestNumSeq):
+        if((datetime.now().day in sideQuestNumSeq and datetime.now().hour > 5) or
+           (datetime.now().day-1 in sideQuestNumSeq and datetime.now().hour < 5)):
             return True
     if(eventName == "story"):
-        if(datetime.now().day in storyNumSeq):
+        if((datetime.now().day in storyNumSeq and datetime.now().hour > 5) or
+           (datetime.now().day-1 in storyNumSeq and datetime.now().hour < 5)):
             return True
     return False
     
@@ -205,7 +208,8 @@ def querySideEventOccurance(eventName) -> bool:
 def loginPage():  
     wrongPasswCounter = 0
     theme = queryThemeDayMode(datetime.now().hour)
-    footerText = "naMizu 2025. Version 3.X"
+    footerText1 = f"\u00a9 {datetime.now().year} {TRADE_MARK}. Version {VERSION}." 
+    footerText2 = queryMotto(datetime.now().day)
     userData = {}
     with open(USERS_DB, 'r') as f:
         userData = json.load(f)
@@ -232,7 +236,8 @@ def loginPage():
                 print(f"Wrong password three times. Banned.")
             print(f"Wrong password. Try again.")
             
-    return render_template('namizu/loginPage.html',userDataPacket=userData, theme=theme, footerText=footerText)
+    return render_template('namizu/loginPage.html',userDataPacket=userData, theme=theme, 
+                           footerText1=footerText1,footerText2=footerText2)
 
 @bp.route("/landingpage")
 @bp.route("/index")
@@ -323,7 +328,7 @@ def dailyPollApp():
     voteSum = np.sum([user["voted"]["dailyPoll"] for user in users_db.values()])
     voterStat = {
         "voteSum":voteSum,
-        "voterSum":7
+        "voterSum":len(users_db)
     }
     answersProcessed = {}
     rankingProcessed = {}
@@ -1061,9 +1066,9 @@ def resetDay():
     
     with open("database/history.json","r") as f:
         historyAll = json.load(f)
-    try:
+    if(yesterdayDate not in historyAll):
         historyAll[yesterdayDate] = historyData
-    except:
+    else:
         print("History log already exists for this date.")
     
     with open("database/history.json","w") as f:
@@ -1123,18 +1128,10 @@ def resetDay():
     ## SideQuest
 
     # Get all lowercase letters
-    alphabet = string.ascii_uppercase
-    def localizeAlphabet(alphabet:str=alphabet,lan:str="HU") -> str:
-        alphabet = alphabet.replace("Q","Á")
-        alphabet = alphabet.replace("W","É")
-        alphabet = alphabet.replace("X","Ó")
-        alphabet = alphabet.replace("Y","Ú")
-        return alphabet
-    alphabet = localizeAlphabet(alphabet,"HU")
+    alphabet = ["A","Á","B","C","D","E","É","F","G","H","I","J","K","L","M","N","O","P","R","S","T","U","Ü","V","Z"]
     # Select a random letter
-    random.seed(datetime.now().day)
+    random.seed(datetime.now().day*datetime.now().month) # theoretically should play every letter within 60 days
     random_letter = random.choice(alphabet)
-
     spellingBeeBody = {
         "Datetime": datetime.now().strftime(DATE_SHORT),
         "letter": random_letter,
