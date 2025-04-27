@@ -76,3 +76,7 @@ This is your playground. 🎉
 
 Want to help improve naMizu? Fork this repo, and extend the source code with many more fun features, or fix remaining issues.
 
+---
+
+© 2025 naMizu™. Version 3.0.1_alpha. \
+Built together, played together.
