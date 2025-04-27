@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash, current_app
+import base64
+from flask import Blueprint, render_template, request, redirect, send_from_directory, url_for, session, flash, current_app
 import requests
 from datetime import datetime, timedelta
 import random, json, re, string
@@ -16,6 +17,11 @@ FUNNY_BANNERS_BANK = "database/funny_banners.json"
 THEMES_BANK = "database/themes.json"
 DATETIME_LONG = "%Y-%m-%d %H:%M:%S"
 DATE_SHORT = "%Y-%m-%d"
+TRADE_MARK = "naMizu\u2122"
+VERSION = "3.0.1_alpha"
+MOTTO_POOL = ["Built with care for the community.","By friends, for friends.","Community-powered fun, every single day.","Built together, played together."]
+MOTTO = "Built with care for the community."
+
 # session: userID,lastURL
 
 #* ERROR HANDLING
@@ -168,6 +174,12 @@ def getDailyPoll() -> dict:
 def getEventsBank() -> dict:
     with open(EVENTS_BANK, 'r') as f:
         return json.load(f)
+    
+def queryMotto(day:int) -> str:
+    random.seed(day)
+    number = random.randint(0, len(MOTTO_POOL)-1)
+    todayMotto = MOTTO_POOL[number]
+    return todayMotto
 
 def querySideEventOccurance(eventName) -> bool:
     """
@@ -257,10 +269,12 @@ def landingPage():
         # Store the joke text
         dailyJoke = response.text
     
-    banner = "NaMizu"
+    
     userName = usernameByID(userID)
     notices = ["notice 1","notice 2"] #queryNotices
-    footerText = "2025 naMizu. Version 3.0 alpha (aaecf03), Built with care for the community."
+    banner = "naMizu"
+    footerText1 = f"\u00a9 {datetime.now().year} {TRADE_MARK}. Version {VERSION}." 
+    footerText2 = queryMotto(datetime.now().day)
     
     funnyMessages = {}
     with open(FUNNY_BANNERS_BANK, 'r') as f:
@@ -274,7 +288,7 @@ def landingPage():
     return render_template('/namizu/landingPage.html', 
                            banner=banner, notices=notices, funnyMessage=funnyMessage,
                            userName=userName, sideQuestStatus=sideQuestStatus,
-                           activeUsers=activeUsers, footerText=footerText,
+                           activeUsers=activeUsers, footerTextTop=footerText1,footerTextBot=footerText2,
                            dailyJoke=dailyJoke, theme=theme)
 
 @bp.route('/logout')
@@ -322,7 +336,8 @@ def dailyPollApp():
     
     banner = ""
     kudosMessage = "Grats!"
-    footerText = "© 2025 naMizu™. Version 3.X . Built with care for the community."
+    footerText1 = f"\u00a9 {datetime.now().year} {TRADE_MARK}. Version {VERSION}." 
+    footerText2 = queryMotto(datetime.now().day)
 
     if request.method == 'GET':    
         pass        
@@ -473,7 +488,7 @@ def dailyPollApp():
                            banner=banner,qTypeDescr=qTypeDescr,answersProcessed=answersProcessed,rankingProcessed=rankingProcessed,
                            theme=theme, optionsBody=optionsBody,voterStat=voterStat,kudosMessage=kudosMessage,
                            questionBody=questionBody, pollster=pollster, pollSubmitted=pollSubmitted,
-                           footerText=footerText,todayComments=todayComments,roman=romanNumbers, sidesProcessed=sidesProcessed
+                           footerTextTop=footerText1,footerTextBot=footerText2,todayComments=todayComments,roman=romanNumbers, sidesProcessed=sidesProcessed
                            )
 
 @bp.route('/editor', methods=['GET', 'POST'])
@@ -492,6 +507,10 @@ def editorApp():
         "Type":"",
         "Options":{}
     }
+
+    footerText1 = f"\u00a9 {datetime.now().year} {TRADE_MARK}. Version {VERSION}." 
+    footerText2 = queryMotto(datetime.now().day)
+    
     if request.method == "POST":
         session.pop('_flashes', None)
 
@@ -618,14 +637,11 @@ def editorApp():
 
         return redirect(url_for('namizu.editorApp'))
     
-    return render_template('namizu/editorPage.html',namesList=namesList, theme=theme)
+    return render_template('namizu/editorPage.html',namesList=namesList, theme=theme, 
+                           footerTextTop=footerText1,footerTextBot=footerText2)
 
 @bp.route("/sketcher/canvas")
 def sketcherApp():
-    return 0
-
-@bp.route("/gallery/welcome")
-def galleryApp():
     return 0
 
 @bp.route("/calendar")
@@ -840,7 +856,7 @@ def drawing_save():
         image_data = request.form.get('imageData')
         image_title = request.form.get('title')
         image_descr = request.form.get('descr')
-        image_author = session["user"]
+        image_author = usernameByID(session["userID"])
         image_date = "2025" #datetime.now().strftime("%Y") #! hardcoded date
     if image_data:
         # Decode the base64 image
@@ -876,18 +892,22 @@ def drawing_save():
             json.dump(imageJson, f, indent=4)  
 
         print(f"Image saved")
-        return redirect(url_for('namizu.index'))
+        return redirect(url_for('namizu.landingPage'))
     return "No image data received!", 400
 
-@bp.route("/gallery/welcome")
+@bp.route("/gallery/welcome", methods=['GET'])
 def gallery_welcome():
     updateSessionCookie("gallery_welcome")
-    
+    userID = session['userID']
+    userName = usernameByID(userID)
     drawing_sum = len(os.listdir("uploads"))
-    drawings = load_drawings()
+    drawings = {}
+    with open(f"database/drawings.json", 'r') as f:
+        drawings =  json.load(f)        
     authors = {item["author"] for item in drawings.values()}
     authors_names = ', '.join(authors)
-    return render_template("namizu/gallery_welcome.html", drawing_sum=drawing_sum, name=userName, authors=authors_names)
+    if request.method == "GET":
+        return render_template("namizu/gallery_welcome.html", drawing_sum=drawing_sum, name=userName, authors=authors_names)
 
 @bp.route("/gallery/lift")
 def gallery_lift():
@@ -923,13 +943,28 @@ def gallery_day(target_date):
     directory_path = "uploads"
     date_found = False
     drawings_dir = os.listdir(directory_path)
-    art_db = load_drawings()  
+    with open(f"database/drawings.json", 'r') as f:
+        art_db = json.load(f)        
     target_day_n_month = target_date.split("-")
     date_str = f"{target_day_n_month[0]} {target_day_n_month[1]} 2025" #! hardcoded year
     date_obj = datetime.strptime(date_str, "%d %b %Y")
-   
-    screenshots,date_found = get_drawings_by_matching_day(art_db,drawings_dir,date_obj,date_found)
-
+    
+    screenshots = []
+    for filename, details in art_db.items():
+        submit_date = datetime.strptime(details["submitted"], "%d/%m/%Y %H:%M:%S")
+        if filename not in art_db:
+            print("missing drawing. abort import.")
+            break
+        if submit_date.day == datetime.now().day and submit_date.month == datetime.now().month:
+            date_found = True
+            screenshot = {}
+            screenshot["filename"] = filename
+            screenshot["author"] = art_db[filename]["author"]
+            screenshot["title"] = art_db[filename]["title"]
+            screenshot["date"] = art_db[filename]["date"]
+            screenshot["descr"] = art_db[filename]["descr"]
+            screenshots.append(screenshot)
+    
     if not date_found:
         session.pop('_flashes', None)
         flash(f"Floor {date_obj.day} {date_obj.strftime('%b')} is empty")
