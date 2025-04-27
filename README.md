@@ -4,11 +4,11 @@
 
 ![banner](./docs/img/frontPage.png)
 
-naMizu daily poll app inspired by askUs.
+naMizu daily poll app 
 
 ## Introduction
 
-naMizu is a free and open-source application based on askUs app.
+naMizu is a free and open-source application
 
 ## Apps
 
