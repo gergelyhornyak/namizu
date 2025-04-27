@@ -10,23 +10,38 @@ naMizu is a free, open-source event-based web application, where community fun h
 
 Participate in creative polls or create your own, and play with your friends! If you got inspired, draw sketches, or dive into story-based adventures or weekly challenges — all in a lively, friendly platform designed for you and your friends.
 
+## 🚀 Key Features
+
+**🗳️ Daily Polls: Vote, comment, and see community results.**
+
 ![prompt_example](./docs/img/prompt_example.png)
+
+**🎮 Mini Games: fun sidequests, in form of e.g.: spelling bee, or hangman.**
+
+![minigame_example](./docs/img/minigame_after.png)
+
+**✍️ Poll Editor: Create custom polls across multiple categories.**
 
 ![editor_example](./docs/img/editor_example.png)
 
+**🎨 Sketch & Submit: Draw and showcase your artwork.**
+
 ![sketcher_example](./docs/img/sketcher_example.png)
+
+**🌙 Day/Night Themes: Automatic switching.**
+
+![dark_mode_example](./docs/img/dark_mode_banner.png)
+
+**📜 Story Adventures: Participate in branching, D&D-style stories.** \
+**💾 Daily Backups: Safe storage of your events and history.**
+
+
+
+
+
+
  
-![minigame_example](./docs/img/minigame_after.png)
 
-## 🚀 Key Features
-
-- 🗳️ Daily Polls: Vote, comment, and see community results.
-- 🎮 Sudden Games: mini games in form of spelling bee, or hangman.
-- ✍️ Poll Editor: Create custom polls across multiple categories.
-- 📜 Story Adventures: Participate in branching, D&D-style stories.
-- 🎨 Sketch & Submit: Draw and showcase your artwork.
-- 🌙 Day/Night Themes: Automatic switching.
-- 💾 Daily Backups: Safe storage of your events and history.
 
 ## 📱 Apps Overview
 
