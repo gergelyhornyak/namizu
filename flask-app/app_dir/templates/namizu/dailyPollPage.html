@@ -4,6 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Playwrite+AU+SA:wght@100..400&family=Playwrite+RO:wght@100..400&family=Sansation:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
   <title>naMizu daily poll</title>
   <style>
     :root {
@@ -152,6 +155,10 @@
       background: var(--footer-colour);
       color: var(--footer-text);
       font-weight: bold;
+    }
+
+    footer p {
+      margin: 1%;
     }
 
     .slider {
@@ -465,16 +472,42 @@
     }
 
     .sticky-note {
-      width: 140px;
+      font-family: "Playwrite AU SA", cursive;
+      font-optical-sizing: auto;
+      font-weight: 200;
+      font-style: normal;
+      max-width: 140px;
       min-height: 140px;
       background: #fff9aa;
       box-shadow: -1px 6px 12px 1px rgba(0, 0, 0, 0.2);
-      padding: 16px;
+      padding: 2%;
       transform: rotate(-2deg);
       border: 1px solid #e1d25f;
       border-radius: 8px;
       border-bottom-right-radius: 12%;
-      font-size: 12px;
+      font-size: 11px;
+      color: #333;
+      position: relative;
+      flex-wrap: wrap;
+      word-wrap: break-word;
+      hyphens: auto;
+    }
+
+    .sticky-note-editor {
+      font-family: "Playwrite AU SA", cursive;
+      font-optical-sizing: auto;
+      font-weight: 200;
+      font-style: normal;
+      max-width: 240px;
+      min-height: 240px;
+      background: #fff9aa;
+      box-shadow: -1px 6px 12px 1px rgba(0, 0, 0, 0.2);
+      padding: 2%;
+      transform: rotate(-2deg);
+      border: 1px solid #e1d25f;
+      border-radius: 8px;
+      border-bottom-right-radius: 12%;
+      font-size: 14px;
       color: #333;
       position: relative;
     }
@@ -490,7 +523,7 @@
 
     .form-note textarea {
       width: 100%;
-      height: 120px;
+      height: 100%;
       border: none;
       background: transparent;
       font-size: 1rem;
@@ -697,7 +730,7 @@
 
       {% if qTypeDescr.prompt %}
       <div class="note-container">
-        <div class="sticky-note form-note" id="noteForm">
+        <div class="sticky-note-editor form-note" id="noteForm">
           <textarea name="prompt_message" placeholder="Write your answer here..."></textarea>
           <!--<button type="submit">Add</button>-->
         </div>
@@ -827,7 +860,8 @@
     {% endif %}
 
     <footer>
-      <p>{{ footerText }}</p>
+      <p>{{ footerTextTop }}</p>
+      <p>{{ footerTextBot }}</p>
     </footer>
 
   </div>

@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <link rel="icon" href="{{ url_for('static', filename='goatIcon.png') }}" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sansation:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
     <title>naMizu</title>
     <style>
 
@@ -40,7 +43,10 @@
 
         /* General Styles */
         body {
-            font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            /*font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;*/
+            font-family: "Sansation", sans-serif;
+            font-weight: 300;
+            font-style: normal;
             margin: 0;
             padding: 0;
             color: var(--banner-text);
@@ -177,7 +183,7 @@
 
 <header>
     <!--<img src="{{ url_for('static', filename='img/cloudBunny.png') }}" width="100px" alt="">-->
-    <h1>Welcome {{ userName }} to naMizu!</h1> <!-- ¿ -->
+    <h1>Welcome {{ userName }} <br> to naMizu!</h1> <!-- ¿ -->
     <p style="margin-top: 5%;"><i>{{ funnyMessage }}</i></p>
     
 </header>
@@ -226,8 +232,8 @@
     <div class="feature-card">
         <h3>Inspired by today's poll?</h3>
         <p style="margin: 1% 0%;">Draw a sketch, or visit the gallery<br>
-            <a href="{{ url_for('namizu.sketcherApp') }}">naMizu<br>Canvas</a> &ensp; 
-            <a href="{{ url_for('namizu.galleryApp') }}">naMizu<br>Gallery</a>
+            <a href="{{ url_for('namizu.drawingApp') }}">naMizu<br>Canvas</a> &ensp; 
+            <a href="{{ url_for('namizu.gallery_welcome') }}">naMizu<br>Gallery</a>
         </p>
     </div>
 
@@ -250,7 +256,8 @@
 
 
 <footer>
-    <p> {{ footerText }} </p>
+    <p> {{ footerTextTop }} </p>
+    <p> {{ footerTextBot }} </p>
 </footer>
 
 </body>
