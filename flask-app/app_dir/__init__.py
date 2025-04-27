@@ -1,5 +1,4 @@
 from flask import Flask,session
-from .routes import main_routes, namizu_routes
 from .routes import namizu_routes_new, main_routes_new
 import logging
 from datetime import timedelta
@@ -7,11 +6,12 @@ from datetime import timedelta
 
 def create_app():   
     app = Flask(__name__)
+
     file_handler = logging.FileHandler('database/logfile.log')
     file_handler.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('[%(asctime)s] %(levelname)s: %(message)s (in %(pathname)s:%(lineno)d)')
-    file_handler.setFormatter(formatter)
+    file_handler.setFormatter(logging.Formatter('[%(asctime)s] %(levelname)s: %(message)s (in %(pathname)s:%(lineno)d)'))
     app.logger.addHandler(file_handler)
+
     app.logger.setLevel(logging.DEBUG)
 
     with open("flask_secret","r") as f:
