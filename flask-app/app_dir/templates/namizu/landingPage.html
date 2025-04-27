@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sansation:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Pangolin&family=Playwrite+AU+SA:wght@200&family=Playwrite+RO:wght@100..400&family=Sansation:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
     <title>naMizu</title>
     <style>
 
@@ -111,7 +111,7 @@
             margin-top: 2%;
         }
         .feature-card p {
-            font-size: 1rem;
+            font-size: 1.1rem;
             line-height: 1.6;
         }
         .feature-card a {
@@ -123,7 +123,7 @@
             color: var(--tiles-buttons-text);
             padding: 0.6rem 1.2rem;
             border-radius: 6px;
-            transition: background-color 0.3s;
+            /*text-shadow: 0px 0px 12px #000000d4;*/
         }
 
         /* Call-to-Action (CTA) Button */
@@ -184,7 +184,7 @@
 <header>
     <!--<img src="{{ url_for('static', filename='img/cloudBunny.png') }}" width="100px" alt="">-->
     <h1>Welcome {{ userName }} <br> to naMizu!</h1> <!-- ¿ -->
-    <p style="margin-top: 5%;"><i>{{ funnyMessage }}</i></p>
+    <p style="margin-top: 5%;font-weight: 400;"><i>{{ funnyMessage }}</i></p>
     
 </header>
 <!--
@@ -198,22 +198,32 @@
 <section class="features">
 
     {% if sideQuestStatus %}
-    <div class="feature-card" style="border: 8px double rgba(255, 166, 0, 0.3)">
+    <div class="feature-card" style="border-left: 8px solid rgb(255 166 0 / 50%)">
+        {% if not userEventStatus.sideQuest %}
         <h3>Heads up!</h3>
+        <p style="margin: 1% 0%;">It's time to compete in today's challenging</p>
+        {% else %}
+        <p style="margin: 1% 0%;">You can still check other's guesses in</p>
+        {% endif %}
         <div class="cta">
             <a href="{{ url_for('namizu.spellingBeeApp') }}">naMizu SideQuest</a>
         </div>
     </div>
     {% endif %}
 
-    {% if dailyJoke %}
-    <div class="feature-card" style="border: 5px double rgba(1, 0, 27, 0.234)">
-        <p style="margin: 1%;"><i>{{ dailyJoke }}</i></p>
+    {% if dailyJokeStatus %}
+    <div class="feature-card" style="border-left: 8px solid rgb(2 0 68 / 50%)">
+        <p style="margin: 1%;"><strong>Daily Joke: </strong><i>{{ dailyJoke }}</i></p>
     </div>
     {% endif %}
 
     <div class="feature-card">
-        <h3>Ready for a daily poll?</h3>
+        {% if not userEventStatus.dailyPoll %}
+        <h3>Today's poll awaits!</h3>
+        <p style="margin: 1% 0%;">Get ready and dive into</p>
+        {% else %}
+        <p style="margin: 1% 0%;">You can still leave comments for</p>
+        {% endif %}
         <div class="cta">
             <a href="{{ url_for('namizu.dailyPollApp') }}">naMizu DailyPoll</a>
         </div>
@@ -221,17 +231,17 @@
 
     <div class="feature-card">
         <h3>Wanna add an event?</h3>
-        <p style="margin: 1% 0%;">Create your own questions using the <a href="{{ url_for('namizu.editorApp') }}">naMizu Editor</a></p>
+        <p style="margin: 1% 0%;">Create your own questions using<a href="{{ url_for('namizu.editorApp') }}">naMizu Editor</a></p>
     </div>
 
-    <div class="feature-card" style="border: 5px double rgba(39, 20, 188, 0.3)">
-        <h4 style="font-size: large;margin: 3%;">naMizu is looking for witty subtitles!</h4>
+    <div class="feature-card" style="border-left: 8px solid rgba(255, 251, 0, 0.5)">
+        <p style="font-size: large;margin: 0.5%;">naMizu is looking for witty subtitles!</p>
         <a href="{{ url_for('namizu.funnyBannerApp') }}">I have one in mind</a>
     </div>
 
     <div class="feature-card">
         <h3>Inspired by today's poll?</h3>
-        <p style="margin: 1% 0%;">Draw a sketch, or visit the gallery<br>
+        <p style="margin: 1% 0%;">Draw a sketch,  or visit the gallery<br>
             <a href="{{ url_for('namizu.drawingApp') }}">naMizu<br>Canvas</a> &ensp; 
             <a href="{{ url_for('namizu.gallery_welcome') }}">naMizu<br>Gallery</a>
         </p>
@@ -239,18 +249,25 @@
 
     <div class="feature-card">
         <h3>Ad-Free</h3>
-        <h3><a href="https://github.com/gregoryhornyak/gamechanger" style="color: var(--banner-text);background: transparent;padding: 0%;text-decoration: underline;margin: 0%;">Open Source</a></h3>
+        <h3>
+            <a href="https://github.com/gregoryhornyak/gamechanger" style="color: var(--banner-text);background: transparent;padding: 0%;text-decoration: underline;margin: 0%;text-shadow: none;">
+                Open Source</a>
+            </h3>
         <h3>Zero Data Collection</h3>
         <h3>No Micro-Transactions</h3>
     </div>
     
-    <div class="feature-card" style="border: 5px double rgb(255 0 0 / 32%)">
-        <h3>Special Thanks 👏</h3>  
-        <p style="margin: 1% 0%;">to the testers <strong>Bella</strong> and <strong>Márk</strong>, who made sure the app runs smoothly.</p>
+    <div class="feature-card" style="border-left: 8px solid rgb(164 7 7 / 50%)">
+        <h3>Special Thanks</h3>  
+        <p style="margin: 1% 0%;">to <strong>Bella</strong> and <strong>Márk</strong>,<br>who made sure the app runs smoothly.</p>
     </div>
 
     <div class="feature-card">
-        <a href="{{ url_for('namizu.logout') }}">LOG OUT</a>
+        <p style="margin: 1% 0%;">
+            Click here to
+            <a href="{{ url_for('namizu.logout') }}" style="padding: 1.5% 2%;">LOG OUT</a>
+        </p>
+        
     </div>
 </section>
 

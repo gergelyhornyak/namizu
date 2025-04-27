@@ -92,8 +92,8 @@
       width: 100%;
       padding: 10px;
       margin: 10px 0px 0px;
-      background-color: #fffff0;
-      color: black;
+      background-color: var(--tiles-colour);
+      color: var(--banner-text);
     }
 
     .button-group {
@@ -209,7 +209,7 @@
     .range-text {
     width: 80%;
     margin: 0% 10%;
-    font-size: 0.6rem;
+    font-size: 0.9rem;
     color: #000;  
     display: flex;
     justify-content: space-between;
@@ -298,13 +298,14 @@
 
             <label class="section-label" for="question">Question:</label>
                 <div class="tutorial" id="question_tutorial" style="display: none;">
-                    For random person(s), use {P} as placeholder. Non-English letters and emojis are supported.
+                    For random person(s), use {P} as placeholder.<br>Non-English letters and emojis are supported.
                 </div>
             <textarea id="question" name="question" maxlength="256" placeholder="Type your question here..."></textarea>
 
             <label class="section-label">Selection Mode:</label>
                 <div class="tutorial" id="selection_tutorial" style="display: none;">
-                    Single-choice means only one choice can be selected, while multi-choice allows multiple options to be selected within one poll.
+                    Single-choice: only one choice can be selected,<br>
+                    Multi-choice: multiple options to be selected within one poll.
                 </div>
             <div class="button-group">
                 <input type="radio" name="selectionType" id="singlechoice" value="singlechoice" checked="True"/>
@@ -316,7 +317,8 @@
 
             <label class="section-label">Voting privacy:</label>
                 <div class="tutorial" id="voting_tutorial" style="display: none;">
-                    Anonym polls hide the creator and voter names, while public polls display all of the names.
+                    Anonym: creator and voter names are hidden,<br>
+                    Public: polls display all of the names.
                 </div>
             <div class="button-group">
                 <input type="radio" name="privacyType" id="anonym" value="anonym">
@@ -330,12 +332,13 @@
             <label class="section-label">Poll Type:</label>
                 <div class="tutorial" id="polltype_tutorial" style="display: none;">
                     Names: automatically filled with user nicknames <br>
-                    Range: Slider between two limits / choices - must be single-choice <br>
-                    Prompt: Short written answer from user - must be single-choice <br>
-                    Yes or No: 4 default answers - must be single-choice <br>
-                    Open ended: Add as many answers as you want, try to use short words. <br>
-                    Teams: users can choose between two opinions, try to use short words. - must be public and single-choice <br>
-                    Ranking: users can rank options, try to use short words. - must be multi-choice <br>
+                    Range: Slider between two choices (single-choice only) <br>
+                    Prompt: Short written answer (single-choice only) <br>
+                    Yes or No: 4 default answers (single-choice only) <br>
+                    Open ended: multiple answers (try using short words) <br>
+                    Teams: choose between two teams, (try using short words)<br> Teams must be public and single-choice<br>
+                    Ranking: rank options (try using short words) (multi-choice only) <br>
+                    Chained: a series of polls, which forms a story [TBA]
                 </div>
             <div class="button-group">
 
