@@ -148,7 +148,6 @@ def queryThemeDayMode(hour:int)->dict:
             themes = json.load(f)
     except Exception as e:
         print(e)
-    
     if(hour > 18 or hour < 8):
         return themes["default_night"]
     else:
@@ -249,6 +248,10 @@ def landingPage():
     user_db = {}#loadAllUserInfo()
     with open(USERS_DB, 'r') as f:
         user_db = json.load(f)
+    userEventStatus = {
+        "dailyPoll":user_db[userID]["voted"]["dailyPoll"],
+        "sideQuest":user_db[userID]["voted"]["sidequest"],
+    }
     activeUsers = []
     #user_db[userID]["lastactive"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -257,18 +260,14 @@ def landingPage():
         if( datetime.now() - last_active_time < timedelta(minutes=1,seconds=30) ):
             activeUsers.append(shortnameByID(uid))
     
-    dailyJokeStatus = querySideEventOccurance("dailyJoke")
-    dailyJoke = ""
     storyStatus = querySideEventOccurance("story")
     sideQuestStatus = querySideEventOccurance("sideQuest")
+    dailyJokeStatus = querySideEventOccurance("dailyJoke")
+    joke_data = {"joke":"NONE"}
     if(dailyJokeStatus):
-        # Set the headers to accept plain text response
-        headers = {"Accept": "text/plain"}
-        # Perform the GET request to the dad joke API
-        response = requests.get("https://icanhazdadjoke.com/", headers=headers)
-        # Store the joke text
-        dailyJoke = response.text
-    
+        with open("database/daily_joke.json","r") as f:
+            joke_data = json.load(f)
+    dailyJoke = joke_data["joke"]
     
     userName = usernameByID(userID)
     notices = ["notice 1","notice 2"] #queryNotices
@@ -289,7 +288,7 @@ def landingPage():
                            banner=banner, notices=notices, funnyMessage=funnyMessage,
                            userName=userName, sideQuestStatus=sideQuestStatus,
                            activeUsers=activeUsers, footerTextTop=footerText1,footerTextBot=footerText2,
-                           dailyJoke=dailyJoke, theme=theme)
+                           dailyJoke=dailyJoke, dailyJokeStatus=dailyJokeStatus, userEventStatus=userEventStatus,theme=theme)
 
 @bp.route('/logout')
 def logout():
@@ -512,7 +511,20 @@ def editorApp():
     footerText2 = queryMotto(datetime.now().day)
     
     if request.method == "POST":
+        print(f"{request.form = }")
         session.pop('_flashes', None)
+        if ( request.form["question"] == "" or
+             request.form["selectionType"] == "" or
+             "privacyType" not in request.form or
+             ("optionsType" not in request.form or 
+              "answer_openended-1" not in request.form or
+              "answer_ranking-1" not in request.form or
+              "answer_range-1" not in request.form or
+              "answer_teams-1" not in request.form)
+            ):
+            restartEditor = True
+            flash("Event incorrect. Session restarted")
+            return redirect(url_for('namizu.editorApp'))
 
         eventType = "dailypoll"
         pollBody["Question"] = request.form["question"]
@@ -600,6 +612,12 @@ def editorApp():
             if( not pollBody["Options"]["maxvalue"].isdigit() ):
                 restartEditor = True
                 flash("Range must be a number. Session restarted")    
+            if( pollBody["Options"]["maxvalue"] < 2 ):
+                restartEditor = True
+                flash("Range too low. Session restarted")    
+            if( pollBody["Options"]["maxvalue"] > 9 ):
+                restartEditor = True
+                flash("Range too high. Session restarted")
 
         if pollBody["Question"] == "":
             restartEditor = True
@@ -633,16 +651,13 @@ def editorApp():
             events_bank[qid] = pollBody
             with open(EVENTS_BANK, 'w') as f:
                 json.dump(events_bank, f, indent=4)
-            flash(f"{eventType.upper()} submitted successfully.")
+            flash(f"Good job! 😁 {eventType.upper()} submitted successfully.")
 
         return redirect(url_for('namizu.editorApp'))
     
     return render_template('namizu/editorPage.html',namesList=namesList, theme=theme, 
                            footerTextTop=footerText1,footerTextBot=footerText2)
 
-@bp.route("/sketcher/canvas")
-def sketcherApp():
-    return 0
 
 @bp.route("/calendar")
 def calendarApp():
@@ -1090,8 +1105,6 @@ def resetDay():
 
     unusedPollIDs = [eid for eid,details in eventsBank.items() 
                      if details["Status"] == 0 and "dailypoll" in details["Type"]]
-    
-    print(unusedPollIDs)
 
     if( len(unusedPollIDs) == 2 ):
         current_app.logger.error("1 dailypoll event left in bank")
@@ -1132,6 +1145,21 @@ def resetDay():
         json.dump(spellingBeeBody,f,indent=4)
 
     ## secure GH backup
+
+    ## set daily joke 
+
+    dailyJokeStatus = querySideEventOccurance("dailyJoke")
+    joke_data = {}
+    if(dailyJokeStatus):
+        # Set the headers to accept plain text response
+        headers = {"Accept": "application/json"}
+        # Perform the GET request to the dad joke API
+        response = requests.get("https://icanhazdadjoke.com/", headers=headers)
+        joke_data = response.json()
+    else:
+        joke_data = {"joke":"NONE"}
+    with open("database/daily_joke.json","w") as f:
+        json.dump(joke_data,f,indent=4)
 
     return redirect(url_for('namizu.adminApp'))  
 
