@@ -10,13 +10,13 @@ naMizu is a free, open-source event-based web application, where community fun h
 
 Participate in creative polls or create your own, and play with your friends! If you got inspired, draw sketches, or dive into story-based adventures or weekly challenges — all in a lively, friendly platform designed for you and your friends.
 
-![prompt_example]()
+![prompt_example](./docs/img/prompt_example.png)
 
-![editor_example]()
+![editor_example](./docs/img/editor_example.png)
 
-![sketcher_example]()
+![sketcher_example](./docs/img/sketcher_example.png)
  
-![minigame_example]()
+![minigame_example](./docs/img/minigame_after.png)
 
 ## 🚀 Key Features
 
