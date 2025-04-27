@@ -146,6 +146,8 @@
   <button id="startBtn" type="button" onclick="startCountdown()">▶️ Start Countdown</button>
   <div id="letterBox" style="display: none;">First letter: {{ letter }}</div>
   <div id="timer">⏳ Time left: --</div>
+
+  <p>NOTE: Only the first letter matters in letter combinations such as "Sz" and "Cs"</p>
   
 
   <form id="userForm" action="{{ url_for('namizu.spellingBeeApp') }}" method="POST">
