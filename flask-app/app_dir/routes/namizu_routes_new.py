@@ -189,17 +189,18 @@ def querySideEventOccurance(eventName) -> bool:
     for day in range(29,calendar.monthrange(datetime.now().year,datetime.now().month)[1]+1):
         dailyJokeNumSeq.append(day)
     storyNumSeq = [3,9,15,21,28] # 6
+    yesterday = datetime.now() - timedelta(days=1)
     if(eventName == "dailyJoke"):
         if((datetime.now().day in dailyJokeNumSeq and datetime.now().hour > 5) or
-           (datetime.now().day-1 in dailyJokeNumSeq and datetime.now().hour < 5)):
+           ( yesterday.day in dailyJokeNumSeq and datetime.now().hour < 5)):
             return True
     if(eventName == "sideQuest"):
         if((datetime.now().day in sideQuestNumSeq and datetime.now().hour > 5) or
-           (datetime.now().day-1 in sideQuestNumSeq and datetime.now().hour < 5)):
+           ( yesterday.day in sideQuestNumSeq and datetime.now().hour < 5)):
             return True
     if(eventName == "story"):
         if((datetime.now().day in storyNumSeq and datetime.now().hour > 5) or
-           (datetime.now().day-1 in storyNumSeq and datetime.now().hour < 5)):
+           ( yesterday.day in storyNumSeq and datetime.now().hour < 5)):
             return True
     return False
     
@@ -252,9 +253,7 @@ def landingPage():
 
     # log user activity
 
-    user_db = {}#loadAllUserInfo()
-    with open(USERS_DB, 'r') as f:
-        user_db = json.load(f)
+    user_db = getUsersDatabase()
     userEventStatus = {
         "dailyPoll":user_db[userID]["voted"]["dailyPoll"],
         "sideQuest":user_db[userID]["voted"]["sidequest"],
@@ -277,7 +276,13 @@ def landingPage():
     dailyJoke = joke_data["joke"]
     
     userName = usernameByID(userID)
-    notices = ["notice 1","notice 2"] #queryNotices
+    noticeBank={}
+    with open("database/notice_bank.json","r") as f:
+        noticeBank = json.load(f)
+    for n in noticeBank.keys():
+        noticeBank[n]["remainingDays"] = (datetime.strptime(noticeBank[n]["endDate"], DATETIME_LONG) - datetime.now()).days
+        if( noticeBank[n]["remainingDays"] == 0 ):
+            noticeBank[n]["render"] = False
     banner = "naMizu"
     footerText1 = f"\u00a9 {datetime.now().year} {TRADE_MARK}. Version {VERSION}." 
     footerText2 = queryMotto(datetime.now().day)
@@ -292,7 +297,7 @@ def landingPage():
     theme = queryThemeDayMode(datetime.now().hour)
     renderPacket = {}
     return render_template('/namizu/landingPage.html', 
-                           banner=banner, notices=notices, funnyMessage=funnyMessage,
+                           banner=banner, noticeBank=noticeBank, funnyMessage=funnyMessage,
                            userName=userName, sideQuestStatus=sideQuestStatus,
                            activeUsers=activeUsers, footerTextTop=footerText1,footerTextBot=footerText2,
                            dailyJoke=dailyJoke, dailyJokeStatus=dailyJokeStatus, userEventStatus=userEventStatus,theme=theme)
