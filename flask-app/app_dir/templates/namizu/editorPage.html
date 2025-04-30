@@ -474,6 +474,7 @@
     const singleChoiceRadio = document.getElementById('singlechoice');
     const multiChoiceRadio = document.getElementById('multichoice');
     const publicRadio = document.getElementById('public');
+    const anonymRadio = document.getElementById('anonym');
     const teamsRadio = document.getElementById('teams'); // single
     const rangeRadio = document.getElementById('range'); // single
     const yesOrNoRadio = document.getElementById('yesorno'); // single
@@ -489,6 +490,7 @@
     rangeRadio.addEventListener('change', function () {
         if (rangeRadio.checked) {
             singleChoiceRadio.checked = true;
+            anonymRadio.checked = true;
         }
     });
     yesOrNoRadio.addEventListener('change', function () {
