@@ -80,6 +80,7 @@ Designed like a branching DnD-style adventure.
 - single ❌ with ranking
 - anonym ❌ with teams
 - ranking ❌ with prompt, yesorno, teams
+- public ❌ range
 
 ## Question JSON Structure
 
@@ -131,6 +132,35 @@ M - Move \
 L - Line \
 C - Curve \
 Z - Close path
+
+
+Future update: use SVG curve for Range plotting
+
+```css
+
+path {
+    fill: #4f46e5; /* Indigo-600 */
+    stroke: #1e40af; /* Indigo-900 */
+    stroke-width: 2;
+}
+svg {
+    width: 400px;
+    height: 300px;
+    background-color: white;
+}
+
+  <svg viewBox="0 0 400 200">
+    <!-- Cubic Bezier Curve filled and closed to make a shape -->
+    <path d="
+      M 50 150
+      C 150 110, 50 50, 350 150
+      L 350 160
+      L 50 160
+      Z
+    " />
+  </svg>
+
+```
 
 ## App Routes & Components
 
