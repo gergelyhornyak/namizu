@@ -39,6 +39,13 @@
       margin: 6px 4px;
     }
 
+    #letterBox2 {
+      text-align: center;
+      font-weight: bold;
+      font-size: 2rem;
+      margin: 6px 4px;
+    }
+
     form {
       display: flex;
       flex-direction: column;
@@ -118,6 +125,7 @@
 
       document.getElementById("startBtn").disabled = true;
       document.getElementById("letterBox").style.display = 'block';
+      document.getElementById("letterBox2").style.display = 'none';
       const timer = document.getElementById('timer');
 
       const interval = setInterval(() => {
@@ -137,14 +145,15 @@
   </script>
 </head>
 <body>
-  <h1>Guessing Game</h1>
+  <h1>Name, Place,<br>Animal, Thing</h1>
 
   <form id="countdownForm" action="{{ url_for('namizu.startCountdown') }}" method="POST">
     <input type="hidden" id="startTimeStamp" name="startTimeStamp">
   </form>   
 
-  <button id="startBtn" type="button" onclick="startCountdown()">▶️ Start Countdown</button>
   <div id="letterBox" style="display: none;">First letter: {{ letter }}</div>
+  <div id="letterBox2" style="display: block;">First letter: ?</div>
+  <button id="startBtn" type="button" onclick="startCountdown()">▶️ Start Countdown</button>
   <div id="timer">⏳ Time left: --</div>
 
   <p>NOTE: Only the first letter matters in digraphes such as "Sz" and "Cs"</p>
