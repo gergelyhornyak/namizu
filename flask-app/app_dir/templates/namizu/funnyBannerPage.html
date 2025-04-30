@@ -11,6 +11,7 @@
     :root {
         --bg-colour1: {{ theme.mainBG1 }};
         --bg-colour2: {{ theme.mainBG2 }};
+        --tiles-buttons-colour: {{ theme.buttonsBG }};
     }
     body {
       font-family: "Sansation", sans-serif;
@@ -59,13 +60,12 @@
     }
 
     input[type="text"]:focus {
-      border-color: #7c3aed;
       outline: none;
     }
 
     .submit-btn {
       margin-top: 20px;
-      background-color: #7c3aed;
+      background-color: var(--tiles-buttons-colour);
       color: white;
       border: none;
       padding: 12px 20px;
@@ -74,18 +74,16 @@
       cursor: pointer;
       width: 90%;
       font-family: "Sansation", sans-serif;
-      font-weight: 300;
+      font-weight: 500;
       font-style: normal;
     }
 
-    .submit-btn:hover {
-      background-color: #5b21b6;
-    }
   </style>
 </head>
 <body>
   <div class="form-wrapper">
     <h2>Add a Funny Banner</h2>
+    <img src="{{ url_for('static', filename='img/bannerTextExample2.png') }}" alt="bannertextex" style="width: 330px;border-radius: 10px;">
     <form action="{{ url_for('namizu.funnyBannerApp') }}" method="POST">
       <label for="bannertext">Funny banner text (max. 40 characters)</label>
       <input type="text" name="bannertext" id="bannertext" maxlength="40" rows="2" placeholder="e.g., namizu már, mondom mi a szitu"  />

@@ -135,7 +135,7 @@
       margin: 1%;
     }
     button:disabled {
-      color: var(--banner-text);
+      color: var(--tiles-buttons-text);
     }
 
     .answer-input {
@@ -151,7 +151,7 @@
     }
 
     .preview-controls {
-      display: flex;
+      /*display: flex;*/
       justify-content: space-between;
       margin-top: 15px;
     }
@@ -296,6 +296,13 @@
 
         <form id="editor-form" method="POST">
 
+            <label class="section-label" style="border-radius: 8px;
+            margin: 1% 6%;
+            padding: 2% 2%;
+            background-color: var(--tiles-colour);
+            text-align: center;
+            font-size: 14px;">Tip: Use short words to avoid overflow</label>
+
             <label class="section-label" for="question">Question:</label>
                 <div class="tutorial" id="question_tutorial" style="display: none;">
                     For random person(s), use {P} as placeholder.<br>Non-English letters and emojis are supported.
@@ -305,7 +312,8 @@
             <label class="section-label">Selection Mode:</label>
                 <div class="tutorial" id="selection_tutorial" style="display: none;">
                     Single-choice: only one choice can be selected,<br>
-                    Multi-choice: multiple options to be selected within one poll.
+                    Multi-choice: multiple options to be selected within one poll.<br>
+                    <strong>The editor will auto-switch, based on the rules.</strong>
                 </div>
             <div class="button-group">
                 <input type="radio" name="selectionType" id="singlechoice" value="singlechoice" checked="True"/>
@@ -317,11 +325,11 @@
 
             <label class="section-label">Voting privacy:</label>
                 <div class="tutorial" id="voting_tutorial" style="display: none;">
-                    Anonym: creator and voter names are hidden,<br>
-                    Public: polls display all of the names.
+                    Anonym: creator and voter names are hidden<br>
+                    Public: poll display everyone's name.
                 </div>
             <div class="button-group">
-                <input type="radio" name="privacyType" id="anonym" value="anonym">
+                <input type="radio" name="privacyType" id="anonym" value="anonym" checked="True"/>
                 <label for="anonym">Anonym</label>
 
                 <input type="radio" name="privacyType" id="public" value="public">
@@ -331,18 +339,20 @@
 
             <label class="section-label">Poll Type:</label>
                 <div class="tutorial" id="polltype_tutorial" style="display: none;">
-                    Names: automatically filled with user nicknames <br>
-                    Range: Slider between two choices (single-choice only) <br>
-                    Prompt: Short written answer (single-choice only) <br>
-                    Yes or No: 4 default answers (single-choice only) <br>
-                    Open ended: multiple answers (try using short words) <br>
-                    Teams: choose between two teams, (try using short words)<br> Teams must be public and single-choice<br>
-                    Ranking: rank options (try using short words) (multi-choice only) <br>
-                    Chained: a series of polls, which forms a story [TBA]
+                    Names: automatically filled with nicknames <br>
+                    Prompt: asks for short written answer from user on a sticky note<br>
+                    Yes or No: provides 4 default answers<br>
+                    <strong>Range, OpenEnded, Teams, and Ranking extra fields can be accidently submitted by pressing the Tick Button on your keyboard</strong><br>
+                    Range: shows slider between two choices <strong>(between 1 and 10)</strong><br>
+                    Open ended: multiple custom answers (try using short words) <br>
+                    Teams: user has to choose between two teams, (try using short words)<br>
+                    Ranking: user has to rank options by reordering them (try using short words)<br>
+                    <strong>For Ranking, pls add at least 3 options</strong>
+                    <!--Chained: a series of polls, which forms a story [TBA]-->
                 </div>
             <div class="button-group">
 
-                <input type="radio" name="optionsType" id="names" value="names">
+                <input type="radio" name="optionsType" id="names" value="names" checked="True"/>
                 <label for="names">Names</label>
 
                 <input type="radio" name="optionsType" id="range" value="range">
@@ -412,17 +422,21 @@
             </div>
 
             <div class="preview-controls">
-                <button type="button" id="toggle-preview">Preview</button>
-                <button type="button" id="toggle-tutorial">Show Tutorial</button>
+                <div class="tutorial" id="preview_tutorial" style="display: none;">
+                    Pressing the 'Preview' button is <strong>not necessary</strong> for a successful submission.
+                    It only helps you showing how your event will approx. look like.<br>
+                </div>
+                <div class="button-group">
+                    <button type="button" id="toggle-preview">Preview</button>
+                    <button type="button" id="toggle-tutorial">Show Tutorial</button>
+                </div>
                 <!--<button type="button"><s>Advanced Mode</s></button>-->
             </div>
 
             <div class="poll-preview" id="preview">
                 <h2 id="preview-question">[ Poll Preview ]</h2>
                 <div id="preview-answers"></div>
-              </div>
-
-            <label class="section-label" style="text-align: center;">tip: use short words for syllabils</label>
+            </div>
 
             <button class="submit-button" type="submit" name="submit" value="submit">Submit New Poll</button>
         </form>
@@ -452,8 +466,45 @@
     const selection_tutorialDiv = document.getElementById('selection_tutorial');
     const voting_tutorialDiv = document.getElementById('voting_tutorial');
     const polltype_tutorialDiv = document.getElementById('polltype_tutorial');
-
+    const preview_tutorialDiv = document.getElementById('preview_tutorial');
+    
     const toggleTutorialButton = document.getElementById('toggle-tutorial');
+
+    const singleChoiceRadio = document.getElementById('singlechoice');
+    const multiChoiceRadio = document.getElementById('multichoice');
+    const publicRadio = document.getElementById('public');
+    const teamsRadio = document.getElementById('teams'); // single
+    const rangeRadio = document.getElementById('range'); // single
+    const yesOrNoRadio = document.getElementById('yesorno'); // single
+    const promptRadio = document.getElementById('prompt'); // single
+    const rankingRadio = document.getElementById('ranking'); // multi
+
+    teamsRadio.addEventListener('change', function () {
+        if (teamsRadio.checked) {
+            singleChoiceRadio.checked = true;
+            publicRadio.checked = true;
+        }
+    });
+    rangeRadio.addEventListener('change', function () {
+        if (rangeRadio.checked) {
+            singleChoiceRadio.checked = true;
+        }
+    });
+    yesOrNoRadio.addEventListener('change', function () {
+        if (yesOrNoRadio.checked) {
+            singleChoiceRadio.checked = true;
+        }
+    });
+    promptRadio.addEventListener('change', function () {
+        if (promptRadio.checked) {
+            singleChoiceRadio.checked = true;
+        }
+    });
+    rankingRadio.addEventListener('change', function () {
+        if (rankingRadio.checked) {
+            multiChoiceRadio.checked = true;
+        }
+    });
     
     // Show/hide tutorial
     toggleTutorialButton.addEventListener('click', () => {
@@ -461,6 +512,7 @@
       selection_tutorialDiv.style.display = (selection_tutorialDiv.style.display === 'block') ? 'none' : 'block';
       voting_tutorialDiv.style.display = (voting_tutorialDiv.style.display === 'block') ? 'none' : 'block';
       polltype_tutorialDiv.style.display = (polltype_tutorialDiv.style.display === 'block') ? 'none' : 'block';
+      preview_tutorialDiv.style.display = (preview_tutorialDiv.style.display === 'block') ? 'none' : 'block';
       toggleTutorialButton.textContent = (question_tutorialDiv.style.display !== 'block') ? 'Show Tutorial' : 'Hide Tutorial';
     });
 

@@ -1,43 +1,72 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Scoreboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      font-family: sans-serif;
-      padding: 1rem;
-      max-width: 800px;
-      margin: auto;
-      font-size: small;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f7f9fc;
+      margin: 2rem;
+      color: #333;
     }
 
     h1 {
       text-align: center;
+      color: #2c3e50;
+      margin-bottom: 2rem;
     }
 
     table {
-      width: 90%;
+      width: 100%;
       border-collapse: collapse;
-      margin-top: 1rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      background: white;
     }
 
     th, td {
-      border: 1px solid #ccc;
-      padding: 0.5rem;
+      padding: 1rem;
       text-align: center;
+      border-bottom: 1px solid #ddd;
     }
 
     th {
-      background-color: #f0f0f0;
+      background-color: #3498db;
+      color: white;
+      font-weight: 600;
     }
 
-    tr:nth-child(even) {
-      background-color: #fafafa;
+    tr:hover {
+      background-color: #f1f1f1;
     }
+
+    td strong {
+      color: #c0392b;
+    }
+
+    .cheated-flag {
+      color: red;
+      font-weight: bold;
+      margin-left: 5px;
+    }
+
+    .leave-button {
+      display: block;
+      width: fit-content;
+      margin: 2rem auto;
+      background-color: #e74c3c;
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      text-align: center;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+
+    .leave-button:hover {
+      background-color: #c0392b;
+    }
+
   </style>
 </head>
+
 <body>
   <h1>📝 Submissions</h1>
 
@@ -45,7 +74,7 @@
     <table>
       <thead>
         <tr>
-          <th><strong>Name</strong></th>
+          <th>Name</th>
           <th>Country</th>
           <th>City</th>
           <th>Thing</th>
@@ -58,28 +87,24 @@
         {% for entry in all_submissions.submissions.values() %}
         <tr>
           <td>
-            {{ entry.uname }} 
+            {{ entry.uname }}
             {% if entry.cheated == True %}
-            X
+              <span class="cheated-flag">✘</span>
             {% endif %}
           </td>
-          <td style="background-color: {{ entry.country.colour }};"> {{ entry.country.answer }} </td>
-          <td style="background-color: {{ entry.city.colour }};"> {{ entry.city.answer }}    </td>
-          <td style="background-color: {{ entry.thing.colour }};"> {{ entry.thing.answer }}   </td>
-          <td style="background-color: {{ entry.animal.colour }};"> {{ entry.animal.answer }}  </td>
-          <td style="background-color: {{ entry.male.colour }};"> {{ entry.male.answer }}    </td>
-          <td style="background-color: {{ entry.female.colour }};"> {{ entry.female.answer }}  </td>
+          <td style="background-color: {{ entry.country.colour }};">{{ entry.country.answer }}</td>
+          <td style="background-color: {{ entry.city.colour }};">{{ entry.city.answer }}</td>
+          <td style="background-color: {{ entry.thing.colour }};">{{ entry.thing.answer }}</td>
+          <td style="background-color: {{ entry.animal.colour }};">{{ entry.animal.answer }}</td>
+          <td style="background-color: {{ entry.male.colour }};">{{ entry.male.answer }}</td>
+          <td style="background-color: {{ entry.female.colour }};">{{ entry.female.answer }}</td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
   {% else %}
-    <p>No submissions yet. 🤷‍♂️</p>
+    <p style="text-align: center;">No submissions yet. 🤷‍♂️</p>
   {% endif %}
 
-  <a href="{{ url_for('namizu.landingPage') }}">
-    <div style="margin: 3%;background: tomato;color: ivory;padding: 2%;">LEAVE</div>
-  </a>
-
+  <a href="{{ url_for('namizu.landingPage') }}" class="leave-button">LEAVE</a>
 </body>
-</html>

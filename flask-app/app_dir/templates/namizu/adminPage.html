@@ -15,9 +15,15 @@
 
         <p>naMizu has been visited {{ visitCount }} times so far.</p>
         <p>{{ loggedinUsers }} are logged in currently.</p>
+        <p>{{ usersCompletedDailyPoll }} have already completed the daily poll.</p>
         <p>{{ activeUsers }} are might be active currently.</p>
+        <p>There are {{ bannersCount }} funny banner messages in the bank.</p>
+        <p>There are {{ historyCount }} days of history.</p>
         <p>There are {{ allEventsCount }} events in the bank.</p>
         <p>{{ unusedEventsCount }} events are unused yet.</p>
+        <a href="{{ url_for('namizu.bannersList') }}">
+            <p>List of banner messages</p>
+        </a>
         <a href="{{ url_for('namizu.eventsList') }}">
             <p>List of events</p>
         </a>
