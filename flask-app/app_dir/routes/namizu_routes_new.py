@@ -19,7 +19,7 @@ THEMES_BANK = "database/themes.json"
 DATETIME_LONG = "%Y-%m-%d %H:%M:%S"
 DATE_SHORT = "%Y-%m-%d"
 TRADE_MARK = "naMizu\u2122"
-VERSION = "3.0.1_alpha"
+VERSION = "3.0.1"
 MOTTO_POOL = ["Built with care for the community.","By friends, for friends.","Community-powered fun, every single day.","Built together, played together."]
 MOTTO = "Built with care for the community."
 
@@ -360,8 +360,6 @@ def dailyPollApp():
                     answersValue = request.form["range_value"]
                 elif(qTypeDescr["prompt"]):
                     answersList = request.form["prompt_message"]
-                    print("prompt raw text:",answersList)
-                    print("prompt raw replaced:",answersList.replace("\n","<br>"))
                 elif( (qTypeDescr["singlechoice"] and qTypeDescr["names"]) or
                     (qTypeDescr["singlechoice"] and qTypeDescr["openended"]) or
                         qTypeDescr["yesorno"] or qTypeDescr["teams"] ):
@@ -473,7 +471,7 @@ def dailyPollApp():
             "NoSide":{}
         }
         for uid, option in answersBody.items(): # options is a value
-            print(uid,option)
+            
             if(option.lower()=="yes"):
                 yesornoProcessed["Yes"] += 1
                 yesornoProcessed["YesSide"][uid] = shortnameByID(uid)
@@ -502,7 +500,7 @@ def dailyPollApp():
                     if(uid not in answersProcessed[option]["voters"]):
                         answersProcessed[option]["voters"].append(shortnameByID(uid))    
 
-    print(yesornoProcessed)
+    
     return render_template('namizu/dailyPollPage.html', 
                            banner=banner,qTypeDescr=qTypeDescr,answersProcessed=answersProcessed,rankingProcessed=rankingProcessed,
                            theme=theme, optionsBody=optionsBody,voterStat=voterStat,kudosMessage=kudosMessage,
@@ -531,7 +529,7 @@ def editorApp():
     footerText2 = queryMotto(datetime.now().day)
     
     if request.method == "POST":
-        print(f"{request.form = }")
+        
         session.pop('_flashes', None)
         if ( request.form["question"] == "" or
              request.form["selectionType"] == "" or
@@ -708,6 +706,7 @@ def startCountdown():
             userSubmission = {
             "uname": username,
             "begin": datetime.now().strftime(DATETIME_LONG),
+            "end": "",
             "cheated": False,
             "country": {
                 "answer": "",
