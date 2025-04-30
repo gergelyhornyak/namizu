@@ -270,13 +270,12 @@ Edit
 
 részletesebben kifejteni az opciókat az Editorban ✅
 gallery fix
-comments to sidequest
-spellingbee: categorise by topics, instead of players
-switch between day and night theme
+comments to sidequest ✅
+button to switch between day and night theme
 
 research new line and submit difference
 
-new line in textarea
+new line in textarea - <pre> and "white-space: pre-wrap;"
 
 profile pics could be uploaded, to use funny images
 
