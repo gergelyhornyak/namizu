@@ -286,17 +286,19 @@ sideQuest - event maybe constrained to days
 more events: for each
 or 3 days
 
-choose to show poll within 5 days
+choose to show poll within 5 days ❌
 
-spontanous events / popups could be clear on duration: display how long 
+spontanous events / popups could be clear on duration: display how long ✅
 
 range: when upgraded to gauss, can go over 10, right now keep it below 11
 
-ranking: minimum 2 options
+ranking: minimum 3 options ✅
 
 ranking: sum up points: 1st 5 pts 2nd 4 pts - show on bottom 
 
-editor: range: scale size note on max 10 - integer 
+editor: range: scale size note on max 10 - integer ✅
 
-country city male female
+country city male female ✅
+
+yesorno ✅
 
