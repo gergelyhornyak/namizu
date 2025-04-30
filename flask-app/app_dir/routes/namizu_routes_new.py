@@ -2,6 +2,7 @@ import base64
 from flask import Blueprint, render_template, request, redirect, send_from_directory, url_for, session, flash, current_app
 import requests
 from datetime import datetime, timedelta
+import calendar
 import random, json, re, string
 import numpy as np
 import os,shutil,subprocess
@@ -139,7 +140,7 @@ def queryThemeDayMode(hour:int)->dict:
             themes = json.load(f)
     except Exception as e:
         print(e)
-      
+    return themes["default_day"]    
     if(hour > 20 or hour < 8):
         return themes["default_night"]
     else:
@@ -183,8 +184,10 @@ def querySideEventOccurance(eventName) -> bool:
     """
     dailyJoke, sideQuest, story
     """
-    sideQuestNumSeq = [2,5,8,12,17,20,24,28,29] # 3-4-5
-    dailyJokeNumSeq = [1,5,9,13,17,21,25,28,29] # 4-3
+    sideQuestNumSeq = [1,4,8,11,15,18,22,25,28] # 3-4-5
+    dailyJokeNumSeq = [2,3,5,6,7,9,10,12,13,14,16,17,19,20,21,23,24,26,27] # + remaining days
+    for day in range(29,calendar.monthrange(datetime.now().year,datetime.now().month)[1]+1):
+        dailyJokeNumSeq.append(day)
     storyNumSeq = [3,9,15,21,28] # 6
     if(eventName == "dailyJoke"):
         if((datetime.now().day in dailyJokeNumSeq and datetime.now().hour > 5) or
@@ -333,6 +336,7 @@ def dailyPollApp():
     rankingProcessed = {}
     romanNumbers = []
     sidesProcessed = {}
+    yesornoProcessed = {}
     answersList = []
     answersValue = None
     
@@ -460,17 +464,28 @@ def dailyPollApp():
                     sidesProcessed[sideName]["voters"].append(usernameByID(uid))
     
     elif(qTypeDescr["yesorno"]):
-        sidesProcessed["Yes"] = 0
-        sidesProcessed["No"] = 0
+        yesornoProcessed = {
+            "Definitely":0,
+            "Yes":0,
+            "No":0,
+            "Never":0,
+            "YesSide":{},
+            "NoSide":{}
+        }
         for uid, option in answersBody.items(): # options is a value
+            print(uid,option)
             if(option.lower()=="yes"):
-                sidesProcessed["Yes"] += 1
+                yesornoProcessed["Yes"] += 1
+                yesornoProcessed["YesSide"][uid] = shortnameByID(uid)
             elif(option.lower()=="definitely"):
-                sidesProcessed["Yes"] += 1*3 # yesornoMultiplier
+                yesornoProcessed["Definitely"] += 1*3 # yesornoMultiplier
+                yesornoProcessed["YesSide"][uid] = shortnameByID(uid)
             elif(option.lower()=="no"):
-                sidesProcessed["No"] += 1
+                yesornoProcessed["No"] += 1
+                yesornoProcessed["NoSide"][uid] = shortnameByID(uid)
             elif(option.lower()=="never"):
-                sidesProcessed["No"] += 1*3 # yesornoMultiplier
+                yesornoProcessed["Never"] += 1*3
+                yesornoProcessed["NoSide"][uid] = shortnameByID(uid)
 
     elif( (qTypeDescr["multichoice"] and qTypeDescr["names"]) or
         (qTypeDescr["multichoice"] and qTypeDescr["openended"]) ):
@@ -487,10 +502,11 @@ def dailyPollApp():
                     if(uid not in answersProcessed[option]["voters"]):
                         answersProcessed[option]["voters"].append(shortnameByID(uid))    
 
+    print(yesornoProcessed)
     return render_template('namizu/dailyPollPage.html', 
                            banner=banner,qTypeDescr=qTypeDescr,answersProcessed=answersProcessed,rankingProcessed=rankingProcessed,
                            theme=theme, optionsBody=optionsBody,voterStat=voterStat,kudosMessage=kudosMessage,
-                           questionBody=questionBody, pollster=pollster, pollSubmitted=pollSubmitted,
+                           questionBody=questionBody, pollster=pollster, pollSubmitted=pollSubmitted,yesornoProcessed=yesornoProcessed,
                            footerTextTop=footerText1,footerTextBot=footerText2,todayComments=todayComments["dailyPoll"],roman=romanNumbers, sidesProcessed=sidesProcessed
                            )
 
@@ -736,7 +752,7 @@ def spellingBeeApp():
     userID = session['userID']
     usersDB = getUsersDatabase()
     theme = queryThemeDayMode(datetime.now().hour)
-    guessTime = 88 ## seconds
+    guessTime = 70 ## seconds
     data = {}
     words = []
     spellingBee = {}
@@ -821,7 +837,7 @@ def spellingBeeApp():
                 spellingBee["submissions"][userID]["female"]["correct"] = 1
                 spellingBee["submissions"][userID]["female"]["colour"] = "#648f2380"
 
-
+        spellingBee["submissions"][userID]["end"] = datetime.now().strftime(DATETIME_LONG)
         #cellColour = "greenyellow","tomato"
         with open(SPELLING_BEE_BANK,"w") as f:
             json.dump(spellingBee,f,indent=4)

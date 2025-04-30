@@ -689,28 +689,45 @@
         {% if qTypeDescr.ranking %}
         RANKING
         {% endif %}
+
+        {% if qTypeDescr.yesorno %}
+        YES OR NO
+        {% endif %}
+
+        {% if qTypeDescr.names or qTypeDescr.openended %}
+        OPTIONS
+        {% endif %}
+
+        {% if qTypeDescr.teams %}
+        TEAMS
+        {% endif %}
       </section>
 
       {% if qTypeDescr.buttons %}
 
-      {% if qTypeDescr.singlechoice %}
-      <section class="vote-box">
-        {% for oid, option in optionsBody.items() %}
-        <button class="vote-btn" type="submit" name="vote" value="{{ option }}">{{ option }}</button>
-        {% endfor %}
-      </section>
+          {% if qTypeDescr.singlechoice %}
+              {% if qTypeDescr.yesorno %}
+                  <div style="text-align: center;margin: 2%;">
+                    Extremes worth 3x
+                  </div>
+              {% endif %}
+          <section class="vote-box">
+            {% for oid, option in optionsBody.items() %}
+            <button class="vote-btn" type="submit" name="vote" value="{{ option }}">{{ option }}</button>
+            {% endfor %}
+          </section>
 
-      {% elif qTypeDescr.multichoice %}
-      <section class="vote-box">
-        {% for oid, option in optionsBody.items() %}
-        <label class="checkboxx">
-          <input class="checkboxx_input" type="checkbox" name="{{ oid }}" style="display: none;" value="{{ option }}"
-            onchange="isChecked(this,'')" />
-          <div class="checkboxx_label">{{ option }}</div>
-        </label>
-        {% endfor %}
-      </section>
-      {% endif %}
+          {% elif qTypeDescr.multichoice %}
+          <section class="vote-box">
+            {% for oid, option in optionsBody.items() %}
+            <label class="checkboxx">
+              <input class="checkboxx_input" type="checkbox" name="{{ oid }}" style="display: none;" value="{{ option }}"
+                onchange="isChecked(this,'')" />
+              <div class="checkboxx_label">{{ option }}</div>
+            </label>
+            {% endfor %}
+          </section>
+          {% endif %}
 
       {% endif %}
 
@@ -754,12 +771,14 @@
       {% endif %}
 
     </form>
-    {% else %} <!-- if player already submitted poll -->
+    {% else %} 
+    
+    <!-- if player already submitted poll -->
 
     <!--<div class="instruction">{{ kudosMessage }}</div>-->
     <div class="instruction">{{ voterStat.voteSum }} of {{ voterStat.voterSum }} people have voted already</div>
 
-    {% if qTypeDescr.yesorno or qTypeDescr.names or qTypeDescr.openended or qTypeDescr.range %}
+    {% if qTypeDescr.names or qTypeDescr.openended or qTypeDescr.range %}
         <div id="chart-container">
             {% for label, details in answersProcessed.items() %}
                 <div class="bar-wrapper">
@@ -779,6 +798,51 @@
                 </div>
             {% endfor %}
         </div>
+    {% endif %}
+
+    {% if qTypeDescr.yesorno %}
+
+    <div style="font-family: sans-serif; max-width: 700px; margin: 5% 10%;">
+    
+      <div style="display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 10px;">
+        <span style="color: green;">Yes</span>
+        <span style="color: black;">|</span>
+        <span style="color: #a70000;">No</span>
+      </div>
+    
+      <div style="display: flex; background: #eee; height: 30px; border-radius: 15px; overflow: hidden;">
+        <!-- Definitely (Yes) -->
+        <div style="flex: {{ yesornoProcessed.Definitely }}; background: #4caf50;"></div>
+        <!-- Probably (Yes-leaning) -->
+        <div style="flex: {{ yesornoProcessed.Yes }}; background: #8bc34a;"></div>
+        <!-- Probably Not (No-leaning) -->
+        <div style="flex: {{ yesornoProcessed.No }}; background: #ff9800;"></div>
+        <!-- Never (No) -->
+        <div style="flex: {{ yesornoProcessed.Never }}; background: #f44336;"></div>
+      </div>
+    
+      <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-top: 5px;">
+        <span style="display: flex;gap:4px;">
+        {% if qTypeDescr.public %}
+            {% for voter in yesornoProcessed.YesSide.values() %}
+            <div class="voter-icons">
+                <div class="voter-icon">{{ voter }}</div>
+            </div>
+            {% endfor %}
+        {% endif %}
+        </span>
+        <span style="display: flex;gap:4px;">
+            {% if qTypeDescr.public %}
+              {% for voter in yesornoProcessed.NoSide.values() %}
+                <div class="voter-icons">
+                    <div class="voter-icon">{{ voter }}</div>
+                </div>
+                {% endfor %}
+            {% endif %}
+        </span>
+      </div>
+    </div>
+    
     {% endif %}
 
     {% if qTypeDescr.ranking %}
