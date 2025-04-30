@@ -310,7 +310,7 @@ new line in textarea - <pre> and "white-space: pre-wrap;"
 profile pics could be uploaded, to use funny images
 
 range max: 10 ✅
-range result visualise 
+range result visualise ✅
 
 sideQuest - event maybe constrained to days
 more events: for each
@@ -320,7 +320,9 @@ choose to show poll within 5 days ❌
 
 spontanous events / popups could be clear on duration: display how long ✅
 
-range: when upgraded to gauss, can go over 10, right now keep it below 11
+range: when upgraded to gauss, can go over 10, right now keep it below 11 ✅
+
+IMPORTANT: implement notice system: notice bank, expiry, message, colour
 
 ranking: minimum 3 options ✅
 
