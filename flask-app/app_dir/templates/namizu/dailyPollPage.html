@@ -5,6 +5,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Pangolin&family=Playwrite+AU+SA:wght@200&family=Playwrite+RO:wght@100..400&family=Sansation:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
@@ -778,7 +781,17 @@
     <!--<div class="instruction">{{ kudosMessage }}</div>-->
     <div class="instruction">{{ voterStat.voteSum }} of {{ voterStat.voterSum }} people have voted already</div>
 
-    {% if qTypeDescr.names or qTypeDescr.openended or qTypeDescr.range %}
+    {% if qTypeDescr.range %}
+      <div style="margin: 6% 4% 2%;">  
+          <canvas id="sliderDistributionChart"></canvas>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-weight: bold; margin: 1.5% 10%;">
+        <span >{{rangeProcessed.mintext}}</span>
+        <span >{{rangeProcessed.maxtext}}</span>
+      </div>
+    {% endif %}
+
+    {% if qTypeDescr.names or qTypeDescr.openended%}
         <div id="chart-container">
             {% for label, details in answersProcessed.items() %}
                 <div class="bar-wrapper">
@@ -941,7 +954,7 @@
 
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  
   <script>
     {% if qTypeDescr.prompt %}
 
@@ -983,7 +996,9 @@
 
     {% endif %}
 
-    {% if qTypeDescr.range %}
+    {% if qTypeDescr.range%}
+
+    {% if not pollSubmitted %}
 
     const slider = document.getElementById("myRange");
     const output = document.getElementById("slider-output");
@@ -998,6 +1013,44 @@
       rangeValue.value = slider.value;
     });
 
+    {% else %}
+
+    const chartCtx = document.getElementById('sliderDistributionChart').getContext('2d');
+    const chartData = {
+        labels: {{ rangeProcessed.range }},
+        datasets: [{
+            data: {{ rangeProcessed.distribution }},
+            borderColor: "{{ theme.rangeChartBRD }}",
+            backgroundColor: "{{ theme.rangeChartBG }}",
+            tension: 0.3,  // Bezier curve smoothness
+            fill: true,
+            pointRadius: 3
+        }]
+    };
+
+    const chartConfig = {
+        type: 'line',
+        data: chartData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {display: false}
+            },
+            scales: {
+                x: {
+                    min: 1,
+                    max: {{ rangeProcessed.maxvalue }},
+                    grid: {display: false},
+                    border: {display: true},
+                    ticks: {display: true}
+                },
+                y: {display: false}
+            }
+        }
+    };
+
+    new Chart(chartCtx, chartConfig);
+      {% endif %}
     {% endif %}
 
   </script>

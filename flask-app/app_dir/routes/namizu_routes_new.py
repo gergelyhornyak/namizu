@@ -337,6 +337,7 @@ def dailyPollApp():
     romanNumbers = []
     sidesProcessed = {}
     yesornoProcessed = {}
+    rangeProcessed = {}
     answersList = []
     answersValue = None
     
@@ -409,8 +410,7 @@ def dailyPollApp():
                 return redirect(url_for('namizu.dailyPollApp'))
             
     
-    if( qTypeDescr["range"] or 
-        (qTypeDescr["singlechoice"] and qTypeDescr["names"]) or
+    if( (qTypeDescr["singlechoice"] and qTypeDescr["names"]) or
         (qTypeDescr["singlechoice"] and qTypeDescr["openended"]) ):
 
         for uid, option in answersBody.items(): # option is a value
@@ -424,7 +424,21 @@ def dailyPollApp():
                 answersProcessed[option]["width"] = int(answersProcessed[option]["value"]/voterStat["voterSum"]*100)
                 if(uid not in answersProcessed[option]["voters"]):
                     answersProcessed[option]["voters"].append(shortnameByID(uid))
-
+    elif( qTypeDescr["range"] ):
+        preprocessed = {}
+        rangeProcessed = {
+            "mintext":optionsBody["mintext"],
+            "maxtext":optionsBody["maxtext"],
+            "maxvalue":optionsBody["maxvalue"],
+            "range":[],
+            "distribution":[]
+        }
+        preprocessed = {str(k):0 for k in range(1,int(optionsBody["maxvalue"])+1)}
+        for uid, pick in answersBody.items(): # option is a value
+            preprocessed[pick] += 1
+        rangeProcessed["range"] = [int(k) for k in preprocessed.keys()]
+        rangeProcessed["distribution"] = list(preprocessed.values())
+            
     elif(qTypeDescr["prompt"]):
         for uid, text in answersBody.items(): # option is a value
             answersProcessed[uid] = {
@@ -500,13 +514,14 @@ def dailyPollApp():
                     if(uid not in answersProcessed[option]["voters"]):
                         answersProcessed[option]["voters"].append(shortnameByID(uid))    
 
-    
     return render_template('namizu/dailyPollPage.html', 
-                           banner=banner,qTypeDescr=qTypeDescr,answersProcessed=answersProcessed,rankingProcessed=rankingProcessed,
-                           theme=theme, optionsBody=optionsBody,voterStat=voterStat,kudosMessage=kudosMessage,
-                           questionBody=questionBody, pollster=pollster, pollSubmitted=pollSubmitted,yesornoProcessed=yesornoProcessed,
-                           footerTextTop=footerText1,footerTextBot=footerText2,todayComments=todayComments["dailyPoll"],roman=romanNumbers, sidesProcessed=sidesProcessed
-                           )
+                           banner=banner,footerTextTop=footerText1,footerTextBot=footerText2,
+                           qTypeDescr=qTypeDescr,optionsBody=optionsBody,voterStat=voterStat,questionBody=questionBody,
+                           answersProcessed=answersProcessed,rankingProcessed=rankingProcessed,
+                           rangeProcessed=rangeProcessed,yesornoProcessed=yesornoProcessed,sidesProcessed=sidesProcessed,
+                           theme=theme,kudosMessage=kudosMessage,roman=romanNumbers,
+                           pollster=pollster, pollSubmitted=pollSubmitted,
+                           todayComments=todayComments["dailyPoll"])
 
 @bp.route('/editor', methods=['GET', 'POST'])
 def editorApp():
@@ -868,7 +883,7 @@ def spellingBeeScoreBoard():
             json.dump(commenstData, f, indent=4)
         return redirect(url_for('namizu.spellingBeeScoreBoard'))
     ## implement scoring system - check if a user entered a unique word
-    return render_template('namizu/spellingBeeScoreBoard_comments.html', all_submissions=all_submissions, theme=theme,comments=commenstData)
+    return render_template('namizu/spellingBeeScoreBoard.html', all_submissions=all_submissions, theme=theme,comments=commenstData)
 
 @bp.route("/sidequest", methods=['GET', 'POST'])
 def sideQuestApp():
