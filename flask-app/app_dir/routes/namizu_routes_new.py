@@ -26,18 +26,6 @@ MOTTO = "Built with care for the community."
 
 #* ERROR HANDLING
 
-@bp.errorhandler(404)
-def page_not_found404(e):
-    return "ERROR 404", 404
-
-@bp.errorhandler(500)
-def page_not_found500(e):
-    return "ERROR 500", 500
-
-@bp.errorhandler(400)
-def page_not_found400(e):
-    return "ERROR 400", 400
-
 #* SMALL FUNCTIONS
 
 def updateSessionCookie(path:str):
@@ -140,6 +128,9 @@ def shortnameByID(uid:str) -> str:
         print("User cannot be found.\n")
     return shortname
 
+def appByID(aid):
+    """DailyPoll: 1, SideQuest: 2, Story: 3"""
+    return 1
 
 def queryThemeDayMode(hour:int)->dict:
     themes = {}
@@ -148,7 +139,8 @@ def queryThemeDayMode(hour:int)->dict:
             themes = json.load(f)
     except Exception as e:
         print(e)
-    if(hour > 18 or hour < 8):
+      
+    if(hour > 20 or hour < 8):
         return themes["default_night"]
     else:
         return themes["default_day"]    
@@ -159,20 +151,27 @@ def getTodayComments() -> dict:
             return json.load(f)
     except json.decoder.JSONDecodeError:
         return {}    
-    except Exception as e:
-        print(e)
 
 def getUsersDatabase() -> dict:
-    with open(USERS_DB, 'r') as f:
-        return json.load(f)
+    try:
+        with open(USERS_DB, 'r') as f:
+            return json.load(f)
+    except json.decoder.JSONDecodeError:
+        return {}
 
 def getDailyPoll() -> dict:
-    with open(DAILY_POLL_CACHE, 'r') as f:
-        return json.load(f)
+    try:
+        with open(DAILY_POLL_CACHE, 'r') as f:
+            return json.load(f)
+    except json.decoder.JSONDecodeError:
+        return {}
     
 def getEventsBank() -> dict:
-    with open(EVENTS_BANK, 'r') as f:
-        return json.load(f)
+    try:
+        with open(EVENTS_BANK, 'r') as f:
+            return json.load(f)
+    except json.decoder.JSONDecodeError:
+        return {}
     
 def queryMotto(day:int) -> str:
     random.seed(day)
@@ -184,8 +183,8 @@ def querySideEventOccurance(eventName) -> bool:
     """
     dailyJoke, sideQuest, story
     """
-    sideQuestNumSeq = [2,5,8,12,17,20,24,28] # 3-4-5
-    dailyJokeNumSeq = [1,5,9,13,17,21,25,28] # 4-3
+    sideQuestNumSeq = [2,5,8,12,17,20,24,28,29] # 3-4-5
+    dailyJokeNumSeq = [1,5,9,13,17,21,25,28,29] # 4-3
     storyNumSeq = [3,9,15,21,28] # 6
     if(eventName == "dailyJoke"):
         if((datetime.now().day in dailyJokeNumSeq and datetime.now().hour > 5) or
@@ -357,6 +356,8 @@ def dailyPollApp():
                     answersValue = request.form["range_value"]
                 elif(qTypeDescr["prompt"]):
                     answersList = request.form["prompt_message"]
+                    print("prompt raw text:",answersList)
+                    print("prompt raw replaced:",answersList.replace("\n","<br>"))
                 elif( (qTypeDescr["singlechoice"] and qTypeDescr["names"]) or
                     (qTypeDescr["singlechoice"] and qTypeDescr["openended"]) or
                         qTypeDescr["yesorno"] or qTypeDescr["teams"] ):
@@ -395,11 +396,9 @@ def dailyPollApp():
             if 'comment' in request.form:
                 comment = request.form['comment']
                 current_date = datetime.now().strftime(DATETIME_LONG)
-                appID = 1
                 
-                todayComments[current_date] = {
+                todayComments["dailyPoll"][current_date] = {
                     "userID": userID,
-                    "appID": appID,
                     "text":comment,
                     "username":usernameByID(userID)
                 }           
@@ -492,7 +491,7 @@ def dailyPollApp():
                            banner=banner,qTypeDescr=qTypeDescr,answersProcessed=answersProcessed,rankingProcessed=rankingProcessed,
                            theme=theme, optionsBody=optionsBody,voterStat=voterStat,kudosMessage=kudosMessage,
                            questionBody=questionBody, pollster=pollster, pollSubmitted=pollSubmitted,
-                           footerTextTop=footerText1,footerTextBot=footerText2,todayComments=todayComments,roman=romanNumbers, sidesProcessed=sidesProcessed
+                           footerTextTop=footerText1,footerTextBot=footerText2,todayComments=todayComments["dailyPoll"],roman=romanNumbers, sidesProcessed=sidesProcessed
                            )
 
 @bp.route('/editor', methods=['GET', 'POST'])
@@ -613,16 +612,22 @@ def editorApp():
             restartEditor = True
             flash("Cannot be anonym and teams at the same time. Session restarted")
 
+        if( "ranking" in pollBody["Type"] ):
+            if(len(pollBody["Options"]) < 3):
+                restartEditor = True
+                flash("Ranking requires at least 3 options. Session restarted")    
+
         if( "range" in pollBody["Type"] ):
             if( not pollBody["Options"]["maxvalue"].isdigit() ):
                 restartEditor = True
                 flash("Range must be a number. Session restarted")    
-            if( pollBody["Options"]["maxvalue"] < 2 ):
-                restartEditor = True
-                flash("Range too low. Session restarted")    
-            if( pollBody["Options"]["maxvalue"] > 9 ):
-                restartEditor = True
-                flash("Range too high. Session restarted")
+            else:
+                if ( int(pollBody["Options"]["maxvalue"]) < 2 ):
+                    restartEditor = True
+                    flash("Range too low. Session restarted")    
+                elif( int(pollBody["Options"]["maxvalue"]) > 10 ):  
+                    restartEditor = True
+                    flash("Range too high. Session restarted")
 
         if pollBody["Question"] == "":
             restartEditor = True
@@ -731,7 +736,7 @@ def spellingBeeApp():
     userID = session['userID']
     usersDB = getUsersDatabase()
     theme = queryThemeDayMode(datetime.now().hour)
-    guessTime = 30 ## seconds
+    guessTime = 88 ## seconds
     data = {}
     words = []
     spellingBee = {}
@@ -825,14 +830,30 @@ def spellingBeeApp():
             json.dump(usersDB,f,indent=4)
         return redirect(url_for('namizu.spellingBeeScoreBoard'))
     
-@bp.route('/spellingbee/scoreboard', methods=['GET'])
+@bp.route('/spellingbee/scoreboard', methods=['GET','POST'])
 def spellingBeeScoreBoard():
+    userID = session['userID']
     with open(SPELLING_BEE_BANK,"r") as f:
         all_submissions = json.load(f)
     #darkseagreen
     theme = queryThemeDayMode(datetime.now().hour)
+    commenstData = getTodayComments()
+    if request.method == "GET":
+        pass
+    elif request.method == "POST":
+        # Save comment (e.g., to database or session)
+        comment_text = request.form.get('comment_text')
+        current_date = datetime.now().strftime(DATETIME_LONG)
+        commenstData["miniGame"][current_date] = {
+            "userID": userID,
+            "text":comment_text,
+            "username":usernameByID(userID)
+        }        
+        with open(COMMENTS_CACHE, 'w') as f:
+            json.dump(commenstData, f, indent=4)
+        return redirect(url_for('namizu.spellingBeeScoreBoard'))
     ## implement scoring system - check if a user entered a unique word
-    return render_template('namizu/spellingBeeScoreBoard3.html', all_submissions=all_submissions, theme=theme)
+    return render_template('namizu/spellingBeeScoreBoard_comments.html', all_submissions=all_submissions, theme=theme,comments=commenstData)
 
 @bp.route("/sidequest", methods=['GET', 'POST'])
 def sideQuestApp():
@@ -999,13 +1020,19 @@ def adminApp():
     with open("database/visit_count.json") as f:
         visit_count = json.load(f)
     visitCount = visit_count["total"]
-    user_db = {}#loadAllUserInfo()
-    with open(USERS_DB, 'r') as f:
-        user_db = json.load(f)
+    user_db = getUsersDatabase()
+    funnyBanners={}
+    with open(FUNNY_BANNERS_BANK,"r") as f:
+        funnyBanners = json.load(f)
+
+    historyData = {}
+    with open("database/history.json","r") as f:
+        historyData = json.load(f)
     if(user_db[userID]["admin"]!=1):
         current_app.logger.error("Unauthorised user - not admin.")
         return redirect(url_for('namizu.landingPage'))
     activeUsers = []
+    usersCompletedDailyPoll = []
     loggedinUsers = []
     for uid,details in user_db.items():
         last_active_time = datetime.strptime(details["lastactive"], "%Y-%m-%d %H:%M:%S")
@@ -1013,25 +1040,35 @@ def adminApp():
             activeUsers.append(details["uname"])
         if( details["loggedin"] == 1 ):
             loggedinUsers.append(details["uname"])
+        if( details["voted"]["dailyPoll"] == 1):
+            usersCompletedDailyPoll.append(details["uname"])
     with open(EVENTS_BANK, 'r') as f:
         events = json.load(f)
     allEventsCount = len(events)
+    bannersCount = len(funnyBanners)
+    historyCount = len(historyData)
     unusedEventsCount = np.sum([event["Status"] == 0 for event in events.values()])
     return render_template('namizu/adminPage.html', 
                            visitCount=visitCount,activeUsers=', '.join(activeUsers),
-                           loggedinUsers=', '.join(loggedinUsers),
+                           loggedinUsers=', '.join(loggedinUsers),bannersCount=bannersCount,
+                           historyCount=historyCount,usersCompletedDailyPoll=', '.join(usersCompletedDailyPoll),
                            allEventsCount=allEventsCount,unusedEventsCount=unusedEventsCount)
 
     # dailyPoll completed
     # sideQuest completed
 
-
-
 @bp.route("/admin/eventslist")
 def eventsList():
     updateSessionCookie("eventsList")
     events = getEventsBank()
-    return render_template('namizu/eventsbankPage.html', events=events) 
+    return render_template('namizu/eventsbankPage.html', events=events)
+
+@bp.route("/admin/bannerslist")
+def bannersList():
+    updateSessionCookie("bannersList")
+    with open(FUNNY_BANNERS_BANK,"r") as f:
+        banners = json.load(f)
+    return render_template('namizu/bannerMessageBankPage.html', bannerMessages=banners)
 
 @bp.route("/admin/resetday")
 def resetDay():
@@ -1046,33 +1083,33 @@ def resetDay():
     comments_packet = {}
     yesterday = datetime.now() - timedelta(days=1)
     yesterdayDate = yesterday.strftime(DATE_SHORT)
-    for timestamp, details in commentsData.items():
-        if( details["appID"] == 1 ):
+    if(dailyPollData and "dailyPoll" in commentsData):
+        for timestamp, details in commentsData["dailyPoll"].items():
             comments_packet[timestamp] = {} 
             comments_packet[timestamp]["UID"] = details["userID"]
             comments_packet[timestamp]["message"] = details["text"]
 
-    historyData = {
-        "DailyPoll": {
-            "Type": dailyPollData["Type"],
-            "Question": dailyPollData["Question"],
-            "Options": dailyPollData["Options"],
-            "Answers": dailyPollData["Answers"],
-            "Pollster": dailyPollData["Pollster"],
-            "Theme": dailyPollData["Theme"],
-            "Comments": comments_packet
+        historyData = {
+            "DailyPoll": {
+                "Type": dailyPollData["Type"],
+                "Question": dailyPollData["Question"],
+                "Options": dailyPollData["Options"],
+                "Answers": dailyPollData["Answers"],
+                "Pollster": dailyPollData["Pollster"],
+                "Theme": dailyPollData["Theme"],
+                "Comments": comments_packet
+            }
         }
-    }
-    
-    with open("database/history.json","r") as f:
-        historyAll = json.load(f)
-    if(yesterdayDate not in historyAll):
-        historyAll[yesterdayDate] = historyData
-    else:
-        print("History log already exists for this date.")
-    
-    with open("database/history.json","w") as f:
-        json.dump(historyAll,f,indent=4)
+        
+        with open("database/history.json","r") as f:
+            historyAll = json.load(f)
+        if(yesterdayDate not in historyAll):
+            historyAll[yesterdayDate] = historyData
+        else:
+            print("History log already exists for this date.")
+        
+        with open("database/history.json","w") as f:
+            json.dump(historyAll,f,indent=4)
 
     ## CHANGE streak according to events
     
@@ -1093,8 +1130,7 @@ def resetDay():
     ## RESET comments
 
     with open(COMMENTS_CACHE,"w") as f:
-        json.dump({},f,indent=4)
-
+        json.dump({"dailyPoll":{},"miniGame":{},"story":{}},f,indent=4)
 
     ## CHANGE main event - DailyPoll
 
@@ -1102,11 +1138,10 @@ def resetDay():
     for eid, details in eventsBank.items():
         if "dailypoll" in details["Type"]:
             if details["Status"] == 1:
-                yesterdayPoll = details
                 yesterdayPollID = eid
                 break
-
-    eventsBank[yesterdayPollID]["Status"] = 2
+    if(yesterdayPollID):
+        eventsBank[yesterdayPollID]["Status"] = 2
 
     unusedPollIDs = [eid for eid,details in eventsBank.items() 
                      if details["Status"] == 0 and "dailypoll" in details["Type"]]
