@@ -343,11 +343,10 @@
                     Prompt: asks for short written answer from user on a sticky note<br>
                     Yes or No: provides 4 default answers<br>
                     <strong>Range, OpenEnded, Teams, and Ranking extra fields can be accidently submitted by pressing the Tick Button on your keyboard</strong><br>
-                    Range: shows slider between two choices <strong>(between 1 and 10)</strong><br>
+                    Range: shows slider between two choices<br>
                     Open ended: multiple custom answers (try using short words) <br>
                     Teams: user has to choose between two teams, (try using short words)<br>
                     Ranking: user has to rank options by reordering them (try using short words)<br>
-                    <strong>For Ranking, pls add at least 3 options</strong>
                     <!--Chained: a series of polls, which forms a story [TBA]-->
                 </div>
             <div class="button-group">
@@ -398,6 +397,7 @@
 
             <div class="form-group answers" id="ranking_answers" style="display: none;">
                 <label class="section-label">Ranking Options:</label>
+                Please add at least 3 options
                 <div class="answer-input">
                     <input type="text" class="answer_ranking" name="answer_ranking-1" placeholder="Type an answer..." maxlength="16">
                     <button type="button" class="add-answer">➕</button>
@@ -406,6 +406,7 @@
 
             <div class="form-group answers" id="range_answers" style="display: none;">
                 <label class="section-label">Range Options:</label>
+                Between 1 and 10
                 <div class="answer-input">
                     <input type="text" class="answer_range" name="answer_range-1" placeholder="Start Label" maxlength="20">
                     <input type="text" class="answer_range" name="answer_range-2" placeholder="End Label" maxlength="20">
@@ -623,7 +624,7 @@
           answers = namesListJson;
       }
       else if (selectedOption == 'yesorno') {
-          answers = ['Definitely!', 'Yes', 'No', 'Never!'];
+          answers = ['Definitely', 'Yes', 'No', 'Never'];
       }
       previewQuestion.textContent = question.replace(/{P}/g, "Someone");
 
