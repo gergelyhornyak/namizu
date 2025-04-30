@@ -13,12 +13,12 @@ def job():
 scheduler.add_job(
     func=job,
     trigger=CronTrigger(hour=5),
-    misfire_grace_time=30
+    misfire_grace_time=40
 )
 
 scheduler.start()
 
 if __name__ == '__main__':
-    app.run(debug=False,use_reloader=False)
+    app.run(debug=True,use_reloader=False)
 
 
