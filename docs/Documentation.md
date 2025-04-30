@@ -29,6 +29,8 @@ Each event contains the following components:
 - Language Format: HU, EN, DE, IT, ...
 - Theme
 
+> `<html lang="en">` part of HTML needs to be changed according to event language, because of lang specific hyphenation rules
+
 ### Event Type IDs
 
 - DailyPoll: 1
@@ -49,14 +51,14 @@ Randomized and creative polls, typically appearing every 5 days or on prime-numb
 
 Task Examples:
 
-1. Create memes or sketches: Draw sketch based on prompt
+1. Create memes or sketches: Draw sketch based on prompt (weekend game - relaxed env)
 2. Emoji-only responses - which one describes the best
-3. Trivia: correct or closest wins
+3. Trivia / Honfoglaló: correct or closest wins ()
 4. Two truths and a lie
 5. Bet on outcome: bet before answering
 6. Hangman: everyone gets 1 help
-7. Haikus
-8. Word-based games (county city names animal thing)
+7. Haikus (could be difficult) - special event - based on celebrations - maybe based on full moons
+8. Word-based games (county city names animal thing) 
 
 ## Story
 
@@ -119,21 +121,15 @@ Example: DMNX = Daily, Multi-choice, Names, Anonym
 ---
 
 
-SVG & Graphing
-Custom themes and range plots can use SVG Bezier curves:
+## SVG & Graphing
 
-html
-Copy
-Edit
+Custom themes and range plots can use SVG Bezier curves:
 
 SVG Commands:
 
-M - Move
-
-L - Line
-
-C - Curve
-
+M - Move \
+L - Line \
+C - Curve \
 Z - Close path
 
 ## App Routes & Components
@@ -211,10 +207,9 @@ Event bank management
 - comments.json
 - drawings.json
 
-New User DB Format
-json
-Copy
-Edit
+## New User DB Format
+
+```json
 "IDX": {
   "name": "NAME",
   "passw": "PASS",
@@ -225,12 +220,9 @@ Edit
     "story": 0
   },
   "loggedin": 0,
-  "streak": {
-    "dailyPoll": 0,
-    "sideQuest": 0,
-    "story": 0
-  }
+  "streak": 0
 }
+```
 Comments Format
 json
 Copy
@@ -272,3 +264,40 @@ Edit
 - Profile pictures
 - Mobile app (Android / iOS)
 - More minigames implemented
+
+
+## TODO
+
+részletesebben kifejteni az opciókat az Editorban ✅
+gallery fix
+comments to sidequest
+spellingbee: categorise by topics, instead of players
+switch between day and night theme
+
+research new line and submit difference
+
+new line in textarea
+
+profile pics could be uploaded, to use funny images
+
+range max: 10 ✅
+range result visualise 
+
+sideQuest - event maybe constrained to days
+more events: for each
+or 3 days
+
+choose to show poll within 5 days
+
+spontanous events / popups could be clear on duration: display how long 
+
+range: when upgraded to gauss, can go over 10, right now keep it below 11
+
+ranking: minimum 2 options
+
+ranking: sum up points: 1st 5 pts 2nd 4 pts - show on bottom 
+
+editor: range: scale size note on max 10 - integer 
+
+country city male female
+
