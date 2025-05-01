@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Pangolin&family=Playwrite+AU+SA:wght@200&family=Playwrite+RO:wght@100..400&family=Sansation:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <title>naMizu</title>
     <style>
 
@@ -158,6 +159,14 @@
         hr {
             color: #3a5d6c;
         }
+        .cannon {
+        position: fixed;
+        top: 90%;
+        left: 10%;
+        transform: translateX(-50%) rotate(-30deg);
+        font-size: 3.5rem;
+        z-index: 100;
+        }
 
         /* Mobile View Compatibility */
         @media (max-width: 768px) {
@@ -182,6 +191,8 @@
 </head>
 <body>
 
+    <div class="cannon">📣</div>
+
 <header>
     <!--<img src="{{ url_for('static', filename='img/cloudBunny.png') }}" width="100px" alt="">-->
     <h1>Welcome {{ userName }} <br> to naMizu!</h1> <!-- ¿ -->
@@ -200,7 +211,7 @@
 
     {% if sideQuestStatus %}
     <div class="feature-card">
-        <div id="countdown" style="background: rgb(255 132 213 / 50%); color: #000; padding: 4px 10px; border-radius: 8px; font-weight: bolder; font-size: 1rem;margin-left: 35%;">
+        <div id="countdown" style="background: #00ff917a; color: #000; padding: 4px 10px; border-radius: 8px; font-weight: bolder; font-size: 1rem;margin-left: 35%;">
             recurring every 3-4 days
         </div>
         {% if not userEventStatus.sideQuest %}
@@ -300,11 +311,23 @@
     </div>
 </section>
 
-
 <footer>
     <p> {{ footerTextTop }} </p>
     <p> {{ footerTextBot }} </p>
 </footer>
+
+<script>
+    window.onload = function () {
+      confetti({
+        particleCount: 250,
+        startVelocity: 70,
+        gravity: 0.7,
+        angle:70,
+        spread: 50,
+        origin: { y: 1, x:0.1 }
+      });
+    };
+</script>
 
 </body>
 
