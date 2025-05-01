@@ -299,9 +299,9 @@ Edit
 ## TODO
 
 részletesebben kifejteni az opciókat az Editorban ✅
-gallery fix
+gallery fix X
 comments to sidequest ✅
-button to switch between day and night theme
+button to switch between day and night theme X
 
 research new line and submit difference
 
@@ -322,7 +322,7 @@ spontanous events / popups could be clear on duration: display how long ✅
 
 range: when upgraded to gauss, can go over 10, right now keep it below 11 ✅
 
-IMPORTANT: implement notice system: notice bank, expiry, message, colour
+IMPORTANT: implement notice system: notice bank, expiry, message, colour [...]
 
 ranking: minimum 3 options ✅
 
