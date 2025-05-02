@@ -184,11 +184,10 @@ def querySideEventOccurance(eventName) -> bool:
     """
     dailyJoke, sideQuest, story
     """
-    sideQuestNumSeq = [1,4,8,11,15,18,22,25,28] # 3-4-5
-    dailyJokeNumSeq = [2,3,5,6,7,9,10,12,13,14,16,17,19,20,21,23,24,26,27] # + remaining days
-    for day in range(29,calendar.monthrange(datetime.now().year,datetime.now().month)[1]+1):
-        dailyJokeNumSeq.append(day)
-    storyNumSeq = [3,9,15,21,28] # 6
+    sideQuestNumSeq = [1,4,8,11,15,18,22,25,28] # 3-4 days
+    storyNumSeq =     [3,9,15,21,28]
+    dailyJokeNumSeq = [2,3,5,6,7,9,10,12,13,14,16,17,19,20,21,23,24,26,27,29,30,31]
+    
     yesterday = datetime.now() - timedelta(days=1)
     if(eventName == "dailyJoke"):
         if((datetime.now().day in dailyJokeNumSeq and datetime.now().hour > 5) or
@@ -1108,7 +1107,7 @@ def bannersList():
 @bp.route("/admin/resetday")
 def resetDay():
     current_app.logger.info(f"Reset initiated")
-    
+
     ## SAVE history
 
     eventsBank = getEventsBank()
