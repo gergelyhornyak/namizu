@@ -252,7 +252,6 @@ def landingPage():
     else: return redirect(url_for(f"namizu.loginPage")) # prompt for login
 
     # log user activity
-    return "<h1>UNDER MAINTENANCE<h1>",200
 
     user_db = getUsersDatabase()
     userEventStatus = {
@@ -1259,8 +1258,8 @@ def sketcher_save():
         header, encoded = image_data.split(',', 1)
         image_data = base64.b64decode(encoded)
 
-        success = save_drawing(directory_path,image_data,image_author,image_title,image_date,image_descr)
-        if success == 0:
-            print(f"Image saved")
+        #success = save_drawing(directory_path,image_data,image_author,image_title,image_date,image_descr)
+        #if success == 0:
+         #   print(f"Image saved")
         return redirect(url_for('namizu.index'))
     return "No image data received!", 400
