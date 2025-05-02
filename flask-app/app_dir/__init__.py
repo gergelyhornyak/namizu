@@ -16,9 +16,8 @@ def create_app():
 
     with open("flask_secret","r") as f:
         stringg = f.readline()
-    app.config['SECRET_KEY'] = stringg
-    app.logger.debug("Secret key aquired")
-    app.config['PERMANENT_SESSION_LIFETIME'] = 86400
+    app.secret_key = stringg
+    app.logger.debug("Secret key aquired")    
     app.permanent_session_lifetime = timedelta(weeks=1)
     app.logger.debug("Session lifetime set to 1 week")
     # Register blueprints
