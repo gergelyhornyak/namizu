@@ -1,14 +1,14 @@
 from app_dir import create_app
 from apscheduler.triggers.cron import CronTrigger
 from apscheduler.schedulers.background import BackgroundScheduler
-from app_dir.utils.namizu_utils import daily_routine
+from app_dir.routes.namizu_routes_new import resetDay
 
 app = create_app()
 
 scheduler = BackgroundScheduler()
 
 def job():
-    daily_routine()
+    resetDay()
 
 scheduler.add_job(
     func=job,
