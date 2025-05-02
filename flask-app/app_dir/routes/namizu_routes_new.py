@@ -252,6 +252,7 @@ def landingPage():
     else: return redirect(url_for(f"namizu.loginPage")) # prompt for login
 
     # log user activity
+    return "<h1>UNDER MAINTENANCE<h1>",200
 
     user_db = getUsersDatabase()
     userEventStatus = {
