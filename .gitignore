@@ -4,4 +4,9 @@ __pycache__
 database/
 uploads/
 flask_secret
-BACKUP/
+BACKUP01/
+BACKUP02/
+lab
+ngrok
+backup_cronjob.sh
+cron_logfile.log

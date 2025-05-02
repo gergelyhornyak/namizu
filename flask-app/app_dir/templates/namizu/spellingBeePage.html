@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>naMizu Minigame</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+
+    :root {
+      --bg-colour1: {{ theme.mainBG1 }};
+      --bg-colour2: {{ theme.mainBG2 }};
+      --banner-text: {{ theme.bannerTXT }};
+    }
+    body {
+      font-family: sans-serif;
+      padding: 1rem;
+      margin: 0;
+      margin-left: auto;
+      margin-right: auto;
+      background: linear-gradient(to bottom right, var(--bg-colour1), var(--bg-colour2));
+      color: var(--banner-text);
+      min-height: 100vh;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    #timer, #result {
+      text-align: center;
+      font-size: 1.2rem;
+      margin: 6px 4px;
+    }
+
+    #letterBox {
+      text-align: center;
+      font-weight: bold;
+      font-size: 2rem;
+      margin: 6px 4px;
+    }
+
+    #letterBox2 {
+      text-align: center;
+      font-weight: bold;
+      font-size: 2rem;
+      margin: 6px 4px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      max-width: 90%;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      font-weight: bold;
+    }
+
+    input[type="text"] {
+      padding: 0.5rem;
+      font-size: large;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      padding: 0.75rem;
+      font-size: 1rem;
+      background-color: #1d72b8;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background-color: #aaa;
+      cursor: not-allowed;
+    }
+
+    .leave-button {
+      margin: 4% auto;
+      text-align: center;
+    }
+
+    .leave-button a {
+      text-decoration: none;
+      background: black;
+      color: white;
+      padding: 0.6rem 1.2rem;
+      margin-bottom: 5%;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1rem;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      display: inline-block;
+      transition: background-color 0.3s;
+    }
+
+
+    @media (max-width: 500px) {
+      body {
+        padding: 5%;
+      }
+
+      input[type="text"], button {
+        width: 100%;
+      }
+    }
+  </style>
+  <script>
+    let seconds = {{ countdown }};
+    let countdownStarted = false;
+
+    function startCountdown() {
+      if (countdownStarted) return;
+      countdownStarted = true;
+
+      const startTimeInput = document.getElementById('startTimeStamp');
+      startTimeInput.value = Date.now(); 
+      document.getElementById('countdownForm').submit();
+
+      document.getElementById("startBtn").disabled = true;
+      document.getElementById("letterBox").style.display = 'block';
+      document.getElementById("letterBox2").style.display = 'none';
+      const timer = document.getElementById('timer');
+
+      const interval = setInterval(() => {
+        seconds--;
+        timer.textContent = `⏳ Time left: ${seconds}s`;
+
+        if (seconds <= 0) {
+          clearInterval(interval);
+          autoSubmit();
+        }
+      }, 1000);
+    }
+
+    function autoSubmit() {
+      document.getElementById('userForm').submit();
+    }
+  </script>
+</head>
+<body>
+  <h1>Name, Place,<br>Animal, Thing</h1>
+
+  <form id="countdownForm" action="{{ url_for('namizu.startCountdown') }}" method="POST">
+    <input type="hidden" id="startTimeStamp" name="startTimeStamp">
+  </form>   
+
+  <div id="letterBox" style="display: none;">First letter: {{ letter }}</div>
+  <div id="letterBox2" style="display: block;">First letter: ?</div>
+  <button id="startBtn" type="button" onclick="startCountdown()">▶️ Start Countdown</button>
+  <div id="timer">⏳ Time left: --</div>
+
+  <p>NOTE: Only the first letter matters in digraphes such as "Sz" and "Cs"</p>
+
+  <form id="userForm" action="{{ url_for('namizu.spellingBeeApp') }}" method="POST">
+    <label>Ország: <input type="text" name="country" id="country" /></label><br />
+    <label>Város: <input type="text" name="city" id="city" /></label><br />
+    <label>Tárgy: <input type="text" name="thing" id="thing" /></label><br />
+    <label>Állat: <input type="text" name="animal" id="animal" /></label><br />
+    <label>Férfi név: <input type="text" name="male" id="male" /></label><br />
+    <label>Női név: <input type="text" name="female" id="female" /></label><br />
+  </form>
+
+  <div class="leave-button">
+    <a href="{{ url_for('namizu.landingPage') }}">LEAVE</a>
+  </div>
+
+</body>
+</html>

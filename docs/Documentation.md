@@ -1,178 +1,336 @@
-# naMizu Docs
+# naMizu Documentation
 
-logs current version
+## Overview
 
----
+naMizu is a dynamic event-based polling application, where users interact through various events like DailyPolls, SideQuests, and Story-based adventures. It supports rich customization, anonymity, and 
 
-naMizu events have the following members: 
+Tech Stack: Flask · Jinja · Python3 · CSS · Bootstrap
 
-- voter(s), 
-- a pollster.
+Backup Policy: Daily backup to a private GitHub repository
 
-the events have the following components: 
+Version Log: Logged in version tracker
 
-- a unique ID, 
-- a type based on the catalogue of types, 
-- the question, 
-- answer(s), *(response options)*
-- a status, 
-- a date-time.
-- a language format (HU, EN, DE, IT, ...)
+## Theme - Day/Night
 
-events can be: Story / SideQuest / DailyPoll
+!fix! css variables
 
-### Questions
+## Event Structure
 
-All polls fall under the following categories:
+Each event contains the following components:
 
-- Event category: Story / SideQuest / DailyPoll **(default)**
-    - DailyPoll: the usual daily poll, recurring every day.
-    - Story: a series of polls, where each poll will inherit the previous answers, and voters can go on an DnD adventure.
-    - SideQuest: pops up randomly, has a very unique task/poll for the voters
-- Using variable in the poll or not **(default)**
-    - Default: contains no variables
-    - Variable: can be in poll question body or answers body, will be rendered during the edit stage
-- Requires extra text from users or no comment **(default)**
-    - Extra text: users need to submit a short answer
-    - Nothing extra means answers are casual click buttons
-- Single **(default)** or multichoice
-    - Single: voters can only pick one answer
-    - Multichoice: voters can pick more than 1 answer at a time
-- Anonym **(default)** or public 
-    - Public: the voters identity is shows next to their answers
-    - Anonym: as usual, voters cannot see others' choices
-- Names **(default)** / Options / Range
-    - Names: The names of the voters are the answers
-    - Options: The pollster can create custom options to vote for
-    - Range: The pollster can set a range for the voters to select from - on a slider possibly
-- (if Options) Yes-or-no or open-ended **(default)**
-    - Open-ended options: voters can select more open ended options at a time
-    - Yes-or-no: excludes multichoice, since yes is the opposite of no
+- Unique ID
+- Voter(s) / Participants
+- Pollster / Author
+- Event Type: DailyPoll, Story, SideQuest
+- Question / Topic
+- Answers (response options)
+- Status
+- DateTime
+- Language Format: HU, EN, DE, IT, ...
+- Theme
 
----
+> `<html lang="en">` part of HTML needs to be changed according to event language, because of lang specific hyphenation rules
 
-*LEGACY TYPES:*
+### Event Type IDs
 
-- **D**efault / Using **V**ariables
-- **S**ingle or **M**ultiple choices
-- **N**ames or **C**ustom options as choices
-- The custom options are **Y**es-or-No questions, or user-defined **O**ptions
+- DailyPoll: 1
+- SideQuest: 2
+- Story: 3
 
----
+### DailyPoll Categories
 
-## Database insight
+- Variable Support
+- Selection Type: single or multichoice
+- Visibility: anonym (default) or public
+- Answer Format: names, range, yesorno, openended, prompt, teams, ranking (answers can be ranked by preference)
+  + chained: Follow-up questions based on results.
 
-poll format:
+### SideQuest
+
+Randomized and creative polls, typically appearing every 5 days or on prime-numbered days.
+
+Task Examples:
+
+1. Create memes or sketches: Draw sketch based on prompt (weekend game - relaxed env)
+2. Emoji-only responses - which one describes the best
+3. Trivia / Honfoglaló: correct or closest wins ()
+4. Two truths and a lie
+5. Bet on outcome: bet before answering
+6. Hangman: everyone gets 1 help
+7. Haikus (could be difficult) - special event - based on celebrations - maybe based on full moons
+8. Word-based games (county city names animal thing) 
+
+## Story
+
+A multi-event narrative experience.
+
+Each new poll inherits previous answers.
+
+Designed like a branching DnD-style adventure.
+
+## Question Type Format
+
+`<category>,<variable>,<prompt>,<choice_type>,<visibility>,<answer_type>`
+
+`dailypoll,variable,prompt,single,anonym,names`
+
+### Question Rules (Incompatible Combinations)
+
+- multichoice ❌ with yesorno, range, teams, prompt, public
+- single ❌ with ranking
+- anonym ❌ with teams
+- ranking ❌ with prompt, yesorno, teams
+- public ❌ range
+
+## Question JSON Structure
 
 ```json
+{
   "IDX": {
-    "Type": "DSNX",
-    "Question": "Who is most likely to cheat on a test?",
-    "Answers": {
-        "Voter1": 0,
-        "Voter2": 0,
-        "Voter3": 0,
-        "Voter4": 1,
-        "Voter5": 0,
-        "Voter6": 0,
-        "Voter7": 0
+    "Type": "dailypoll,variable,prompt,single,anonym,names",
+    "Theme": {
+      "bgColour": "#HEX",
+      "fontstyle": "style",
+      "frontColour": "#HEX"
     },
-    "Status": 1
+    "Question": "Who is most likely to cheat on a test?",
+    "Pollster": "UID",
+    "Options": {
+      "range config": "option list with IDs"
+    },
+    "Answers": {
+      "Voter1": "value",
+      "Voter2": 0
+    },
+    "Status": 0
   }
+}
 ```
 
-databases:
+Legacy Type Format
 
-- user_db.json
-- questions_bank.json
+Code	Meaning
+S	Single Choice
+M	Multi Choice
+N	Names
+C	Custom Options
+Y	Yes/No
+O	Open-ended
+F	Teams (1v1)
+Example: DMNX = Daily, Multi-choice, Names, Anonym
+
+---
+
+
+## SVG & Graphing
+
+Custom themes and range plots can use SVG Bezier curves:
+
+SVG Commands:
+
+M - Move \
+L - Line \
+C - Curve \
+Z - Close path
+
+
+Future update: use SVG curve for Range plotting
+
+```css
+
+path {
+    fill: #4f46e5; /* Indigo-600 */
+    stroke: #1e40af; /* Indigo-900 */
+    stroke-width: 2;
+}
+svg {
+    width: 400px;
+    height: 300px;
+    background-color: white;
+}
+
+  <svg viewBox="0 0 400 200">
+    <!-- Cubic Bezier Curve filled and closed to make a shape -->
+    <path d="
+      M 50 150
+      C 150 110, 50 50, 350 150
+      L 350 160
+      L 50 160
+      Z
+    " />
+  </svg>
+
+```
+
+## App Routes & Components
+
+### Landing Page
+
+1) Seasonal Banner
+2) Logged-in Username
+3) Alert/Popup
+4) Active Story / SideQuest
+5) Daily Joke
+6) DailyPoll
+7) Event Editor
+8) Drawing Canvas & Gallery
+9) naMizu Info
+10) Special Thanks
+11) Login/Logout
+12) Version Log
+
+> Session lasts 1 week (604800 seconds)
+> Tracks:
+> userID, last app visited
+
+### Streak progression
+
+Users will get streak, if they participate in any event
+
+### Poll Pages
+
+**DailyPoll Page**
+
+Before Voting:
+
+Banner, back icon, question & answers
+
+After Voting:
+
+Stats, results, comments, version log
+
+**SideQuest Page**
+
+**EventEditor Page**
+
+All poll configuration options (Advanced Mode)
+
+JSON editor in advanced mode
+
+Live Preview
+
+### Calendar Page
+
+Date-based navigation
+Today highlighted
+
+### History Page
+
+Archive of past polls
+Could be in raw json format
+
+### Admin Page
+
+User visits
+Voter tracking
+Event bank management
+
+## Database Overview
+
+**Main Databases:**
+
+- users_db.json
+- events_bank.json
 - visit_count.json
 - history.json
-- today_poll.json
+- daily_poll.json
 - comments.json
 - drawings.json
 
-users_db
+## New User DB Format
 
 ```json
+"IDX": {
+  "name": "NAME",
+  "passw": "PASS",
+  "profilePic": "pic.png",
+  "participated": {
+    "dailyPoll": 0,
+    "sideQuest": 0,
+    "story": 0
+  },
+  "loggedin": 0,
+  "streak": 0
+}
+```
+Comments Format
+json
+Copy
+Edit
+"CID": {
+  "uid": "UID",
+  "appID": "APPID",
+  "datetime": "DATETIME",
+  "text": "TXT"
+}
+History Format
+json
+Copy
+Edit
+"DD-MM-YYYY": {
+  "Type": "XXXX",
+  "Question": "QUESTION",
+  "Answers": {
+    "Yes": 0,
+    "No": 0
+  },
+  "Voted": {
     "IDX": {
-        "name": "NAME",
-        "passw": "PASS",
-        "voted": 0,
-        "loggedin": 0,
-        "streak": 0
-    },
-```
+      "name": "NAME",
+      "voted": 0
+    }
+  },
+  "Comments": [
+    {
+      "name": "NAME",
+      "message": "COMMENT"
+    }
+  ]
+}
 
-history file:
+## Planned Features for v3.1+
 
-```json
-  "DD-MM-YYYY": {
-        "Type": "XXXX",
-        "Question": "QUESTION",
-        "Answers": {
-            "Yes": 0,
-            "No": 0,
-            "Maybe": 0
-        },
-        "Voted": {
-            "IDX": {
-                "name": "NAME",
-                "voted": 0
-            }
-        },
-        "Comments": [
-            {
-                "name": "NAME",
-                "message": "COMMENT"
-            }
-        ]
-    },
-```
-
----
-
-## Components/Routes
-
-### Landing page
-
-1) Banner
-    - could change seasonally
-2) username
-    - show username who is logged in
-3) Alert / Notice popup
-    - any important info should show up on the top
-4) Story / Sidequest
-    - if sidequest or story is active, show up before DailyPoll
-5) DailyPoll
-6) Event Editor
-7) Canvas + Gallery
-8) naMizu info: opensource, free, no data collection...
-9) Special Thanks
-10) Version log
-
-### Login page + logout page
-
-DailyPoll page
-
-SideQuest page
-
-EventEditor page
-
-Calendar page
-
-History pages
-
-Admin page
-
-Drawing Canvas page
-
-Gallery page
+- MySQL support
+- Profile pictures
+- Mobile app (Android / iOS)
+- More minigames implemented
 
 
-## Big update ideas:
+## TODO
 
-- mysql setup,
-- profile pics?
-- anonym voting?
-- app? android vs iOS
-- separate apps under naMizu
+részletesebben kifejteni az opciókat az Editorban ✅
+gallery fix X
+comments to sidequest ✅
+button to switch between day and night theme X
+
+research new line and submit difference
+
+new line in textarea - <pre> and "white-space: pre-wrap;"
+
+profile pics could be uploaded, to use funny images
+
+range max: 10 ✅
+range result visualise ✅
+
+sideQuest - event maybe constrained to days
+more events: for each
+or 3 days
+
+choose to show poll within 5 days ❌
+
+spontanous events / popups could be clear on duration: display how long ✅
+
+range: when upgraded to gauss, can go over 10, right now keep it below 11 ✅
+
+IMPORTANT: implement notice system: notice bank, expiry, message, colour [...]
+
+ranking: minimum 3 options ✅
+
+ranking: sum up points: 1st 5 pts 2nd 4 pts - show on bottom 
+
+editor: range: scale size note on max 10 - integer ✅
+
+country city male female ✅
+
+yesorno ✅
+

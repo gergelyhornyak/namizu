@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Pangolin&family=Playwrite+AU+SA:wght@200&family=Playwrite+RO:wght@100..400&family=Sansation:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+  <title>naMizu daily poll</title>
+  <style>
+    :root {
+        --bg-colour1: {{ theme.mainBG1 }};
+        --bg-colour2: {{ theme.mainBG2 }};
+
+        --banner-colour1: {{ theme.bannerBG1 }};
+        --banner-colour2: {{ theme.bannerBG2 }};
+        --banner-text: {{ theme.bannerTXT }};
+
+        --tiles-colour: {{ theme.tilesBG }};
+        --tiles-text: {{ theme.tilesTXT }};
+
+        --event1-colour: {{ theme.event1BG }};
+        --event1-text: {{ theme.event1TXT }};
+        --event2-colour: {{ theme.event2BG }};
+        --event2-text: {{ theme.event2TXT }};
+
+        --notice1-colour: {{ theme.notice1BG }};
+        --notice1-border: {{ theme.notice1BRD }};
+        --notice1-text: {{ theme.notice1TXT }};
+
+        --notice2-colour: {{ theme.notice2BG }};
+        --notice2-border: {{ theme.notice2BRD }};
+        --notice2-text: {{ theme.notice2TXT }};
+
+        --tiles-buttons-colour: {{ theme.buttonsBG }};
+        --tiles-buttons-border: {{ theme.buttonsBRD }};
+        --tiles-buttons-text1: {{ theme.buttonsTXT1 }};
+        --tiles-buttons-text2: {{ theme.buttonsTXT2 }};
+        --footer-colour: {{ theme.footerBG }};
+        --footer-text: {{ theme.footerTXT }};
+        --icon-colour1: {{theme.iconBG1}};
+        --icon-colour2: {{theme.iconBG2}};
+        --ranking-colour: {{theme.rankingBG}};
+        --ranking-text: {{theme.rankingTXT}};
+    }
+
+    body {
+      margin: 0;
+      font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+      font-family: "Sansation", sans-serif;
+      font-weight: 300;
+      font-style: normal;
+      background: linear-gradient(to bottom right, var(--bg-colour1), var(--bg-colour2));
+      color: var(--banner-text);
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(to top, var(--banner-colour1), var(--banner-colour2));
+      color: var(--banner-text);
+      padding: 30px 16px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      margin: 0;
+    }
+
+    .nav-icon {
+      font-size: 1.6rem;
+      border-radius: 50%;
+      padding: 10px;
+      background: radial-gradient(circle, var(--icon-colour1), var(--icon-colour2))
+    }
+
+    /* Poll question styling */
+    .question-section {
+      background-color: var(--tiles-colour);
+      /*background-color: #ffffff74;*/
+      padding: 2%;
+      margin: 2%;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 1.1rem;
+      line-height: 1;
+    }
+
+    .pollster {
+      font-style: normal;
+      font-size: 1rem;
+      margin-block-start: 0.3em;
+    }
+
+    .podium-title {
+      padding: 2%;
+      border-radius: 14px;
+      font-style: normal;
+      font-size: 1.2rem;
+      margin-block-start: 0.3em;
+      margin: 2% 18% 7%;
+      justify-content: center;
+      display: flex;
+      gap: 5%;
+    }
+
+    .instruction {
+      text-align: center;
+      padding: 4px;
+      font-weight: bold;
+      font-size: 1rem;
+      margin: 2%;
+    }
+
+    /* Voting area */
+    .vote-box {
+      display: flex;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      background: var(--tiles-colour);
+      margin: 0 12px;
+      padding: 20px;
+      border-radius: 12px;
+    }
+
+    .vote-btn {
+      max-width: 250px;
+      padding: 8px;
+      background: var(--tiles-buttons-colour);
+      color: var(--tiles-buttons-text2);
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    footer {
+      margin-top: auto;
+      text-align: center;
+      padding: 15px;
+      font-size: 0.85rem;
+      background: var(--footer-colour);
+      color: var(--footer-text);
+      font-weight: bold;
+    }
+
+    footer p {
+      margin: 1%;
+    }
+
+    .slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 15px;
+      border-radius: 5px;
+      background: #d3d3d3;
+      outline: none;
+      opacity: 1;
+    }
+
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      background: var(--tiles-buttons-colour);
+      cursor: pointer;
+    }
+
+    .slider::-moz-range-thumb {
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      background: var(--tiles-buttons-colour);
+      cursor: pointer;
+    }
+
+    .prompt-box {
+      display: flex;
+    }
+
+    .prompt-box #prompt {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-top-left-radius: 8px;
+      border-bottom-left-radius: 8px;
+      outline: none;
+      font-size: 1em;
+    }
+
+    .prompt-box #promptSubmit {
+      padding: 10px 15px;
+      background-color: #f5c199;
+      border: none;
+      border-top-right-radius: 8px;
+      border-bottom-right-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 1em;
+    }
+
+    .comments-box {
+      background-color: var(--tiles-colour);
+      /*background-color: rgba(255, 255, 240, 0.385);*/
+      border-radius: 10px;
+      max-width: 400px;
+      padding: 2% 4% 4%;
+      margin: 5% 2% 2%;
+    }
+
+    .comments-header {
+      text-align: center;
+      padding: 10px;
+      font-weight: bold;
+      font-size: 18px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+    }
+
+    .range-text {
+      width: 100%;
+      font-size: 0.8rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .checkboxx {
+      font-weight: 600;
+      background-color: var(--tiles-buttons-colour);
+      color: var(--tiles-buttons-text1);
+      border-radius: 6px;
+      padding: 2%;
+    }
+
+    .ranking-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .ranking-list li {
+      background: var(--ranking-colour);
+      padding: 14px 18px;
+      margin-bottom: 10px;
+      color: var(--ranking-text);
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      cursor: grab;
+      font-size: 18px;
+      user-select: none;
+      touch-action: none;
+      /* Prevent accidental scroll */
+    }
+
+    .ghost {
+      opacity: 0;
+    }
+
+    hr {
+      margin: 0% 0%;
+      border: 6px solid #ffda24;
+    }
+
+    .chosen {
+      background-color: var(--ranking-colour);
+      transform: scale(1.01);
+      box-shadow: 0 4px 12px rgba(0, 0, 0);
+      z-index: 1000;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      background-color: #4CAF50;
+      color: white;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    #chart-container {
+      width: 90%;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-left: 5%;
+    }
+
+    .bar-wrapper {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 5px;
+    }
+
+    .bar-name {
+      width: 100%;
+      display: flex;
+      align-items: flex-start;
+      gap: 4px;
+    }
+
+    .bar {
+      position: relative;
+      background-color: #bf4222;
+      border-radius: 20px;
+      border-top-left-radius: 0%;
+      border-bottom-left-radius: 0%;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      flex-wrap: wrap;
+      word-wrap: break-word;
+      padding: 1% 0%;
+    }
+
+    .bar .value {
+      color: #fff;
+      font-weight: bold;
+      font-size: medium;
+      white-space: normal;
+      overflow-wrap: break-word;
+      padding-left: 10px;
+      padding-right: 10px;
+      max-width: 100%;
+      text-align: right;
+      align-self: flex-end;
+      /* Align value to the bottom right */
+      display: inline-block;
+    }
+
+    .bar .label {
+      font-size: 16px;
+      font-weight: normal;
+      text-align: left;
+      color: #333;
+      padding-left: 10px;
+      width: 100%;
+      /* Ensure label spans the full width */
+    }
+
+    /* Optional: Style for bar container to ensure it wraps neatly */
+    .bar-wrapper .label {
+      padding: 1.3%;
+      border-radius: 12px 12px 0px 0px;
+      background-color: #ffffff6b;
+      font-weight: bold;
+    }
+
+    .podium-section {
+      background-color: #ffffff4a;
+      border-radius: 12px;
+      padding: 3%;
+      margin: 4% 4%;
+    }
+
+    .podium-container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .podium {
+      flex: 1 1 40px;
+      background-color: #6EACDA;
+      color: white;
+      border-radius: 12px 12px 0 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      box-shadow: 5px -5px 8px rgb(0 0 0 / 20%);
+    }
+
+    .podium-1 {
+      height: 180px;
+      background-color: #ac4d16;
+    }
+
+    .podium-2 {
+      height: 140px;
+      background-color: #750E21;
+    }
+
+    .podium-3 {
+      height: 120px;
+      background-color: #3E4377;
+    }
+
+    .podium-rank {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .podium-name {
+      font-size: 1rem;
+      padding: 10px 0;
+      margin: 6%;
+      word-break: break-word;
+      hyphens: auto;
+    }
+
+    .others {
+      max-width: 80%;
+      margin: 4px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .other-item {
+      background-color: var(--ranking-colour);
+      margin: 10px 0;
+      padding: 12px 20px;
+      border-radius: 10px;
+      box-shadow: 5px -5px 5px rgba(0, 0, 0, 0.08);
+      display: flex;
+      justify-content: start;
+      align-items: center;
+    }
+
+    .other-rank {
+      font-weight: bold;
+      color: #ee6c4d;
+      margin-right: 15px;
+      font-size: 1.1rem;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      word-wrap: break-word;
+    }
+
+    .message {
+      margin-bottom: 10px;
+    }
+
+    .message .text {
+      background-color: var(--tiles-colour);
+      color: var(--banner-text);
+      padding: 8px;
+      border-radius: 6px;
+      display: inline-block;
+      word-break: break-word;
+    }
+
+    .note-container {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .sticky-note {
+      font-family: "Playwrite AU SA", cursive;
+      font-optical-sizing: auto;
+      font-weight: 200;
+      font-style: normal;
+      max-width: 140px;
+      min-width: 140px;
+      min-height: 140px;
+      background: #fff9aa;
+      box-shadow: -1px 6px 12px 1px rgba(0, 0, 0, 0.2);
+      padding: 2%;
+      transform: rotate(-2deg);
+      border: 1px solid #e1d25f;
+      border-radius: 8px;
+      border-bottom-right-radius: 12%;
+      font-size: 11px;
+      color: #333;
+      position: relative;
+      word-wrap: break-word;
+      hyphens: auto;
+    }
+
+    .sticky-note-editor {
+      font-family: "Playwrite AU SA", cursive;
+      font-optical-sizing: auto;
+      font-weight: 200;
+      font-style: normal;
+      max-width: 240px;
+      min-height: 240px;
+      background: #fff9aa;
+      box-shadow: -1px 6px 12px 1px rgba(0, 0, 0, 0.2);
+      padding: 2%;
+      transform: rotate(-2deg);
+      border: 1px solid #e1d25f;
+      border-radius: 8px;
+      border-bottom-right-radius: 12%;
+      font-size: 14px;
+      color: #333;
+      position: relative;
+    }
+
+    .sticky-note h3 {
+      margin: 0%;
+    }
+
+    .form-note {
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .form-note textarea {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: transparent;
+      font-size: 1rem;
+      resize: none;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .form-note button {
+      align-self: flex-end;
+      padding: 6px 10px;
+      background: #ffcd38;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .submit-button {
+      width: 50%;
+      margin: 10% 22%;
+      padding: 18px;
+      border: none;
+      background-color: var(--tiles-buttons-colour);
+      color: var(--tiles-buttons-text1);
+      font-weight: bold;
+      font-size: 20px;
+      border-radius: 14px;
+      cursor: pointer;
+    }
+
+    .voter-icons {
+      display: flex;
+      gap: 6px;
+    }
+
+    .voter-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #000;
+      font-size: 14px;
+      background-color: whitesmoke;
+    }
+
+    .team-container {
+      display: flex;
+      gap: 20px;
+      align-self: center;
+      max-width: 600px;
+      margin: 2%;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+    }
+
+    .team-card {
+      border-radius: 16px;
+      padding: 20px;
+      color: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .team-red {
+      background: linear-gradient(135deg, #af211d, #af221d7a);
+    }
+
+    .team-blue {
+      background: linear-gradient(135deg, #2d93ad, #2d93ad81);
+    }
+
+    .team-title {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .team-score {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .team-members {
+      font-weight: 400;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .team-members li {
+      background: rgba(255,255,255,0.1);
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin-bottom: 5px;
+    }
+    .profile-pic {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        object-fit: cover;
+        }
+
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <header>
+      <a href="{{ url_for('namizu.landingPage') }}">
+        <div class="nav-icon">&#127968;</div>
+      </a>
+      <h1>naMizu DailyPoll</h1>
+      <!--
+      <a href="{{ url_for('namizu.calendarApp') }}">
+        <div class="nav-icon">&#128197;</div>
+      </a>
+      -->
+    </header>
+
+    <section class="question-section">
+      {% if qTypeDescr.public %}
+      <p class="pollster"><i>{{ pollster }}'s question</i></p>
+      {% endif %}
+      <p class="question-text">
+        {{ questionBody }}
+      </p>
+    </section>
+
+    {% if not pollSubmitted %}
+    <form method="POST" id="mainForm">
+
+      <section class="instruction">
+        {% if qTypeDescr.multichoice %}
+        MULTI-CHOICE
+        {% endif %}
+
+        {% if qTypeDescr.singlechoice %}
+        SINGLE-CHOICE
+        {% endif %}
+
+        {% if qTypeDescr.range %}
+        RANGE
+        {% endif %}
+
+        {% if qTypeDescr.prompt %}
+        PROMPT
+        {% endif %}
+
+        {% if qTypeDescr.ranking %}
+        RANKING
+        {% endif %}
+
+        {% if qTypeDescr.yesorno %}
+        YES OR NO
+        {% endif %}
+
+        {% if qTypeDescr.names or qTypeDescr.openended %}
+        OPTIONS
+        {% endif %}
+
+        {% if qTypeDescr.teams %}
+        TEAMS
+        {% endif %}
+      </section>
+
+      {% if qTypeDescr.buttons %}
+
+          {% if qTypeDescr.singlechoice %}
+              {% if qTypeDescr.yesorno %}
+                  <div style="text-align: center;margin: 2%;">
+                    Extremes worth 3x
+                  </div>
+              {% endif %}
+          <section class="vote-box">
+            {% for oid, option in optionsBody.items() %}
+            <button class="vote-btn" type="submit" name="vote" value="{{ option }}">{{ option }}</button>
+            {% endfor %}
+          </section>
+
+          {% elif qTypeDescr.multichoice %}
+          <section class="vote-box">
+            {% for oid, option in optionsBody.items() %}
+            <label class="checkboxx">
+              <input class="checkboxx_input" type="checkbox" name="{{ oid }}" style="display: none;" value="{{ option }}"
+                onchange="isChecked(this,'')" />
+              <div class="checkboxx_label">{{ option }}</div>
+            </label>
+            {% endfor %}
+          </section>
+          {% endif %}
+
+      {% endif %}
+
+      {% if qTypeDescr.range %}
+      <section class="vote-box">
+        <div class="range-text">
+          <div>{{ optionsBody.mintext }}</div>
+          <div>{{ optionsBody.maxtext }}</div>
+        </div>
+        <input type="range" min="{{ optionsBody.minvalue }}" max="{{ optionsBody.maxvalue }}"
+          value="{{ optionsBody.minvalue }}" class="slider" id="myRange">
+        <span id="slider-output" style="font-weight: bold;"></span>
+        <input type="hidden" id="rangeValue" name="range_value" value="{{ optionsBody.minvalue }}">
+      </section>
+
+      {% endif %}
+
+      {% if qTypeDescr.ranking %}
+      <section class="vote-box" style="display:block;">
+        <ul id="sortable-list" class="ranking-list">
+          {% for oid, option in optionsBody.items() %}
+          <li data-value="{{ option }}">{{ option }}</li>
+          {% endfor %}
+        </ul>
+        <input type="hidden" name="ranked_list" id="rankedInput">
+      </section>
+      {% endif %}
+
+      {% if qTypeDescr.prompt %}
+      <div class="note-container">
+        <div class="sticky-note-editor form-note" id="noteForm">
+          <textarea name="prompt_message" placeholder="Write your answer here..."></textarea>
+          <!--<button type="submit">Add</button>-->
+        </div>
+      </div>
+      {% endif %}
+
+      {% if qTypeDescr.prompt or qTypeDescr.range or qTypeDescr.ranking or (qTypeDescr.buttons and
+      qTypeDescr.multichoice) %}
+      <button class="submit-button" type="submit">Submit</button>
+      {% endif %}
+
+    </form>
+    {% else %} 
+    
+    <!-- if player already submitted poll -->
+
+    <!--<div class="instruction">{{ kudosMessage }}</div>-->
+    <div class="instruction">{{ voterStat.voteSum }} of {{ voterStat.voterSum }} people have voted already</div>
+
+    {% if qTypeDescr.range %}
+      <div style="margin: 6% 4% 2%;">  
+          <canvas id="sliderDistributionChart"></canvas>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-weight: bold; margin: 1.5% 10%;">
+        <span >{{rangeProcessed.mintext}}</span>
+        <span >{{rangeProcessed.maxtext}}</span>
+      </div>
+    {% endif %}
+
+    {% if qTypeDescr.names or qTypeDescr.openended%}
+        <div id="chart-container">
+            {% for label, details in answersProcessed.items() %}
+                <div class="bar-wrapper">
+                    <div class="label">{{ label }}</div>
+                    <div class="bar-name">
+                        <div class="bar" style="width: {{ details.width }}%;">
+                            <span class="value">{{ details.value }}</span>
+                        </div>
+                        {% if qTypeDescr.public %}
+                            {% for voter in details.voters %}
+                            <div class="voter-icons">
+                                <div class="voter-icon">{{ voter }}</div>
+                            </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if qTypeDescr.yesorno %}
+
+    <div style="font-family: sans-serif; max-width: 700px; margin: 5% 10%;">
+    
+      <div style="display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 10px;">
+        <span style="color: green;">Yes</span>
+        <span style="color: black;">|</span>
+        <span style="color: #a70000;">No</span>
+      </div>
+    
+      <div style="display: flex; background: #eee; height: 30px; border-radius: 15px; overflow: hidden;">
+        <!-- Definitely (Yes) -->
+        <div style="flex: {{ yesornoProcessed.Definitely }}; background: #4caf50;"></div>
+        <!-- Probably (Yes-leaning) -->
+        <div style="flex: {{ yesornoProcessed.Yes }}; background: #8bc34a;"></div>
+        <!-- Probably Not (No-leaning) -->
+        <div style="flex: {{ yesornoProcessed.No }}; background: #ff9800;"></div>
+        <!-- Never (No) -->
+        <div style="flex: {{ yesornoProcessed.Never }}; background: #f44336;"></div>
+      </div>
+    
+      <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-top: 5px;">
+        <span style="display: flex;gap:4px;">
+        {% if qTypeDescr.public %}
+            {% for voter in yesornoProcessed.YesSide.values() %}
+            <div class="voter-icons">
+                <div class="voter-icon">{{ voter }}</div>
+            </div>
+            {% endfor %}
+        {% endif %}
+        </span>
+        <span style="display: flex;gap:4px;">
+            {% if qTypeDescr.public %}
+              {% for voter in yesornoProcessed.NoSide.values() %}
+                <div class="voter-icons">
+                    <div class="voter-icon">{{ voter }}</div>
+                </div>
+                {% endfor %}
+            {% endif %}
+        </span>
+      </div>
+    </div>
+    
+    {% endif %}
+
+    {% if qTypeDescr.ranking %}
+        {% for uid, details in rankingProcessed.items() %}
+        <section class="podium-section">
+          {% if qTypeDescr.public %}
+          <div class="podium-title">
+              <img src="{{ url_for('static', filename='img/' + details.profpic) }}" alt="ProfilePic" class="profile-pic">
+              <div>{{ details.username }}'s tier list</div>
+          </div>
+          {% endif %}
+          <div class="podium-container">
+            {% for rank, roman_and_name in details.top_three.items() %}
+            <div class="podium podium-{{ rank }}">
+              <div class="podium-rank">{{ roman_and_name.roman }}.</div>
+              <div class="podium-name">{{ roman_and_name.name }}</div>
+            </div>
+            {% endfor %}
+          </div>
+          <hr>
+          <ul class="others">
+            {% for rank, roman_and_name in details.others.items() %}
+            <li class="other-item">
+              <span class="other-rank">{{ roman_and_name.roman }}.</span> {{ roman_and_name.name }}
+            </li>
+            {% endfor %}
+          </ul>
+        </section>
+        {% endfor %}
+    {% endif %}
+
+    {% if qTypeDescr.prompt %}
+        <div class="note-container">
+          {% for uid, details in answersProcessed.items() %}
+          <div class="sticky-note">
+            {% if qTypeDescr.public %}
+            <h3>{{ details.username }}</h3>
+            {% endif %}
+            <p>{{ details.text }}</p>
+          </div>
+          {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if qTypeDescr.teams %}
+      <div class="team-container">
+        <div class="team-card team-red">
+          <div class="team-title">Team <br> {{ sidesProcessed.redteam.name }}</div>
+          <div class="team-score">Score: {{ sidesProcessed.redteam.score }}</div>
+          {% for voter in sidesProcessed.redteam.voters %}
+              <ul class="team-members">
+                <li>{{ voter }}</li>
+              </ul>
+          {% endfor %}
+        </div>
+
+        <div class="team-card team-blue">
+          <div class="team-title">Team <br> {{ sidesProcessed.blueteam.name }}</div>
+          <div class="team-score">Score: {{ sidesProcessed.blueteam.score }}</div>
+          {% for voter in sidesProcessed.blueteam.voters %}
+              <ul class="team-members">
+                <li>{{ voter }}</li>
+              </ul>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    <section class="comments-box">
+      <div class="comments-header">Comments</div>
+
+      <div class="chat-messages" id="chatMessages">
+        {% if todayComments %}
+        {% for comment in todayComments.values() %}
+        <div class="message">
+          <div class="text"><strong>{{ comment.username }}:</strong> {{ comment.text }}</div>
+        </div>
+        {% endfor %}
+        {% endif %}
+      </div>
+
+      <form method="POST">
+        <div class="prompt-box">
+          <input type="text" id="prompt" name="comment" placeholder="Type a message...">
+          <input type="submit" id="promptSubmit" value="Submit">
+        </div>
+      </form>
+    </section>
+
+    {% endif %}
+
+    <footer>
+      <p>{{ footerTextTop }}</p>
+      <p>{{ footerTextBot }}</p>
+    </footer>
+
+  </div>
+
+  
+  <script>
+    {% if qTypeDescr.prompt %}
+
+    const notes = document.querySelectorAll('.sticky-note');
+    notes.forEach(note => {
+      const deg = (Math.random() * 6 - 3).toFixed(2); // Random -3 to +3
+      note.style.transform = `rotate(${deg}deg)`;
+    });
+
+
+    {% endif %}
+    function isChecked(elem) {
+      //elem.parentNode.style.backgroundColor = (elem.checked) ? ' #a2a2a2' : '#ffffff';
+      // when checked, reduce margin and increase border - to keep gap same size
+      elem.parentNode.style.border = (elem.checked) ? '3px solid black' : '0px solid #ddd';
+    }
+
+    {% if qTypeDescr.ranking %}
+
+    const sortable = new Sortable(document.getElementById('sortable-list'), {
+      animation: 300,
+      ghostClass: 'ghost',       // Hide the original item
+      chosenClass: 'chosen',     // Style the lifted item
+      onStart: () => document.body.style.overflow = 'hidden',
+      onEnd: () => {
+        document.body.style.overflow = 'auto',
+          saveOrder();
+      },
+    });
+
+    const input = document.getElementById('rankedInput');
+
+    // Function to save the current order of the list into the hidden input field
+    function saveOrder() {
+      const items = document.querySelectorAll('#sortable-list li');
+      const ordered = Array.from(items).map(item => item.dataset.value);
+      input.value = JSON.stringify(ordered);  // Store the ordered list as a JSON string
+    }
+
+    {% endif %}
+
+    {% if qTypeDescr.range%}
+
+    {% if not pollSubmitted %}
+
+    const slider = document.getElementById("myRange");
+    const output = document.getElementById("slider-output");
+    const rangeValue = document.getElementById('rangeValue');
+
+    // Set initial value
+    output.textContent = slider.value;
+
+    // Update as user moves the slider
+    slider.addEventListener("input", () => {
+      output.textContent = slider.value;
+      rangeValue.value = slider.value;
+    });
+
+    {% else %}
+
+    const chartCtx = document.getElementById('sliderDistributionChart').getContext('2d');
+    const chartData = {
+        labels: {{ rangeProcessed.range }},
+        datasets: [{
+            data: {{ rangeProcessed.distribution }},
+            borderColor: "{{ theme.rangeChartBRD }}",
+            backgroundColor: "{{ theme.rangeChartBG }}",
+            tension: 0.3,  // Bezier curve smoothness
+            fill: true,
+            pointRadius: 3
+        }]
+    };
+
+    const chartConfig = {
+        type: 'line',
+        data: chartData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {display: false}
+            },
+            scales: {
+                x: {
+                    min: 1,
+                    max: {{ rangeProcessed.maxvalue }},
+                    grid: {display: false},
+                    border: {display: true},
+                    ticks: {display: true}
+                },
+                y: {display: false}
+            }
+        }
+    };
+
+    new Chart(chartCtx, chartConfig);
+      {% endif %}
+    {% endif %}
+
+  </script>
+
+
+</body>
+
+</html>

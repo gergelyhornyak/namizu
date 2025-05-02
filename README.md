@@ -1,29 +1,82 @@
-# NaMizu Github Repo
+# 💬 naMizu App
 
-naMizu daily poll app.
+![Version](https://img.shields.io/badge/version-3.0.1-green) ![Release](https://img.shields.io/badge/release-develop-153f66) ![Python](https://img.shields.io/badge/python-3.10-yellow) ![apache_httpd](https://img.shields.io/badge/httpd-2.4.63-blue)
 
-![front page](./docs/img/image2.png)
+![banner](./docs/img/frontPageBanner.png)
 
-## Introduction
+## 📖 Introduction
 
-naMizu is a free and open-source application.
+naMizu is a free, open-source event-based web application, where community fun happens every day!
 
-## Apps
+Participate in creative polls or create your own, and play with your friends! If you got inspired, draw sketches, or dive into story-based adventures or weekly challenges — all in a lively, friendly platform designed for you and your friends.
 
-### naMizu Daily Poll app
+## 🚀 Key Features
 
-You can vote and add comments for daily polls.
+**🗳️ Daily Polls: Vote, comment, and see community results.**
 
-### naMizu Poll Editor app
+![prompt_example](./docs/img/prompt_example.png)
 
-You can create new polls in many categories.
+**🎮 Mini Games: fun sidequests, in form of e.g.: spelling bee, or hangman.**
 
-### naMizu Sketcher app
+![minigame_example](./docs/img/minigame_after.png)
 
-You can draw a sketch and submit it, then you can see your artwork in the gallery.
+**✍️ Poll Editor: Create custom polls across multiple categories.**
 
-[Documentation](./docs/Documentation.md)
+![editor_example](./docs/img/editor_example.png)
 
-[Manual](./docs/Manual.md)
+**🎨 Sketch & Submit: Draw and showcase your artwork.**
+
+![sketcher_example](./docs/img/sketcher_example.png)
+
+**🌙 Day/Night Themes: Automatic switching.**
+
+![dark_mode_example](./docs/img/dark_mode_banner.png)
+
+**📜 Story Adventures: Participate in branching, D&D-style stories.** \
+**💾 Daily Backups: Safe storage of your events and history.**
 
 
+
+
+
+
+ 
+
+
+## 📱 Apps Overview
+
+🗳️ naMizu Daily Poll App
+: Vote and comment on fresh daily polls!
+
+✍️ naMizu Poll Editor App
+: Create and customize new polls across many dynamic categories.
+
+🎨 naMizu Sketcher App
+: Draw a sketch based on prompts and share your art in the community gallery.
+
+## 📚 Full Documentation
+
+- 📖 [Documentation](./docs/Documentation.md)
+- 📔 [Manual](./docs/Manual.md)
+
+## 🎯 Planned Features (v4+)
+
+- 🔥 Full MySQL support
+- 🖼️ Profile pictures for users
+- 📱 Native Mobile App (ndroid & iOS)
+- 🎮 More minigames and gamified SideQuests
+- 📊 Advanced stats dashboard
+
+## 🤝 Special Thanks
+
+To all the contributors, friends, and early players who made naMizu possible!
+This is your playground. 🎉
+
+## 📥 How to Contribute
+
+Want to help improve naMizu? Fork this repo, and extend the source code with many more fun features, or fix remaining issues.
+
+---
+
+© 2025 naMizu™. Version 3.0.1_alpha. \
+Built together, played together.

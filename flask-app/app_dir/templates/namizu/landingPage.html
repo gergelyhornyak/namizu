@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="{{ url_for('static', filename='goatIcon.png') }}" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Pangolin&family=Playwrite+AU+SA:wght@200&family=Playwrite+RO:wght@100..400&family=Sansation:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <title>naMizu</title>
+    <style>
+
+        :root {
+            --bg-colour1: {{ theme.mainBG1 }};
+            --bg-colour2: {{ theme.mainBG2 }};
+
+            --banner-colour1: {{ theme.bannerBG1 }};
+            --banner-colour2: {{ theme.bannerBG2 }};
+            --banner-text: {{ theme.bannerTXT }};
+
+            --tiles-colour: {{ theme.tilesBG }};
+            --tiles-text: {{ theme.tilesTXT }};
+
+            --event1-colour: {{ theme.event1BG }};
+            --event1-text: {{ theme.event1TXT }};
+            --event2-colour: {{ theme.event2BG }};
+            --event2-text: {{ theme.event2TXT }};
+
+            --notice1-colour: {{ theme.notice1BG }};
+            --notice1-border: {{ theme.notice1BRD }};
+            --notice1-text: {{ theme.notice1TXT }};
+
+            --notice2-colour: {{ theme.notice2BG }};
+            --notice2-border: {{ theme.notice2BRD }};
+            --notice2-text: {{ theme.notice2TXT }};
+
+            --tiles-buttons-colour: {{ theme.buttonsBG }};
+            --tiles-buttons-border: {{ theme.buttonsBRD }};
+            --tiles-buttons-text: {{ theme.buttonsTXT1 }};
+            --footer-colour: {{ theme.footerBG }};
+            --footer-text: {{ theme.footerTXT }};
+        }
+
+        /* General Styles */
+        body {
+            /*font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;*/
+            font-family: "Sansation", sans-serif;
+            font-weight: 300;
+            font-style: normal;
+            margin: 0;
+            padding: 0;
+            color: var(--banner-text);
+            background: linear-gradient(to bottom right, var(--bg-colour1), var(--bg-colour2));
+        }
+
+        /* Header Styling */
+        header {
+            color: var(--banner-text);
+            background: linear-gradient(to top, var(--banner-colour1), var(--banner-colour2));
+            text-align: center;
+            padding: 10% 2% 4%;
+            margin-bottom: 0%;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.8rem;
+            letter-spacing: 2px;
+        }
+        header p {
+            font-size: 1.3rem;
+            margin: 0.5rem 0;
+            opacity: 0.9;
+        }
+        header a {
+            color: var(--banner-text);
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .active-users {
+            text-align: center;
+            font-size: medium;
+            font-weight: bold;
+        }
+
+        /* Features Section */
+        .features {
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+            padding: 0 1rem;
+            max-width: 1200px;
+            background-repeat: no-repeat;
+        }
+
+        /* Feature Card Styling */
+        .feature-card {
+            background-color: var(--tiles-colour);
+            border-radius: 12px;
+            padding: 2%;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            flex: 1;
+            max-width: 320px;
+            margin: 1.5%;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 2%;
+            margin-top: 2%;
+        }
+        .feature-card p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        .feature-card a {
+            display: inline-block;
+            margin-top: 1%;
+            text-decoration: none;
+            font-weight: bold;
+            background: var(--tiles-buttons-colour);
+            color: var(--tiles-buttons-text);
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            /*text-shadow: 0px 0px 12px #000000d4;*/
+        }
+
+        /* Call-to-Action (CTA) Button */
+        .cta {
+            text-align: center;
+            margin: 2%;
+        }
+        .cta a {
+            display: inline-block;
+            background: var(--tiles-buttons-colour);
+            color: var(--tiles-buttons-text);
+            text-decoration: none;
+            font-size: 1.6rem;
+            font-weight: bold;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Footer Styling */
+        footer {
+            text-align: center;
+            background: linear-gradient(to bottom, var(--banner-colour1), var(--banner-colour2));
+            padding: 1.5rem;
+            margin-top: 2%;
+        }
+        footer p {
+            margin: 0;
+            font-size: 0.95rem;
+        }
+        hr {
+            color: #3a5d6c;
+        }
+        .cannon {
+        position: fixed;
+        top: 90%;
+        left: 10%;
+        transform: translateX(-50%) rotate(-30deg);
+        font-size: 3.5rem;
+        z-index: 100;
+        }
+
+        /* Mobile View Compatibility */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            header p {
+                font-size: 1.1rem;
+            }
+            .features {
+                padding: 0 0.5rem;
+            }
+            .feature-card {
+                max-width: 100%;
+            }
+            .cta a {
+                font-size: 1.6rem;
+                padding: 0.5rem 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cannon">📣</div>
+
+<header>
+    <!--<img src="{{ url_for('static', filename='img/cloudBunny.png') }}" width="100px" alt="">-->
+    <h1>Welcome {{ userName }} <br> to naMizu!</h1> <!-- ¿ -->
+    <p style="margin-top: 5%;font-weight: 400;"><i>{{ funnyMessage }}</i></p>
+    
+</header>
+<!--
+<section class="active-users">
+    Active users: &nbsp;
+    {% for user in activeUsers %}
+        {{ user }}, &nbsp;
+    {% endfor %}
+</section>
+-->
+<section class="features">
+
+    {% if sideQuestStatus %}
+    <div class="feature-card">
+        <div id="countdown" style="background: #00ff917a; color: #000; padding: 4px 10px; border-radius: 8px; font-weight: bolder; font-size: 1rem;margin-left: 35%;">
+            recurring every 3-4 days
+        </div>
+        {% if not userEventStatus.sideQuest %}
+        <h3>Heads up!</h3>
+        <p style="margin: 1% 0%;">It's time to compete in today's challenging</p>
+        {% else %}
+        <p style="margin: 1% 0%;">You can still check other's guesses in</p>
+        {% endif %}
+        <div class="cta">
+            <a href="{{ url_for('namizu.spellingBeeApp') }}">naMizu SideQuest</a>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if dailyJokeStatus %}
+    <div class="feature-card" style="border-left: 14px solid rgb(2 0 68 / 50%)">
+        <p style="margin: 1%;"><strong>Daily Joke: </strong><i>{{ dailyJoke }}</i></p>
+    </div>
+    {% endif %}
+
+    <div class="feature-card">
+        {% if not userEventStatus.dailyPoll %}
+        <h3>Today's poll awaits!</h3>
+        <p style="margin: 1% 0%;">Get ready and dive into</p>
+        {% else %}
+        <p style="margin: 1% 0%;">You can still leave comments for</p>
+        {% endif %}
+        <div class="cta">
+            <a href="{{ url_for('namizu.dailyPollApp') }}">naMizu DailyPoll</a>
+        </div>
+    </div>
+
+    <div class="feature-card">
+        <h3>Wanna add an event?</h3>
+        <p style="margin: 1% 0%;">Create your own questions using<a href="{{ url_for('namizu.editorApp') }}">naMizu Editor</a></p>
+    </div>
+
+    {% if noticeBank %}
+
+    {% for notice in noticeBank.values() %} 
+
+    {% if notice.render %}
+
+    <div class="feature-card">
+        <div id="countdown" style="background: #fffb0086; color: #000; padding: 4px 10px; border-radius: 8px; font-weight: bolder; font-size: 1rem;margin-left: 52%;">
+            ends in {{ notice.remainingDays }} days
+        </div>
+        <p style="font-size: large;margin: 0.5%;">{{ notice.subtitle }}</p>
+        <a href="{{ url_for(notice.redirect) }}">{{ notice.caption }}</a>
+    </div>
+
+    {% endif %}
+
+    {% endfor %}
+
+    {% endif %}
+<!--
+    <div class="feature-card">
+        <h3>Inspired by today's poll?</h3>
+        <p style="margin: 1% 0%;">Draw a sketch,  or visit the gallery<br>
+            <a href="{{ url_for('namizu.drawingApp') }}">naMizu<br>Canvas</a> &ensp; 
+            <a href="{{ url_for('namizu.gallery_welcome') }}">naMizu<br>Gallery</a>
+        </p>
+    </div>
+-->
+    <div class="feature-card">
+        <h3>Ad-Free</h3>
+        <h3>
+            <a href="https://github.com/gregoryhornyak/gamechanger" style="color: var(--banner-text);background: transparent;padding: 0%;text-decoration: underline;margin: 0%;text-shadow: none;">
+                Open Source</a>
+            </h3>
+        <h3>Zero Data Collection</h3>
+        <h3>No Micro-Transactions</h3>
+    </div>
+    
+    <div class="feature-card" style="border-left: 14px solid rgba(29, 211, 5, 0.5)">
+        <h3>Have a suggestion?</h3>  
+        <p style="margin: 1% 0%;">If you have any feedback on naMizu,<br>leave a message to Geri.</p>
+    </div>
+
+    <div class="feature-card" style="border-left: 8px solid rgb(164 7 7 / 50%)">
+        <h3>Special Thanks</h3>  
+        <p style="margin: 1% 0%;">to <strong>Bella</strong> and <strong>Márk</strong>,<br>who made sure the app runs smoothly.</p>
+    </div>
+
+    <div class="feature-card" style="border-left: 8px solid rgba(114, 7, 164, 0.5)">
+        <h3>Additional info</h3>  
+        <p style="margin: 1% 0%;">naMizu is offline between<br>4am to 6am CET (morning)</p>
+    </div>
+
+    <div class="feature-card">
+        <p style="margin: 1% 0%;">
+            Click here to
+            <a href="{{ url_for('namizu.logout') }}" style="padding: 1.5% 2%;">LOG OUT</a>
+        </p>
+        
+    </div>
+</section>
+
+<footer>
+    <p> {{ footerTextTop }} </p>
+    <p> {{ footerTextBot }} </p>
+</footer>
+
+<script>
+    window.onload = function () {
+      confetti({
+        particleCount: 250,
+        startVelocity: 70,
+        gravity: 0.7,
+        angle:70,
+        spread: 50,
+        origin: { y: 1, x:0.1 }
+      });
+    };
+</script>
+
+</body>
+
+</html>

@@ -149,7 +149,7 @@
 <body>
 
 <header>
-    <h1>¿naMizu?</h1> <!-- ¿ -->
+    <h1>naMizu?🐇</h1>
     {% if not alreadyLoggedIn %}
     <p style="font-size: 1.2rem;">Not the restaurant <!--{{ funnyMessage }}--> </p>
     {% elif alreadyLoggedIn %}
@@ -158,18 +158,42 @@
 </header>
 
 <section class="features">
-    <div class="feature-card" style="border-color:rgb(205, 50, 50)">
-        <h3>naMizu 3.0 is coming on <strong>Friday</strong>!</h3>
-        This means naMizu will shut down on Friday morning.<br>
-        <strong>But don't worry</strong>, it will be back by the afternoon!
+
+    <!--NOTICE / ALERT-->
+
+    <div class="feature-card" style="border-color:tomato">
+        <h4 style="margin: 2%;"><u>Notice:</u> Don't forget to login,<br>to continue your streak.</h4>
+        This feature will be fixed soon.
     </div>
-    <div class="feature-card" style="border-color:yellowgreen">
-        <strong>Please dont forget to login everyday.</strong><br>
-        <i>This will be fixed in 3.0 soon</i>
+    
+<!--
+    <div class="feature-card" style="border-color:steelblue">
+        <h3>Magnificent 💯</h4>
+        <h3 style="font-size: medium;">Four members' streak will reach 100, which is 3 months worth of dedication ✊🏾.</h3>
+        <h3 style="font-size: medium;">Incredible commitment to this app,<br>carry on and congrats🥳!</h3>
+        <img src="https://media1.giphy.com/media/Ov09jGgEThFKpxZ9eC/200w.gif?cid=6c09b952vn57zav2tc8oxsqxnew1fyopnp6rd6e8hsrrd6y5&ep=v1_gifs_search&rid=200w.gif&ct=g" width="200px" style="border: thick ridge steelblue; border-radius: 18%;">
+    </div>
+-->
+<!--
+    <div class="feature-card">
+        <h4 style="font-size: large;">naMizu is looking for witty subtitles!</h4>
+        <p>If you have one in mind, click here to submit.</p>
     </div>
 
     <div class="feature-card">
-        <h3>Ready for a fun poll?</h3>
+        <h3>Heads up!</h3>
+        <div class="cta">
+            <a href="{{ url_for('namizu.side_quest') }}">naMizu SideQuest!</a>
+        </div>
+        {% if not alreadyLoggedIn %}
+        <p style="margin: 1% 1%;">(you need to be signed in)</p>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="feature-card">
+        <h3><img src="{{ url_for('static', filename='img/namizuGlitch2.png') }}" width="100px" alt="Ready"> for a fun poll?</h3>
+        <!--<h3>Ready for a fun poll?</h3>-->
         <div class="cta">
             <a href="{{ url_for('namizu.poll') }}">naMizu DailyPoll</a>
         </div>
@@ -211,7 +235,7 @@
 
 
 <footer>
-    <p>&copy; 2025 naMizu&#8482;, Version 2.9  <!--{{ versionLog }}--> .<br>Built with care for the community.</p>
+    <p>&copy; 2025 naMizu&#8482;. Version 2.0.  <!--{{ versionLog }}--> Built with care for the community.</p>
 </footer>
 
 </body>

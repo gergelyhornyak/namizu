@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Pangolin&family=Playwrite+AU+SA:wght@200&family=Playwrite+RO:wght@100..400&family=Sansation:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+  <title>Funny Banner</title>
+  <style>
+    :root {
+        --bg-colour1: {{ theme.mainBG1 }};
+        --bg-colour2: {{ theme.mainBG2 }};
+        --tiles-buttons-colour: {{ theme.buttonsBG }};
+    }
+    body {
+      font-family: "Sansation", sans-serif;
+      font-weight: 300;
+      font-style: normal;
+      background: linear-gradient(135deg, #f9f7fd, #e0e7ff);
+      background: linear-gradient(to bottom right, var(--bg-colour1), var(--bg-colour2));
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .form-wrapper {
+      background: white;
+      padding: 30px 20px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 90%;
+      margin: 2%;
+      max-width: 400px;
+    }
+
+    .form-wrapper h2 {
+      font-size: 1.4rem;
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      font-size: 1rem;
+      color: #555;
+      margin-bottom: 8px;
+    }
+
+    input[type="text"] {
+      width: 90%;
+      padding: 12px 15px;
+      font-size: 1rem;
+      border: 2px solid #dcdcdc;
+      border-radius: 10px;
+      transition: border-color 0.3s;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+    }
+
+    .submit-btn {
+      margin-top: 20px;
+      background-color: var(--tiles-buttons-colour);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      width: 90%;
+      font-family: "Sansation", sans-serif;
+      font-weight: 500;
+      font-style: normal;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="form-wrapper">
+    <h2>Add a Funny Banner</h2>
+    <img src="{{ url_for('static', filename='img/bannerTextExample2.png') }}" alt="bannertextex" style="width: 330px;border-radius: 10px;">
+    <form action="{{ url_for('namizu.funnyBannerApp') }}" method="POST">
+      <label for="bannertext">Funny banner text (max. 40 characters)</label>
+      <input type="text" name="bannertext" id="bannertext" maxlength="40" rows="2" placeholder="e.g., namizu már, mondom mi a szitu"  />
+      <button type="submit" class="submit-btn">Submit idea</button>
+      <a href="{{ url_for('namizu.landingPage') }}">
+        <div class="submit-btn" style="text-align: center;">Maybe next time</div>
+      </a>
+    </form>
+  </div>
+</body>
+</html>
