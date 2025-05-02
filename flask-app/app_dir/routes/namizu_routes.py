@@ -36,6 +36,8 @@ def check_user_logged_in(funcName) -> tuple[bool, str]:
 @bp.route("/")
 def index():
     alreadyLoggedIn, userName = check_user_logged_in("index")
+        # log user activity
+    return "<h1>UNDER MAINTENANCE<h1>",200
     sidequest = False #checkSideQuest()
     return render_template('/namizu/landing_page.html', userName=userName, alreadyLoggedIn=alreadyLoggedIn, sideQuest=sidequest)
 
