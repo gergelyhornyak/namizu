@@ -7,8 +7,11 @@ app = create_app()
 
 scheduler = BackgroundScheduler()
 
+## fix the current_app problem by placing the support functions AND the resetDay function into namizu_utils file
+
 def job():
-    resetDay()
+    with app.app_context():
+        resetDay()
 
 scheduler.add_job(
     func=job,
