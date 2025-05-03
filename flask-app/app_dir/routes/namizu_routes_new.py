@@ -1198,6 +1198,7 @@ def resetDay():
         usersData[uid]["voted"]["dailyPoll"] = 0
         usersData[uid]["voted"]["story"] = 0
         usersData[uid]["voted"]["sidequest"] = 0
+        usersData[uid]["theme"] = "default_day"
 
     with open(USERS_DB,"w") as f:
         json.dump(usersData,f,indent=4)
