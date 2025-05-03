@@ -297,12 +297,12 @@
             Click here to
             <a href="{{ url_for('namizu.logout') }}" style="padding: 1.5% 2%;">LOG OUT</a>
         </p>
-        
     </div>
 </section>
 
 <footer>
-    <p> {{ footerTextTop }} </p>
+    <p> 
+        <a href="{{ url_for('namizu.darkMode') }}" style="text-decoration: none;">{{ footerDarkModeSwitchIcon }}</a> {{ footerTextTop }} </p>
     <p> {{ footerTextBot }} </p>
 </footer>
 
