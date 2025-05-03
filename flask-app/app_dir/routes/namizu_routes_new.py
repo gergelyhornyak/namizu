@@ -1125,6 +1125,14 @@ def eventsList():
     events = getEventsBank()
     return render_template('namizu/eventsbankPage.html', events=events)
 
+@bp.route("/admin/historyList")
+def historyList():
+    updateSessionCookie("historyList")
+    historyData = {}
+    with open("database/history.json","r") as f:
+        historyData = json.load(f)
+    return render_template('namizu/historyBankPage.html', historyData=historyData)
+
 @bp.route("/admin/bannerslist")
 def bannersList():
     updateSessionCookie("bannersList")

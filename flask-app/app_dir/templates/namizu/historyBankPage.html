@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>naMizu Poll History</title>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 800px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+.poll {
+    margin-bottom: 40px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.options, .votes ul, .comments ul {
+    list-style: none;
+    padding: 0;
+}
+
+.options li, .votes li, .comments li {
+    margin: 5px 0;
+}
+
+h2 {
+    color: #007BFF;
+}
+
+h3 {
+    margin-bottom: 10px;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>naMizu Poll History</h1>
+        {% for date, content in historyData.items() %}
+            <div class="poll">
+                <h2>{{ date }}</h2>
+                <h3>{{ content['DailyPoll']['Question'] }}</h3>
+
+                {% if content['DailyPoll'].get('AnswersOld') %}
+
+                    <ul class="options">
+                        {% for key, option in content['DailyPoll']['AnswersOld'].items() %}
+                            <li>{{ key }}: {{ option }}</li>
+                        {% endfor %}
+                    </ul>
+
+                    {% if content['DailyPoll'].get('Comments') %}
+                    <div class="comments">
+                        <strong>Comments:</strong>
+                        <ul>
+                            {% for commentBody in content['DailyPoll']['Comments'] %}
+                                <li>{{ commentBody['name'] }}: {{ commentBody['message'] }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                {% else %}
+                    <ul class="options">
+                        {% for key, option in content['DailyPoll']['Options'].items() %}
+                            <li>{{ option }}</li>
+                        {% endfor %}
+                    </ul>
+                    <div class="votes">
+                        <strong>Votes:</strong>
+                        <ul>
+                            {% for uid, vote in content['DailyPoll']['Answers'].items() %}
+                                <li>{{ uid }} ➤ {{ vote }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% if content['DailyPoll'].get('Comments') %}
+                    <div class="comments">
+                        <strong>Comments:</strong>
+                        <ul>
+                            {% for timestamp, comment in content['DailyPoll']['Comments'].items() %}
+                                <li>[{{ timestamp }}] {{ comment['UID'] }}: {{ comment['message'] }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                {% endif %}
+
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
