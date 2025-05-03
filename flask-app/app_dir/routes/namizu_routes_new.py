@@ -1200,7 +1200,7 @@ def resetDay():
         json.dump(eventsBank,f,indent=4)
 
     with open('database/daily_poll.json', 'w') as f:
-        json.dump(eventsBank[newPollID], f)
+        json.dump(eventsBank[newPollID], f, indent=4)
 
     current_app.logger.info(f"DAILY_RESET: daily poll set")
 
