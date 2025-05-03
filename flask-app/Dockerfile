@@ -10,7 +10,8 @@ COPY . /docker_app
 
 RUN apt-get update && apt-get install -y tzdata
 
-RUN echo "$(tr -dc A-Za-z0-9 </dev/urandom | head -c 16)" > /docker_app/flask_secret
+#RUN echo "$(tr -dc A-Za-z0-9 </dev/urandom | head -c 16)" > /docker_app/flask_secret
+#RUN echo "1a2s3d4f5g6h" > /docker_app/database/flask_secret
 
 RUN mkdir -p /docker_app/logs
 
