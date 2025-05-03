@@ -145,6 +145,15 @@ def queryThemeDayMode(hour:int)->dict:
         return themes["default_night"]
     else:
         return themes["default_day"]    
+    
+def queryThemeByName(name:str)->dict:
+    themes = {}
+    try:
+        with open(THEMES_BANK, 'r') as f:
+            themes = json.load(f)
+    except Exception as e:
+        print(e)
+    return themes[name]    
 
 def getTodayComments() -> dict:
     try:
@@ -202,7 +211,12 @@ def querySideEventOccurance(eventName) -> bool:
            ( yesterday.day in storyNumSeq and datetime.now().hour < 5)):
             return True
     return False
-    
+
+def switchUserThemeMode(currentTheme):
+    if(currentTheme == "default_day"):
+        return "default_night"
+    elif(currentTheme == "default_night"):
+        return "default_day"
 
 #* PAGEs and APPs
 
@@ -283,7 +297,10 @@ def landingPage():
         if( noticeBank[n]["remainingDays"] == 0 ):
             noticeBank[n]["render"] = False
     banner = "naMizu"
-    footerText1 = f"\u00a9 {datetime.now().year} {TRADE_MARK}. Version {VERSION}." 
+    #\u00a9 COPYRIGHT SIGN
+    footerDarkModeSwitchIcon = "🌘" if user_db[userID]["theme"] == "default_day" else "🌞"
+    theme = queryThemeByName(user_db[userID]["theme"])
+    footerText1 = f"{datetime.now().year} {TRADE_MARK}. Version {VERSION}." 
     footerText2 = queryMotto(datetime.now().day)
     
     funnyMessages = {}
@@ -293,13 +310,24 @@ def landingPage():
     number = random.randint(1, len(funnyMessages))
     funnyMessage = funnyMessages[f"B{str(number)}"]
 
-    theme = queryThemeDayMode(datetime.now().hour)
+    #theme = queryThemeDayMode(datetime.now().hour)
     renderPacket = {}
     return render_template('/namizu/landingPage.html', 
                            banner=banner, noticeBank=noticeBank, funnyMessage=funnyMessage,
                            userName=userName, sideQuestStatus=sideQuestStatus,
-                           activeUsers=activeUsers, footerTextTop=footerText1,footerTextBot=footerText2,
+                           activeUsers=activeUsers, footerTextTop=footerText1,footerTextBot=footerText2,footerDarkModeSwitchIcon=footerDarkModeSwitchIcon,
                            dailyJoke=dailyJoke, dailyJokeStatus=dailyJokeStatus, userEventStatus=userEventStatus,theme=theme)
+
+@bp.route('/darkmode')
+def darkMode():
+    #updateSessionCookie("darkMode")
+    users_db = getUsersDatabase()
+    userID = session['userID']
+    newTheme = switchUserThemeMode(users_db[userID]["theme"])
+    users_db[userID]["theme"] = newTheme
+    with open(USERS_DB, 'w') as f:
+        json.dump(users_db,f,indent=4)
+    return redirect(url_for("namizu.landingPage"),302)
 
 @bp.route('/logout')
 def logout():
