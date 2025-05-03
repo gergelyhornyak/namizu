@@ -1105,6 +1105,10 @@ def bannersList():
     return render_template('namizu/bannerMessageBankPage.html', bannerMessages=banners)
 
 @bp.route("/admin/resetday")
+def resetDayCommand():
+    resetDay()
+    return redirect(url_for('namizu.adminApp'))
+
 def resetDay():
     current_app.logger.info(f"Reset initiated")
 
@@ -1144,6 +1148,7 @@ def resetDay():
         
         with open("database/history.json","w") as f:
             json.dump(historyAll,f,indent=4)
+    current_app.logger.info(f"DAILY_RESET: History saved")
 
     ## CHANGE streak according to events
     
@@ -1161,10 +1166,13 @@ def resetDay():
     with open(USERS_DB,"w") as f:
         json.dump(usersData,f,indent=4)
 
+    current_app.logger.info(f"DAILY_RESET: Users data saved")
+
     ## RESET comments
 
     with open(COMMENTS_CACHE,"w") as f:
         json.dump({"dailyPoll":{},"miniGame":{},"story":{}},f,indent=4)
+    current_app.logger.info(f"DAILY_RESET: Comments cleaned")
 
     ## CHANGE main event - DailyPoll
 
@@ -1194,6 +1202,8 @@ def resetDay():
     with open('database/daily_poll.json', 'w') as f:
         json.dump(eventsBank[newPollID], f)
 
+    current_app.logger.info(f"DAILY_RESET: daily poll set")
+
     ## SideQuest
 
     # Get all lowercase letters
@@ -1209,6 +1219,8 @@ def resetDay():
 
     with open("database/spelling_bee.json","w") as f:
         json.dump(spellingBeeBody,f,indent=4)
+
+    current_app.logger.info(f"DAILY_RESET: sidequest set")
 
     ## secure GH backup
 
@@ -1226,6 +1238,8 @@ def resetDay():
         joke_data = {"joke":"NONE"}
     with open("database/daily_joke.json","w") as f:
         json.dump(joke_data,f,indent=4)
+
+    current_app.logger.info(f"DAILY_RESET: daily joke set")
 
     return redirect(url_for('namizu.adminApp'))  
 
