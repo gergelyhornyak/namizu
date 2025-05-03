@@ -1241,8 +1241,6 @@ def resetDay():
 
     current_app.logger.info(f"DAILY_RESET: daily joke set")
 
-    return redirect(url_for('namizu.adminApp'))  
-
     # check for sidequest    
 
 ## ARCHIVED APPS
