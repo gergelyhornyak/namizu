@@ -16,9 +16,11 @@ scheduler.add_job(
     misfire_grace_time=40
 )
 
+app.logger.info("cronjob added: reset at 5am.")
+
 scheduler.start()
 
 if __name__ == '__main__':
-    app.run(debug=True,use_reloader=False)
+    app.run(debug=False,use_reloader=False)
 
 
