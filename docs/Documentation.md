@@ -298,9 +298,10 @@ Edit
 
 ## TODO
 
-részletesebben kifejteni az opciókat az Editorban ✅
+!!!TEST CRONJOB!!!
+
 gallery fix X
-comments to sidequest ✅
+
 button to switch between day and night theme X
 
 research new line and submit difference
@@ -309,22 +310,14 @@ new line in textarea - <pre> and "white-space: pre-wrap;"
 
 profile pics could be uploaded, to use funny images
 
-range max: 10 ✅
-range result visualise ✅
-
 sideQuest - event maybe constrained to days
 more events: for each
 or 3 days
 
-choose to show poll within 5 days ❌
-
-spontanous events / popups could be clear on duration: display how long ✅
-
-range: when upgraded to gauss, can go over 10, right now keep it below 11 ✅
-
 IMPORTANT: implement notice system: notice bank, expiry, message, colour [...]
 
 ranking: minimum 3 options ✅
+ranking: maximum 7 options ✅
 
 ranking: sum up points: 1st 5 pts 2nd 4 pts - show on bottom 
 
