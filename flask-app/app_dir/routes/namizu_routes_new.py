@@ -578,7 +578,7 @@ def editorApp():
         if(request.form["optionsType"] == "prompt"):
             pollBody["Options"] = {"shape":"cloud"}
         if(request.form["optionsType"] == "yesorno"):
-            pollBody["Options"] = {f"option{i+1}": val for i, val in enumerate(['Definitely!', 'Yes', 'No', 'Never!'])}
+            pollBody["Options"] = {f"option{i+1}": val for i, val in enumerate(['Definitely', 'Yes', 'No', 'Never'])}
         if(request.form["optionsType"] == "names"):
             pollBody["Options"] = {f"option{i+1}": val for i, val in enumerate(namesList)}
         if(request.form["optionsType"] == "range"):
