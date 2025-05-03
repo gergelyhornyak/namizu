@@ -1,8 +1,7 @@
-from flask import Flask,session
+from flask import Flask
 from .routes import namizu_routes_new, main_routes_new
 import logging
 from datetime import timedelta
-
 
 def create_app():   
     app = Flask(__name__)
