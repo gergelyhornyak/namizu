@@ -145,18 +145,18 @@
   </script>
 </head>
 <body>
-  <h1>Name, Place,<br>Animal, Thing</h1>
+  <h1>🇭🇺 Ország, Város<br>Fiú, Lány</h1>
 
   <form id="countdownForm" action="{{ url_for('namizu.startCountdown') }}" method="POST">
     <input type="hidden" id="startTimeStamp" name="startTimeStamp">
   </form>   
 
-  <div id="letterBox" style="display: none;">First letter: {{ letter }}</div>
-  <div id="letterBox2" style="display: block;">First letter: ?</div>
-  <button id="startBtn" type="button" onclick="startCountdown()">▶️ Start Countdown</button>
-  <div id="timer">⏳ Time left: --</div>
+  <div id="letterBox" style="display: none;">Első betű: {{ letter }}</div>
+  <div id="letterBox2" style="display: block;">Első betű: ?</div>
+  <button id="startBtn" type="button" onclick="startCountdown()">▶️ Visszaszámlálás </button>
+  <div id="timer">⏳ : --</div>
 
-  <p>NOTE: Only the first letter matters in digraphes such as "Sz" and "Cs"</p>
+  <p>A tippelésnél a digráf betűk, mint az '<strong>S</strong>z' és '<strong>N</strong>y' esetén csak az első betűjük számít.</p>
 
   <form id="userForm" action="{{ url_for('namizu.spellingBeeApp') }}" method="POST">
     <label>Ország: <input type="text" name="country" id="country" /></label><br />
@@ -168,7 +168,7 @@
   </form>
 
   <div class="leave-button">
-    <a href="{{ url_for('namizu.landingPage') }}">LEAVE</a>
+    <a href="{{ url_for('namizu.landingPage') }}">PASSZOLOM INKÁBB</a>
   </div>
 
 </body>
