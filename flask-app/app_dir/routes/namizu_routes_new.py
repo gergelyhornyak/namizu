@@ -823,9 +823,7 @@ def spellingBeeApp():
 
         with open(SPELLING_BEE_BANK,"r") as f:
             spellingBee = json.load(f)
-        with open("database/words.txt","r") as f:
-            words = [line.strip().lower() for line in f if line.strip()]
-
+        
         submissionDatetime = datetime.strptime(spellingBee["submissions"][userID]["begin"], DATETIME_LONG)
         current_app.logger.info(f"Minigame guess time: {datetime.now() - submissionDatetime} > {timedelta(seconds=guessTime+4)}")
         if( datetime.now() - submissionDatetime > timedelta(seconds=guessTime+4) ):
@@ -840,48 +838,51 @@ def spellingBeeApp():
         spellingBee["submissions"][userID]["female"]["answer"] = request.form.get("female").lower()        
         
         todaysLetter_lower = spellingBee["letter"].lower()
+        
+        # with open("database/words.txt","r") as f:
+        #     words = [line.strip().lower() for line in f if line.strip()]
 
-        for word in words:
-            if( spellingBee["submissions"][userID]["country"]["answer"] == word and 
-                spellingBee["submissions"][userID]["country"]["answer"][0] == todaysLetter_lower ):
+        # for word in words:
+        #     if( spellingBee["submissions"][userID]["country"]["answer"] == word and 
+        #         spellingBee["submissions"][userID]["country"]["answer"][0] == todaysLetter_lower ):
 
-                spellingBee["submissions"][userID]["country"]["correct"] = 1
-                spellingBee["submissions"][userID]["country"]["colour"] = "#648f2380"
-
-
-            if( spellingBee["submissions"][userID]["city"]["answer"] == word and 
-                spellingBee["submissions"][userID]["city"]["answer"][0] == todaysLetter_lower ):
-
-                spellingBee["submissions"][userID]["city"]["correct"] = 1
-                spellingBee["submissions"][userID]["city"]["colour"] = "#648f2380"
+        #         spellingBee["submissions"][userID]["country"]["correct"] = 1
+        #         spellingBee["submissions"][userID]["country"]["colour"] = "#648f2380"
 
 
-            if( spellingBee["submissions"][userID]["thing"]["answer"] == word and 
-                spellingBee["submissions"][userID]["thing"]["answer"][0] == todaysLetter_lower ):
+        #     if( spellingBee["submissions"][userID]["city"]["answer"] == word and 
+        #         spellingBee["submissions"][userID]["city"]["answer"][0] == todaysLetter_lower ):
 
-                spellingBee["submissions"][userID]["thing"]["correct"] = 1
-                spellingBee["submissions"][userID]["thing"]["colour"] = "#648f2380"
+        #         spellingBee["submissions"][userID]["city"]["correct"] = 1
+        #         spellingBee["submissions"][userID]["city"]["colour"] = "#648f2380"
 
 
-            if( spellingBee["submissions"][userID]["animal"]["answer"] == word and 
-                spellingBee["submissions"][userID]["animal"]["answer"][0] == todaysLetter_lower ):
+        #     if( spellingBee["submissions"][userID]["thing"]["answer"] == word and 
+        #         spellingBee["submissions"][userID]["thing"]["answer"][0] == todaysLetter_lower ):
+
+        #         spellingBee["submissions"][userID]["thing"]["correct"] = 1
+        #         spellingBee["submissions"][userID]["thing"]["colour"] = "#648f2380"
+
+
+        #     if( spellingBee["submissions"][userID]["animal"]["answer"] == word and 
+        #         spellingBee["submissions"][userID]["animal"]["answer"][0] == todaysLetter_lower ):
                 
-                spellingBee["submissions"][userID]["animal"]["correct"] = 1
-                spellingBee["submissions"][userID]["animal"]["colour"] = "#648f2380"
+        #         spellingBee["submissions"][userID]["animal"]["correct"] = 1
+        #         spellingBee["submissions"][userID]["animal"]["colour"] = "#648f2380"
 
 
-            if( spellingBee["submissions"][userID]["male"]["answer"] == word and 
-                spellingBee["submissions"][userID]["male"]["answer"][0] == todaysLetter_lower ):
+        #     if( spellingBee["submissions"][userID]["male"]["answer"] == word and 
+        #         spellingBee["submissions"][userID]["male"]["answer"][0] == todaysLetter_lower ):
 
-                spellingBee["submissions"][userID]["male"]["correct"] = 1
-                spellingBee["submissions"][userID]["male"]["colour"] = "#648f2380"
+        #         spellingBee["submissions"][userID]["male"]["correct"] = 1
+        #         spellingBee["submissions"][userID]["male"]["colour"] = "#648f2380"
 
 
-            if( spellingBee["submissions"][userID]["female"]["answer"] == word and 
-                spellingBee["submissions"][userID]["female"]["answer"][0] == todaysLetter_lower ):
+        #     if( spellingBee["submissions"][userID]["female"]["answer"] == word and 
+        #         spellingBee["submissions"][userID]["female"]["answer"][0] == todaysLetter_lower ):
 
-                spellingBee["submissions"][userID]["female"]["correct"] = 1
-                spellingBee["submissions"][userID]["female"]["colour"] = "#648f2380"
+        #         spellingBee["submissions"][userID]["female"]["correct"] = 1
+        #         spellingBee["submissions"][userID]["female"]["colour"] = "#648f2380"
 
         spellingBee["submissions"][userID]["end"] = datetime.now().strftime(DATETIME_LONG)
         #cellColour = "greenyellow","tomato"
