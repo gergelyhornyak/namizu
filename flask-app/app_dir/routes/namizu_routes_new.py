@@ -755,35 +755,43 @@ def startCountdown():
             "begin": datetime.now().strftime(DATETIME_LONG),
             "end": "",
             "cheated": False,
-            "country": {
-                "answer": "",
-                "correct":0,
-                "colour":"transparent"
-                },
-            "city": {
-                "answer": "",
-                "correct":0,
-                "colour":"transparent"
-                },
-            "thing": {
-                "answer": "",
-                "correct":0,
-                "colour":"transparent"
-                },
-            "animal": {
-                "answer": "",
-                "correct":0,
-                "colour":"transparent"
-                },
-            "male": {
-                "answer": "",
-                "correct":0,
-                "colour":"transparent"
-                },
-            "female": {
-                "answer": "",
-                "correct":0,
-                "colour":"transparent"
+            "guesses": {
+                "country": {
+                    "alreadyExists":0,
+                    "answer": "",
+                    "correct":0,
+                    "colour":"transparent"
+                    },
+                "city": {
+                    "alreadyExists":0,
+                    "answer": "",
+                    "correct":0,
+                    "colour":"transparent"
+                    },
+                "thing": {
+                    "alreadyExists":0,
+                    "answer": "",
+                    "correct":0,
+                    "colour":"transparent"
+                    },
+                "animal": {
+                    "alreadyExists":0,
+                    "answer": "",
+                    "correct":0,
+                    "colour":"transparent"
+                    },
+                "male": {
+                    "alreadyExists":0,
+                    "answer": "",
+                    "correct":0,
+                    "colour":"transparent"
+                    },
+                "female": {
+                    "alreadyExists":0,
+                    "answer": "",
+                    "correct":0,
+                    "colour":"transparent"
+                    }
                 }
             }
             spellingBee["submissions"][userID] = userSubmission
@@ -830,91 +838,43 @@ def spellingBeeApp():
             current_app.logger.error("Spelling bee guess time error: longer guess time. Probably restarted session.")
             spellingBee["submissions"][userID]["cheated"] = True
 
-        spellingBee["submissions"][userID]["country"]["answer"] = request.form.get("country").lower()
-        spellingBee["submissions"][userID]["city"]["answer"] = request.form.get("city").lower()
-        spellingBee["submissions"][userID]["thing"]["answer"] = request.form.get("thing").lower()
-        spellingBee["submissions"][userID]["animal"]["answer"] = request.form.get("animal").lower()
-        spellingBee["submissions"][userID]["male"]["answer"] = request.form.get("male").lower()
-        spellingBee["submissions"][userID]["female"]["answer"] = request.form.get("female").lower()        
+        spellingBee["submissions"][userID]["guesses"]["country"]["answer"] = request.form.get("country").lower()
+        spellingBee["submissions"][userID]["guesses"]["city"]["answer"] = request.form.get("city").lower()
+        spellingBee["submissions"][userID]["guesses"]["thing"]["answer"] = request.form.get("thing").lower()
+        spellingBee["submissions"][userID]["guesses"]["animal"]["answer"] = request.form.get("animal").lower()
+        spellingBee["submissions"][userID]["guesses"]["male"]["answer"] = request.form.get("male").lower()
+        spellingBee["submissions"][userID]["guesses"]["female"]["answer"] = request.form.get("female").lower()        
         
         todaysLetter_lower = spellingBee["letter"].lower()
 
-        for uid,details in spellingBee["submissions"].items():
-            for uid_DIFF,details_DIFF in spellingBee["submissions"].items():
-                if( uid != uid_DIFF ):
-                    if( details["country"] == details_DIFF["country"] ):
-                        spellingBee["submissions"][uid]["country"]["alreadyExists"] = 1
-                        spellingBee["submissions"][uid_DIFF]["country"]["alreadyExists"] = 1
-                    if( details["city"] == details_DIFF["city"] ):
-                        spellingBee["submissions"][uid]["city"]["alreadyExists"] = 1
-                        spellingBee["submissions"][uid_DIFF]["city"]["alreadyExists"] = 1
+        for uid, details in spellingBee["submissions"].items():
+            for uid_DIFF, details_DIFF in spellingBee["submissions"].items():
+                for guessCategory, guessDetails in details["guesses"].items():
+                    if( spellingBee["submissions"][uid]["guesses"][guessCategory]["answer"] ):
+                        if( spellingBee["submissions"][uid]["guesses"][guessCategory]["answer"][0] != todaysLetter_lower ):
+                            spellingBee["submissions"][uid]["guesses"][guessCategory]["correct"] = False
+                        else:
+                            spellingBee["submissions"][uid]["guesses"][guessCategory]["correct"] = True
+                    else:
+                        spellingBee["submissions"][uid]["guesses"][guessCategory]["correct"] = False
+                        spellingBee["submissions"][uid]["guesses"][guessCategory]["answer"] = "---"
+                    if( uid != uid_DIFF ):
+                        for guessCategory_DIFF,guessDetails_DIFF in details_DIFF["guesses"].items():
+                            if( guessDetails["answer"] == guessDetails_DIFF["answer"] ):
+                                spellingBee["submissions"][uid]["guesses"][guessCategory_DIFF]["alreadyExists"] = 1
+                                spellingBee["submissions"][uid_DIFF]["guesses"][guessCategory_DIFF]["alreadyExists"] = 1
 
-        # continue for each category, then put them into 3 categories:
+        for uid, details in spellingBee["submissions"].items():
+            for category, catDet in details["guesses"].items():
+                if( catDet["correct"] and not catDet["alreadyExists"] ):
+                    spellingBee["submissions"][uid]["guesses"][category]["colour"] = "lightgreen"
+                elif( catDet["correct"] and catDet["alreadyExists"] ):
+                    spellingBee["submissions"][uid]["guesses"][category]["colour"] = "lightskyblue"
+                elif( not catDet["correct"]):
+                    spellingBee["submissions"][uid]["guesses"][category]["colour"] = "lightcoral"
+
         # correct, correct and unique, wrong
-
-        """
-        "ID3": {
-            "uname": "Geri",
-            "begin": "2025-05-04 09:29:07",
-            "end": "2025-05-04 09:30:17",
-            "cheated": false,
-            "country": {
-                "answer": "\u00e9szorsz\u00e1g",
-                "correct": 0,
-                "colour": "transparent"
-            },
-            "city": {
-                "answer": "\u00e9rd",
-                "correct": 0,
-                "colour": "transparent"
-            },
-        """
         
-        # with open("database/words.txt","r") as f:
-        #     words = [line.strip().lower() for line in f if line.strip()]
-
-        # for word in words:
-        #     if( spellingBee["submissions"][userID]["country"]["answer"] == word and 
-        #         spellingBee["submissions"][userID]["country"]["answer"][0] == todaysLetter_lower ):
-
-        #         spellingBee["submissions"][userID]["country"]["correct"] = 1
-        #         spellingBee["submissions"][userID]["country"]["colour"] = "#648f2380"
-
-
-        #     if( spellingBee["submissions"][userID]["city"]["answer"] == word and 
-        #         spellingBee["submissions"][userID]["city"]["answer"][0] == todaysLetter_lower ):
-
-        #         spellingBee["submissions"][userID]["city"]["correct"] = 1
-        #         spellingBee["submissions"][userID]["city"]["colour"] = "#648f2380"
-
-
-        #     if( spellingBee["submissions"][userID]["thing"]["answer"] == word and 
-        #         spellingBee["submissions"][userID]["thing"]["answer"][0] == todaysLetter_lower ):
-
-        #         spellingBee["submissions"][userID]["thing"]["correct"] = 1
-        #         spellingBee["submissions"][userID]["thing"]["colour"] = "#648f2380"
-
-
-        #     if( spellingBee["submissions"][userID]["animal"]["answer"] == word and 
-        #         spellingBee["submissions"][userID]["animal"]["answer"][0] == todaysLetter_lower ):
-                
-        #         spellingBee["submissions"][userID]["animal"]["correct"] = 1
-        #         spellingBee["submissions"][userID]["animal"]["colour"] = "#648f2380"
-
-
-        #     if( spellingBee["submissions"][userID]["male"]["answer"] == word and 
-        #         spellingBee["submissions"][userID]["male"]["answer"][0] == todaysLetter_lower ):
-
-        #         spellingBee["submissions"][userID]["male"]["correct"] = 1
-        #         spellingBee["submissions"][userID]["male"]["colour"] = "#648f2380"
-
-
-        #     if( spellingBee["submissions"][userID]["female"]["answer"] == word and 
-        #         spellingBee["submissions"][userID]["female"]["answer"][0] == todaysLetter_lower ):
-
-        #         spellingBee["submissions"][userID]["female"]["correct"] = 1
-        #         spellingBee["submissions"][userID]["female"]["colour"] = "#648f2380"
-
         spellingBee["submissions"][userID]["end"] = datetime.now().strftime(DATETIME_LONG)
         #cellColour = "greenyellow","tomato"
         with open(SPELLING_BEE_BANK,"w") as f:

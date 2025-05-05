@@ -119,51 +119,54 @@
 </head>
 
 <body>
-  <h1>📝 Submissions</h1>
+  <h1>📝 Végeredmény 🇭🇺</h1>
+
 
   {% if all_submissions %}
     <table>
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Country</th>
-          <th>City</th>
-          <th>Thing</th>
-          <th>Animal</th>
-          <th>Male</th>
-          <th>Female</th>
+          <th>Játékos</th>
+          <th>Ország</th>
+          <th>Város</th>
+          <th>Tárgy</th>
+          <th>Állat</th>
+          <th>Férfi név</th>
+          <th>Női név</th>
         </tr>
       </thead>
       <tbody>
         {% for entry in all_submissions.submissions.values() %}
         <tr>
           <td>
-            {{ entry.uname }}
+            <strong style="color: black;">{{ entry.uname }}</strong>
             {% if entry.cheated == True %}
               <span class="cheated-flag">✘</span>
             {% endif %}
           </td>
-          <td style="background-color: {{ entry.country.colour }};">{{ entry.country.answer }}</td>
-          <td style="background-color: {{ entry.city.colour }};">{{ entry.city.answer }}</td>
-          <td style="background-color: {{ entry.thing.colour }};">{{ entry.thing.answer }}</td>
-          <td style="background-color: {{ entry.animal.colour }};">{{ entry.animal.answer }}</td>
-          <td style="background-color: {{ entry.male.colour }};">{{ entry.male.answer }}</td>
-          <td style="background-color: {{ entry.female.colour }};">{{ entry.female.answer }}</td>
+          <td style="background-color: {{ entry.guesses.country.colour }};">{{ entry.guesses.country.answer }}</td>
+          <td style="background-color: {{ entry.guesses.city.colour }};">{{ entry.guesses.city.answer }}</td>
+          <td style="background-color: {{ entry.guesses.thing.colour }};">{{ entry.guesses.thing.answer }}</td>
+          <td style="background-color: {{ entry.guesses.animal.colour }};">{{ entry.guesses.animal.answer }}</td>
+          <td style="background-color: {{ entry.guesses.male.colour }};">{{ entry.guesses.male.answer }}</td>
+          <td style="background-color: {{ entry.guesses.female.colour }};">{{ entry.guesses.female.answer }}</td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
   {% else %}
-    <p style="text-align: center;">No submissions yet. 🤷‍♂️</p>
+    <p style="text-align: center;">Még senki sem játszott ma. 🤷‍♂️</p>
   {% endif %}
 
+  <p style="font-size: 0.85rem;">*<i>Az értékelés puszán a helyes kezdőbetű és nem-egyező szavak alapján történik. A szavak valódi jelentése még nincs kiértékelve.</i></p>
+
   <div class="comments-section">
-    <h2>💬 Comments</h2>
+    <h2>💬 Hozzáfűzések</h2>
   
     <form method="POST" action="{{ url_for('namizu.spellingBeeScoreBoard') }}" class="comment-form">
-      <textarea name="comment_text" placeholder="You can add a comment..." required></textarea>
+      <textarea name="comment_text" placeholder="Ide irjál..." required></textarea>
       <br>
-      <button type="submit">Post Comment</button>
+      <button type="submit">Elküld</button>
     </form>
   
     {% if comments %}
@@ -180,5 +183,5 @@
   </div>
   
 
-  <a href="{{ url_for('namizu.landingPage') }}" class="leave-button">LEAVE</a>
+  <a href="{{ url_for('namizu.landingPage') }}" class="leave-button">Vissza</a>
 </body>
