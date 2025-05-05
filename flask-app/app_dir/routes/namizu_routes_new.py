@@ -199,15 +199,15 @@ def querySideEventOccurance(eventName) -> bool:
     
     yesterday = datetime.now() - timedelta(days=1)
     if(eventName == "dailyJoke"):
-        if((datetime.now().day in dailyJokeNumSeq and datetime.now().hour > 5) or
+        if((datetime.now().day in dailyJokeNumSeq and datetime.now().hour >= 5) or
            ( yesterday.day in dailyJokeNumSeq and datetime.now().hour < 5)):
             return True
     if(eventName == "sideQuest"):
-        if((datetime.now().day in sideQuestNumSeq and datetime.now().hour > 5) or
+        if((datetime.now().day in sideQuestNumSeq and datetime.now().hour >= 5) or
            ( yesterday.day in sideQuestNumSeq and datetime.now().hour < 5)):
             return True
     if(eventName == "story"):
-        if((datetime.now().day in storyNumSeq and datetime.now().hour > 5) or
+        if((datetime.now().day in storyNumSeq and datetime.now().hour >= 5) or
            ( yesterday.day in storyNumSeq and datetime.now().hour < 5)):
             return True
     return False
@@ -838,6 +838,37 @@ def spellingBeeApp():
         spellingBee["submissions"][userID]["female"]["answer"] = request.form.get("female").lower()        
         
         todaysLetter_lower = spellingBee["letter"].lower()
+
+        for uid,details in spellingBee["submissions"].items():
+            for uid_DIFF,details_DIFF in spellingBee["submissions"].items():
+                if( uid != uid_DIFF ):
+                    if( details["country"] == details_DIFF["country"] ):
+                        spellingBee["submissions"][uid]["country"]["alreadyExists"] = 1
+                        spellingBee["submissions"][uid_DIFF]["country"]["alreadyExists"] = 1
+                    if( details["city"] == details_DIFF["city"] ):
+                        spellingBee["submissions"][uid]["city"]["alreadyExists"] = 1
+                        spellingBee["submissions"][uid_DIFF]["city"]["alreadyExists"] = 1
+
+        # continue for each category, then put them into 3 categories:
+        # correct, correct and unique, wrong
+
+        """
+        "ID3": {
+            "uname": "Geri",
+            "begin": "2025-05-04 09:29:07",
+            "end": "2025-05-04 09:30:17",
+            "cheated": false,
+            "country": {
+                "answer": "\u00e9szorsz\u00e1g",
+                "correct": 0,
+                "colour": "transparent"
+            },
+            "city": {
+                "answer": "\u00e9rd",
+                "correct": 0,
+                "colour": "transparent"
+            },
+        """
         
         # with open("database/words.txt","r") as f:
         #     words = [line.strip().lower() for line in f if line.strip()]
@@ -1265,6 +1296,7 @@ def resetDay():
     ## set daily joke 
 
     dailyJokeStatus = querySideEventOccurance("dailyJoke")
+    current_app.logger.info(f"{dailyJokeStatus = }")
     joke_data = {}
     if(dailyJokeStatus):
         # Set the headers to accept plain text response
