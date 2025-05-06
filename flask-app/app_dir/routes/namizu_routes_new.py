@@ -846,6 +846,13 @@ def spellingBeeApp():
         spellingBee["submissions"][userID]["guesses"]["female"]["answer"] = request.form.get("female").lower()        
         
         todaysLetter_lower = spellingBee["letter"].lower()
+        # 6*7 queries a day max.
+        # with open("synonymsAPI","r") as f:
+        #   apiKey = f.readline() 
+        apiKey = ""
+        synonymURL = f"https://api.poet.hu/szinonima.php?f=jgh&j={apiKey}&s="
+        def searchHunWord(URL,word):
+            return URL+word
 
         for uid, details in spellingBee["submissions"].items():
             for uid_DIFF, details_DIFF in spellingBee["submissions"].items():
@@ -860,9 +867,17 @@ def spellingBeeApp():
                         spellingBee["submissions"][uid]["guesses"][guessCategory]["answer"] = "---"
                     if( uid != uid_DIFF ):
                         for guessCategory_DIFF,guessDetails_DIFF in details_DIFF["guesses"].items():
-                            if( guessDetails["answer"] == guessDetails_DIFF["answer"] ):
+                            if( guessDetails["answer"] == guessDetails_DIFF["answer"] and
+                                guessCategory == guessCategory_DIFF):
                                 spellingBee["submissions"][uid]["guesses"][guessCategory_DIFF]["alreadyExists"] = 1
                                 spellingBee["submissions"][uid_DIFF]["guesses"][guessCategory_DIFF]["alreadyExists"] = 1
+
+        # for uid, details in spellingBee["submissions"].items():
+        #     for guessCategory, guessDetails in details["guesses"].items():
+        #         synonymResponse = requests.get(searchHunWord(synonymURL,guessDetails["answer"])).text
+        #         print(f"{uid}: {guessCategory}: {synonymResponse = }")
+        #         if( "<hiba>Nincs" in synonymResponse ):
+        #             spellingBee["submissions"][uid]["guesses"][guessCategory]["correct"] = False
 
         for uid, details in spellingBee["submissions"].items():
             for category, catDet in details["guesses"].items():
