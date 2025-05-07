@@ -62,6 +62,7 @@ h3 {
                 {% if content['DailyPoll'].get('AnswersOld') %}
 
                     <ul class="options">
+                        <strong>Options:</strong>
                         {% for key, option in content['DailyPoll']['AnswersOld'].items() %}
                             <li>{{ key }}: {{ option }}</li>
                         {% endfor %}
@@ -80,6 +81,7 @@ h3 {
 
                 {% else %}
                     <ul class="options">
+                        <strong>Options:</strong>
                         {% for key, option in content['DailyPoll']['Options'].items() %}
                             <li>{{ option }}</li>
                         {% endfor %}
@@ -88,7 +90,7 @@ h3 {
                         <strong>Votes:</strong>
                         <ul>
                             {% for uid, vote in content['DailyPoll']['Answers'].items() %}
-                                <li>{{ uid }} ➤ {{ vote }}</li>
+                                <li>{{ smallUsersData[uid] }} ➤ {{ vote }}</li>
                             {% endfor %}
                         </ul>
                     </div>

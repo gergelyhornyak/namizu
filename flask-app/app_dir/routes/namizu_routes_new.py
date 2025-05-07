@@ -1138,7 +1138,9 @@ def historyList():
     historyData = {}
     with open("database/history.json","r") as f:
         historyData = json.load(f)
-    return render_template('namizu/historyBankPage.html', historyData=historyData)
+    usersData = getUsersDatabase()
+    smallUsersData = {uid:details["uname"] for uid,details in usersData.items()}
+    return render_template('namizu/historyBankPage.html', historyData=historyData, smallUsersData=smallUsersData)
 
 @bp.route("/admin/bannerslist")
 def bannersList():
