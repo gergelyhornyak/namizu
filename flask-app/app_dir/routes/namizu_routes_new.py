@@ -1138,9 +1138,11 @@ def historyList():
     historyData = {}
     with open("database/history.json","r") as f:
         historyData = json.load(f)
+    # reverse history order
+    reversedHistoryData = dict(reversed(list(historyData.items())))
     usersData = getUsersDatabase()
     smallUsersData = {uid:details["uname"] for uid,details in usersData.items()}
-    return render_template('namizu/historyBankPage.html', historyData=historyData, smallUsersData=smallUsersData)
+    return render_template('namizu/historyBankPage.html', historyData=reversedHistoryData, smallUsersData=smallUsersData)
 
 @bp.route("/admin/bannerslist")
 def bannersList():
