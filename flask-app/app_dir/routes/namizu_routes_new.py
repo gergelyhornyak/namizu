@@ -754,6 +754,9 @@ def calendarApp():
 #* 2) user starts game - countdown and empty form
 #* 3) game finishes
 #* 4) score is shown on scoreboard
+
+# https://opentdb.com/api.php?amount=3&category=9&difficulty=easy
+
 @bp.route('/trivia', methods=['POST','GET'])
 def triviaApp():
     triviaDB = {}
