@@ -80,6 +80,7 @@ h3 {
                     {% endif %}
 
                 {% else %}
+                <!-- New history format -->
                     <ul class="options">
                         <strong>Options:</strong>
                         {% for key, option in content['DailyPoll']['Options'].items() %}
@@ -99,7 +100,7 @@ h3 {
                         <strong>Comments:</strong>
                         <ul>
                             {% for timestamp, comment in content['DailyPoll']['Comments'].items() %}
-                                <li>[{{ timestamp }}] {{ comment['UID'] }}: {{ comment['message'] }}</li>
+                                <li> <!--[{{ timestamp }}]--> {{ smallUsersData[comment['UID']] }}: {{ comment['message'] }}</li>
                             {% endfor %}
                         </ul>
                     </div>
