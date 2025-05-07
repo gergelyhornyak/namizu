@@ -241,7 +241,7 @@
 
     {% if notice.render %}
 
-    <div class="feature-card">
+    <div class="feature-card" style="border-left: 14px solid rgba(29, 211, 5, 0.5)">
         <div id="countdown" style="background: #fffb0086; color: #000; padding: 4px 10px; border-radius: 8px; font-weight: bolder; font-size: 1rem;margin-left: 52%;">
             ends in {{ notice.remainingDays }} days
         </div>
@@ -273,7 +273,7 @@
         <h3>No Micro-Transactions</h3>
     </div>
     
-    <div class="feature-card" style="border-left: 14px solid rgba(29, 211, 5, 0.5)">
+    <div class="feature-card">
         <h3>Have a suggestion?</h3>  
         <p style="margin: 1% 0%;">If you have any feedback on naMizu,<br>leave a message to Geri.</p>
     </div>
@@ -289,7 +289,12 @@
         <hr style="border: 1px solid #7207a480;margin: 1% 5%;">
         <p style="margin: 1% 0%;"><strong>naMizu streak</strong> can be earned by completing the DailyPoll continuously.</p>
         <hr style="border: 1px solid #7207a480;margin: 1% 5%;">
-        <p style="margin: 1% 0%;">naMizu Calendar, Canvas, and Gallery are temporarily offline. Will be online soon.</p>
+        <p style="margin: 1% 0%;">naMizu History, Canvas, and Gallery are temporarily offline. Will be online soon.</p>
+    </div>
+
+    <div class="feature-card" style="border-left: 16px solid #00d8ff78">
+        <h3>Temporary Calendar</h3>  
+        <a href="{{ url_for('namizu.historyList') }}">naMizu History</a>
     </div>
 
     <div class="feature-card">
