@@ -99,7 +99,7 @@
   border-radius: 6px;
   cursor: pointer;
   font-weight: bold;
-  transition: background 0.3s ease;
+  font-size: 1.2rem;
 }
 
 .comments-list {
@@ -121,7 +121,7 @@
 <body>
   <h1>📝 Végeredmény 🇭🇺</h1>
 
-
+  <p style="font-size: 0.85rem;">*<i>Az értékelés puszán a helyes kezdőbetű és nem-egyező szavak alapján történik. A szavak valódi jelentése még nincs kiértékelve.</i></p>
   {% if all_submissions %}
     <table>
       <thead>
@@ -158,10 +158,10 @@
     <p style="text-align: center;">Még senki sem játszott ma. 🤷‍♂️</p>
   {% endif %}
 
-  <p style="font-size: 0.85rem;">*<i>Az értékelés puszán a helyes kezdőbetű és nem-egyező szavak alapján történik. A szavak valódi jelentése még nincs kiértékelve.</i></p>
+  <p style="font-size: 1.4rem;margin: 6%;">TIPP: Érdemes később visszalátogatni<br>a többiek eredményei miatt 😉.</p>
 
   <div class="comments-section">
-    <h2>💬 Hozzáfűzések</h2>
+    <h2>Hozzáfűzések</h2>
   
     <form method="POST" action="{{ url_for('namizu.spellingBeeScoreBoard') }}" class="comment-form">
       <textarea name="comment_text" placeholder="Ide irjál..." required></textarea>
