@@ -427,16 +427,27 @@ def dailyPollApp():
                     json.dump(dailyPoll,f,indent=4)              
                 return redirect(url_for('namizu.dailyPollApp'))
 
-        else:
+        else: # if comment submitted
             if 'comment' in request.form:
                 comment = request.form['comment']
                 current_date = datetime.now().strftime(DATETIME_LONG)
+                commentByMistake = False
+
+                # fix double submission mistake: check previous comment from same user within a given time
                 
-                todayComments["dailyPoll"][current_date] = {
-                    "userID": userID,
-                    "text":comment,
-                    "username":usernameByID(userID)
-                }           
+                for comDate, comDet in todayComments["dailyPoll"].items():
+                    #for comDate_DIFF, comDet_DIFF in todayComments["dailyPoll"].items():
+                        if( datetime.now() - datetime.strptime(comDate,DATETIME_LONG) < timedelta(seconds=5) ):# and datetime.now() - comDate_DIFF < timedelta(seconds=5) ): # just now
+                            if( comDet["userID"] == userID ):#and comDet_DIFF["userID"] == userID ): # same user
+                                if( comDet["text"] == comment ):#comDet_DIFF["text"] ):
+                                    commentByMistake = True
+                if(not commentByMistake):
+                    todayComments["dailyPoll"][current_date] = {
+                        "userID": userID,
+                        "text":comment,
+                        "username":usernameByID(userID)
+                    }           
+
                 with open(COMMENTS_CACHE, 'w') as f:
                     json.dump(todayComments, f, indent=4)
                 return redirect(url_for('namizu.dailyPollApp'))
@@ -738,6 +749,22 @@ def calendarApp():
 
 ## Funny Apps
 
+## Trivia - 3 gen-know., easy questions
+#* 1) user opens page
+#* 2) user starts game - countdown and empty form
+#* 3) game finishes
+#* 4) score is shown on scoreboard
+@bp.route('/trivia', methods=['POST','GET'])
+def triviaApp():
+    triviaDB = {}
+    if request.method == "POST":
+        with open("database/trivia.json","r") as f:
+            triviaDB = json.load(f)
+    return redirect(url_for('namizu.landingPage'))
+    
+
+## Country City Male Female names - guessing game
+
 @bp.route('/spellingbee/countdown', methods=['POST'])
 def startCountdown():
     userID = session['userID']
@@ -806,7 +833,7 @@ def spellingBeeApp():
     userID = session['userID']
     usersDB = getUsersDatabase()
     theme = queryThemeDayMode(datetime.now().hour)
-    guessTime = 70 ## seconds
+    guessTime = 60 ## seconds
     data = {}
     words = []
     spellingBee = {}
