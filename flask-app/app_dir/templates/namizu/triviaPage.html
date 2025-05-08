@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>naMizu Trivia MiniGame</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            color: #222;
+        }
+
+        .question-box {
+            margin-bottom: 2rem;
+        }
+
+        .question {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .option {
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            
+            cursor: pointer;
+            
+        }
+
+        #timer,
+        #result {
+            text-align: center;
+            font-size: 1.2rem;
+            margin: 6px 4px;
+        }
+
+        button {
+            padding: 0.75rem;
+            font-size: 1rem;
+            background-color: #1d72b8;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
+        }
+    </style>
+    <script>
+        let seconds = {{ countdown }};
+        let countdownStarted = false;
+
+        function startCountdown() {
+            if (countdownStarted) return;
+            countdownStarted = true;
+
+            const startTimeInput = document.getElementById('startTimeStamp');
+            startTimeInput.value = Date.now();
+            document.getElementById('countdownForm').submit();
+
+            document.getElementById("startBtn").disabled = true;
+            const timer = document.getElementById('timer');
+
+            const interval = setInterval(() => {
+                seconds--;
+                timer.textContent = `⏳ ${seconds}s remaining...`;
+
+                if (seconds <= 0) {
+                    clearInterval(interval);
+                    autoSubmit();
+                }
+            }, 1000);
+        }
+
+        function autoSubmit() {
+            document.getElementById('userForm').submit();
+        }
+    </script>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Trivia Game</h1>
+
+        <form id="countdownForm" action="{{ url_for('namizu.startTriviaCountdown') }}" method="POST">
+            <input type="hidden" id="startTimeStamp" name="startTimeStamp">
+        </form>
+
+        <button id="startBtn" type="button" onclick="startCountdown()">▶️ Begin Countdown </button>
+        <div id="timer">
+            ⏳ : --
+        </div>
+    
+        <h2>Question {{ currentQuestionID }}</h2>
+        <form id="quiz-form" action="{{ url_for('namizu.triviaApp') }}" method="post">
+            <p>{{ trivia[currentQuestion].question }}</p>
+            {% for option in trivia[currentQuestion].options %}
+                <label><input type="radio" name="answer" value="{{ option }}" required> {{ option }}</label><br>
+            {% endfor %}
+            <button type="submit">Submit</button>
+        </form>
+
+        <div class="leave-button">
+            <a href="{{ url_for('namizu.landingPage') }}">PASSZOLOM INKÁBB</a>
+        </div>
+    </div>
+
+</body>
+
+</html>

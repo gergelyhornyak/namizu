@@ -191,9 +191,10 @@ def queryMotto(day:int) -> str:
 
 def querySideEventOccurance(eventName) -> bool:
     """
-    dailyJoke, sideQuest, story
+    dailyJoke, sideQuest, story, trivia
     """
     sideQuestNumSeq = [1,4,8,11,15,18,22,25,28] # 3-4 days
+    triviaNumSeq    = [1,4,8,11,15,18,22,25,28] # 3-4 days
     storyNumSeq =     [3,9,15,21,28]
     dailyJokeNumSeq = [2,3,5,6,7,9,10,12,13,14,16,17,19,20,21,23,24,26,27,29,30,31]
     
@@ -205,6 +206,10 @@ def querySideEventOccurance(eventName) -> bool:
     if(eventName == "sideQuest"):
         if((datetime.now().day in sideQuestNumSeq and datetime.now().hour >= 5) or
            ( yesterday.day in sideQuestNumSeq and datetime.now().hour < 5)):
+            return True
+    if(eventName == "trivia"):
+        if((datetime.now().day in triviaNumSeq and datetime.now().hour >= 5) or
+           ( yesterday.day in triviaNumSeq and datetime.now().hour < 5)):
             return True
     if(eventName == "story"):
         if((datetime.now().day in storyNumSeq and datetime.now().hour >= 5) or
@@ -759,12 +764,67 @@ def calendarApp():
 
 @bp.route('/trivia', methods=['POST','GET'])
 def triviaApp():
+    updateSessionCookie("triviaApp")
     triviaDB = {}
+    userID = session['userID']
+    usersDB = getUsersDatabase()
+    username = usernameByID(userID)
+    def determineCurrentQuestion(userGuesses):
+        if( userGuesses["question1"] == "" ):
+            return 1
+        elif( userGuesses["question1"] != "" and 
+              userGuesses["question2"] == "" ):
+            return 2
+        elif( userGuesses["question1"] != "" and 
+              userGuesses["question2"] != "" ):
+            return 3
+        elif( userGuesses["question1"] != "" and 
+              userGuesses["question2"] != "" and 
+              userGuesses["question3"] != ""):
+            return 0
+    with open("database/trivia.json","r") as f:
+        triviaDB = json.load(f)
+    currentQuestionID = determineCurrentQuestion(triviaDB["submissions"][userID])
+    currentQuestion = "question"+str(currentQuestionID)
+    theme = queryThemeDayMode(datetime.now().hour)
+    guessTime = 60 ## seconds = 3x20 sec
     if request.method == "POST":
-        with open("database/trivia.json","r") as f:
-            triviaDB = json.load(f)
-    return redirect(url_for('namizu.landingPage'))
-    
+        print(f"{request.form = }")
+        if(currentQuestionID != 0):
+            triviaDB["submissions"][userID][currentQuestion] = request.form["answer"]
+            with open("database/trivia.json","w") as f:
+                json.dump(triviaDB,f,indent=4)
+            return redirect(url_for('namizu.triviaApp'))
+        else:
+            return redirect(url_for('namizu.triviaScoreboard'))
+    elif request.method == "GET":
+        if(userID not in triviaDB["submissions"]):
+            triviaDB["submissions"][userID] = {
+                "username": username,
+                "begin": datetime.now().strftime(DATETIME_LONG),
+                "end": "",
+                "cheated": False,
+                "question1":"",
+                "question2":"",
+                "question3":""
+            }
+            with open("database/trivia.json","w") as f:
+                json.dump(triviaDB,f,indent=4)
+    return render_template('namizu/triviaPage.html', countdown=guessTime, trivia=triviaDB, theme=theme, 
+                           currentQuestion=currentQuestion,currentQuestionID=currentQuestionID)
+
+@bp.route('/trivia/countdown', methods=['POST'])
+def startTriviaCountdown():    
+    return '', 204  # No Content
+
+@bp.route('/trivia/scoreboard', methods=['GET'])
+def triviaScoreboard():    
+    with open("database/trivia.json","r") as f:
+        triviaDB = json.load(f)
+    userID = session['userID']
+    username = usernameByID(userID)
+    usersDB = getUsersDatabase()
+    return render_template('namizu/triviaScoreboardPage.html', trivia=triviaDB)
 
 ## Country City Male Female names - guessing game
 
@@ -901,13 +961,6 @@ def spellingBeeApp():
                                 guessCategory == guessCategory_DIFF):
                                 spellingBee["submissions"][uid]["guesses"][guessCategory_DIFF]["alreadyExists"] = 1
                                 spellingBee["submissions"][uid_DIFF]["guesses"][guessCategory_DIFF]["alreadyExists"] = 1
-
-        # for uid, details in spellingBee["submissions"].items():
-        #     for guessCategory, guessDetails in details["guesses"].items():
-        #         synonymResponse = requests.get(searchHunWord(synonymURL,guessDetails["answer"])).text
-        #         print(f"{uid}: {guessCategory}: {synonymResponse = }")
-        #         if( "<hiba>Nincs" in synonymResponse ):
-        #             spellingBee["submissions"][uid]["guesses"][guessCategory]["correct"] = False
 
         for uid, details in spellingBee["submissions"].items():
             for category, catDet in details["guesses"].items():
@@ -1319,8 +1372,46 @@ def resetDay():
         json.dump(joke_data,f,indent=4)
 
     current_app.logger.info(f"DAILY_RESET: daily joke set")
+    
+    ## set Trivia
 
-    # check for sidequest    
+    # https://opentdb.com/api.php?amount=3&category=9&difficulty=easy
+    triviaStatus = querySideEventOccurance("trivia")
+    current_app.logger.info(f"{dailyJokeStatus = }")
+    trivia_data = {}
+    trivia_data_refined = {}
+    if(triviaStatus):
+        # Set the headers to accept plain text response
+        headers = {"Accept": "application/json"}
+        response = requests.get("https://opentdb.com/api.php?amount=3&category=9&difficulty=easy", headers=headers)
+        trivia_data = response.json()
+        trivia_data.pop("response_code")
+        trivia_data_refined = {f"question{sernum}": detail for sernum,detail in enumerate(trivia_data["results"],1)}
+        trivia_data = trivia_data_refined
+        
+        for question,details in trivia_data.items():
+            trivia_data[question]["options"] = []
+            trivia_data[question]["options"].append(trivia_data[question]["correct_answer"])
+            trivia_data[question]["options"].extend(trivia_data[question]["incorrect_answers"])
+            random.shuffle(trivia_data[question]["options"])
+        trivia_data["submissions"] = {}
+        for uid in usersData.keys():
+            trivia_data["submissions"][uid] = {
+                "username": usernameByID(uid),
+                "begin": "",
+                "end": "",
+                "cheated": False,
+                "question1":"",
+                "question2":"",
+                "question3":""
+            }
+        
+    else:
+        trivia_data = {"results":"NONE"}
+
+    with open("database/trivia.json","w") as f:
+        json.dump(trivia_data_refined,f,indent=4)
+    current_app.logger.info(f"DAILY_RESET: trivia set")
 
 ## ARCHIVED APPS
 
