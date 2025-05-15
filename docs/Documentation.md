@@ -10,6 +10,17 @@ Backup Policy: Daily backup to a private GitHub repository
 
 Version Log: Logged in version tracker
 
+## Table Of Content
+
+1. [Background](#example)
+2. [Content](#example)
+3. [Apps](#example)
+4. [Event Structures](#example2)
+5. [Type Formats](#third-example)
+6. [Roadmap](#third-example)
+7. [Planned Features](#third-example)
+8. [TODO](#third-example)
+
 ## Theme - Day/Night
 
 !fix! css variables
@@ -51,14 +62,19 @@ Randomized and creative polls, typically appearing every 5 days or on prime-numb
 
 Task Examples:
 
-1. Create memes or sketches: Draw sketch based on prompt (weekend game - relaxed env)
+1. **SKETCHER**: Create memes or sketches: Draw sketch based on prompt (weekend game - relaxed env)
 2. Emoji-only responses - which one describes the best
-3. Trivia / Honfoglaló: correct or closest wins ()
-4. Two truths and a lie
-5. Bet on outcome: bet before answering
-6. Hangman: everyone gets 1 help
+3. **TRIVIA**: Trivia / Honfoglaló: correct or closest wins ♻
+4. Two truths and a lie 
+5. **BETTING**: Bet on outcome: bet before answering -> evaluation is next day
+6. **HANGMAN**: Hangman: everyone gets 1 help *
 7. Haikus (could be difficult) - special event - based on celebrations - maybe based on full moons
-8. Word-based games (county city names animal thing) 
+8. **CATEGORIES**: Word-based games (county city names animal thing) ✅
+
+* Genre: Turn-based Cooperative Word Game,
+Style: Hangman,
+Mode: Asynchronous Multiplayer,
+Goal: Collaboratively guess the word before running out of lives (wrong attempts)
 
 ## Story
 
@@ -201,6 +217,22 @@ Stats, results, comments, version log
 
 **SideQuest Page**
 
+differs based on the sidequest type
+
+Country City Thing Animal Name:
+
+- timer
+- input field for each category
+- exit button
+- scoreboard
+- comments
+
+Trivia
+
+- 3 questions sequencially
+- Scoreboard
+- comments?
+
 **EventEditor Page**
 
 All poll configuration options (Advanced Mode)
@@ -287,6 +319,27 @@ Edit
     }
   ]
 }
+
+## SideQuest DB Format
+
+```json
+{
+    "Type": "trivia",
+    "Datetime": "2025-05-08",
+    "Body": {},
+    "Submissions": {},
+    "Comments": {}
+}
+```
+
+## Roadmap
+
+3.0.1: new poll types, new login system, sidequests
+3.0.2: history fix
+3.1.0: new sidequest: trivia
+3.1.1: gallery fix
+3.2.0: sql database instead of json
+3.3.0: new mobile app
 
 ## Planned Features for v3.1+
 
