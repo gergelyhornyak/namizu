@@ -5,7 +5,6 @@ database/
 uploads/
 flask_secret
 BACKUP01/
-BACKUP02/
 lab
 ngrok
 backup_cronjob.sh
