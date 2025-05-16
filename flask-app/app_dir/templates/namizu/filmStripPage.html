@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Film Strip Layout</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background-color: black;
+      font-family: Arial, sans-serif;
+    }
+
+    .page-wrapper {
+      position: relative;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .page-wrapper::before,
+    .page-wrapper::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 20px;
+      background-image: repeating-linear-gradient(
+        to bottom,
+        black,
+        black 15px,
+        white 15px,
+        white 30px
+      );
+      z-index: 0;
+    }
+
+    .page-wrapper::before {
+      left: 20px;
+    }
+
+    .page-wrapper::after {
+      right: 20px;
+    }
+
+    .container {
+      margin: 5%;
+      padding: 6px;
+      display: flex;
+      gap: 10px;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 1; /* Ensure content is above sprockets */
+    }
+
+    .film-strip {
+      display: flex;
+      justify-content: center;
+      padding: 2px 0;
+    }
+
+    .strip {
+      border-radius: 10px;
+      background-color: white;
+      position: relative;
+      max-width: 75%;
+      padding: 10px;
+    }
+    
+    .strip p {
+        margin: 1% 0% 1%;
+    }
+
+    .strip + .strip {
+      margin-top: 20px;
+    }
+
+    .question {
+        font-size: larger;
+    }
+    .author {
+        display: grid;
+        justify-items: end;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <div class="container">
+      <div class="film-strip">
+        <div class="strip">
+          <p>"Where would you stay during a summer trip?"</p>
+          <hr>
+          <p>A) In a tent</p>
+          <p>B) I could imagine a caravan</p>
+          <p>C) In a 4 star hotel</p>
+        </div>
+      </div>
+      <div class="film-strip">
+        <div class="strip">
+          <p class="question">"Ana de Armas: hot or not?"</p>
+          <p class="author"><i>by Geri</i></p>
+          <hr>
+          <p>Hot(1) - Nope(7)</p>
+          <p>Bálint: 2</p>
+          <p>Bella: 1</p>
+          <p>Comments:</p>
+          <p>Herczi: WHO?</p>
+          <p>Koppány: who?</p>
+        </div>
+      </div>
+      <div class="film-strip">
+        <div class="strip">
+          <p>Finally, a third example with even more text content to simulate a longer scene or dialogue. This is to ensure that the height of the film strip expands naturally based on the content length, just like in real film reels. It’s flexible and works great for storytelling layouts.</p>
+        </div>
+      </div>
+      <div class="film-strip">
+        <div class="strip">
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore </p>
+        </div>
+      </div>
+      <div class="film-strip">
+        <div class="strip">
+          <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex </p>
+        </div>
+      </div>
+      <div class="film-strip">
+        <div class="strip">
+          <p>This one has a bit more content. Let's make sure the height adjusts accordingly and keeps everything well-aligned and readable inside the white rectangle, with the classic film strip frame.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
