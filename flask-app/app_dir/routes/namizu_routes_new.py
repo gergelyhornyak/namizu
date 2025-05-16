@@ -217,8 +217,8 @@ def querySideEventOccurance(eventName) -> bool:
     dailyJokeNumSeq = [2,3,5,6,7,9,10,12,13,14,16,17,19,20,21,23,24,26,27,29,30,31]
     
     #          datetime(year, month, day, hour, minute)
-    today = datetime(2025, 6, 1, 18, 5)
-    #today = datetime.now()
+    #today = datetime(2025, 6, 2, 18, 5)
+    today = datetime.now()
     yesterday = datetime.now() - timedelta(days=1)
     if(eventName == "dailyJoke"):
         if((today.day in dailyJokeNumSeq and today.hour >= 5) or
@@ -320,7 +320,7 @@ def landingPage():
         noticeBank = json.load(f)
     for n in noticeBank.keys():
         noticeBank[n]["remainingDays"] = (datetime.strptime(noticeBank[n]["endDate"], DATETIME_LONG) - datetime.now()).days
-        if( noticeBank[n]["remainingDays"] == 0 ):
+        if( noticeBank[n]["remainingDays"] <= 0 ):
             noticeBank[n]["render"] = False
     banner = "naMizu"
     #\u00a9 COPYRIGHT SIGN
