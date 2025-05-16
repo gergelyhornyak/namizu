@@ -1039,7 +1039,9 @@ def spellingBeeScoreBoard():
 @bp.route("/sidequest", methods=['GET', 'POST'])
 def sideQuestApp():
     return 0
-    
+
+## NOTICES
+
 @bp.route("/funnybanner", methods=["GET","POST"])
 def funnyBannerApp():
     updateSessionCookie("funnyBannerApp")
