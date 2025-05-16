@@ -337,12 +337,22 @@ def landingPage():
     funnyMessage = funnyMessages[f"B{str(number)}"]
 
     #theme = queryThemeDayMode(datetime.now().hour)
+
+    lowOnPolls = False
+    lowOnPollsMessage = "Please add some new polls here"
+    events = getEventsBank()
+    unusedEventsCount = np.sum([event["Status"] == 0 for event in events.values()])
+    print(unusedEventsCount)
+    if( unusedEventsCount <= 7 ):
+        lowOnPolls = True
+
     renderPacket = {}
     return render_template('/namizu/landingPage.html', 
                            banner=banner, noticeBank=noticeBank, funnyMessage=funnyMessage,
                            userName=userName, sideQuestStatus=sideQuestStatus,
                            activeUsers=activeUsers, footerTextTop=footerText1,footerTextBot=footerText2,footerDarkModeSwitchIcon=footerDarkModeSwitchIcon,
-                           dailyJoke=dailyJoke, dailyJokeStatus=dailyJokeStatus, userEventStatus=userEventStatus,theme=theme)
+                           dailyJoke=dailyJoke, dailyJokeStatus=dailyJokeStatus, userEventStatus=userEventStatus,
+                           lowOnPolls=lowOnPolls, lowOnPollsMessage=lowOnPollsMessage, theme=theme)
 
 @bp.route('/darkmode')
 def darkMode():

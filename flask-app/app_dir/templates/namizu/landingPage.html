@@ -231,7 +231,14 @@
     </div>
 
     <div class="feature-card">
+        {% if lowOnPolls %}
+        <div id="countdown" style="background: #ffc5c5dc; color: var(--banner-text);; padding: 4px 10px; border-radius: 8px; font-weight: bolder; font-size: 1rem;margin-left: 2%;">
+            we are low on events
+        </div>
+        <h3>{{lowOnPollsMessage}}</h3>
+        {% else %}
         <h3>Wanna add an event?</h3>
+        {% endif %}
         <p style="margin: 1% 0%;">Create your own questions using<a href="{{ url_for('namizu.editorApp') }}">naMizu Editor</a></p>
     </div>
 
