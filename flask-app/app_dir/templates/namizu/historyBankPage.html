@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>naMizu Poll History</title>
+    <title>naMizu Archives</title>
     <style>
         body {
     font-family: Arial, sans-serif;
@@ -53,7 +53,8 @@ h3 {
 </head>
 <body>
     <div class="container">
-        <h1>naMizu Poll History</h1>
+        <h1>naMizu Archives</h1>
+        <p></p>
         {% for date, content in historyData.items() %}
             <div class="poll">
                 <h2>{{ date }}</h2>

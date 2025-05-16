@@ -84,7 +84,7 @@
   <div class="form-wrapper">
     <h2>Suggest a word for hangman</h2>
     <form action="{{ url_for('namizu.hangmanGather') }}" method="POST">
-      <label for="bannertext">Difficult word (max. 10 characters)</label>
+      <label for="bannertext">An English or Hungarian word (without diacritics) (max. 10 characters)</label>
       <input type="text" name="bannertext" id="bannertext" minlength="8" maxlength="10" rows="2" placeholder="e.g., triangle"  />
       <p>(These suggestions will be reviewed)</p>
       <button type="submit" class="submit-btn">Submit idea</button>
