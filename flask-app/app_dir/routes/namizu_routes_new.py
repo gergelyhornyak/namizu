@@ -12,6 +12,7 @@ bp = Blueprint('namizu', __name__, template_folder='templates')
 EVENTS_BANK = "database/events_bank.json"
 USERS_DB = "database/users_db.json"
 COMMENTS_CACHE = "database/comments.json"
+SIDEQUEST_BANK = "database/today_sidequest.json"
 SPELLING_BEE_BANK = "database/spelling_bee.json"
 DAILY_POLL_CACHE = "database/daily_poll.json"
 FUNNY_BANNERS_BANK = "database/funny_banners.json"
@@ -20,7 +21,13 @@ DATETIME_LONG = "%Y-%m-%d %H:%M:%S"
 DATE_SHORT = "%Y-%m-%d"
 TRADE_MARK = "naMizu\u2122"
 VERSION = "3.0.1"
-MOTTO_POOL = ["Built with care for the community.","By friends, for friends.","Community-powered fun, every single day.","Built together, played together."]
+MOTTO_POOL = ["Built with care for the community.",
+              "By friends, for friends.",
+              "Community-powered fun, every single day.",
+              "Built together, played together.",
+              "Made with heart, for everyone here.",
+              "Created to entertain, built to belong.",
+              "Built for good. Shared with all."]
 MOTTO = "Built with care for the community."
 
 # session: userID,lastURL
@@ -759,12 +766,20 @@ def editorApp():
     return render_template('namizu/editorPage.html',namesList=namesList, theme=theme, 
                            footerTextTop=footerText1,footerTextBot=footerText2)
 
-
-@bp.route("/calendar")
-def calendarApp():
-    updateSessionCookie("calendarApp")
-    theme = queryThemeDayMode(datetime.now().hour)
-    return render_template('namizu/calendarPage.html', theme=theme)
+@bp.route("/history")
+def historyApp():
+    updateSessionCookie("historyApp")
+    historyData = {}
+    with open("database/history.json","r") as f:
+        historyData = json.load(f)
+    # reverse history order
+    reversedHistoryData = dict(reversed(list(historyData.items())))
+    for hdate in reversedHistoryData.keys():
+        date_obj = datetime.strptime(hdate, "%Y-%m-%d")
+        reversedHistoryData[hdate]["textdate"] = date_obj.strftime("%A, %d. %B, %Y").upper()
+    usersData = getUsersDatabase()
+    smallUsersData = {uid:details["uname"] for uid,details in usersData.items()}
+    return render_template('namizu/historyPage.html', historyData=reversedHistoryData, smallUsersData=smallUsersData)
 
 ## Funny Apps
 
@@ -1260,21 +1275,6 @@ def historyList():
     smallUsersData = {uid:details["uname"] for uid,details in usersData.items()}
     return render_template('namizu/historyBankPage.html', historyData=reversedHistoryData, smallUsersData=smallUsersData)
 
-@bp.route("/historyroll")
-def historyRollApp():
-    updateSessionCookie("historyRollApp")
-    historyData = {}
-    with open("database/history.json","r") as f:
-        historyData = json.load(f)
-    # reverse history order
-    reversedHistoryData = dict(reversed(list(historyData.items())))
-    for hdate in reversedHistoryData.keys():
-        date_obj = datetime.strptime(hdate, "%Y-%m-%d")
-        reversedHistoryData[hdate]["textdate"] = date_obj.strftime("%A, %d. %B, %Y").upper()
-    usersData = getUsersDatabase()
-    smallUsersData = {uid:details["uname"] for uid,details in usersData.items()}
-    return render_template('namizu/historyPage.html', historyData=reversedHistoryData, smallUsersData=smallUsersData)
-
 @bp.route("/admin/bannerslist")
 def bannersList():
     updateSessionCookie("bannersList")
@@ -1498,6 +1498,13 @@ def resetDay():
         current_app.logger.info(f"DAILY_RESET: daily joke set")
 
 ## ARCHIVED APPS
+
+
+@bp.route("/calendar")
+def calendarApp():
+    updateSessionCookie("calendarApp")
+    theme = queryThemeDayMode(datetime.now().hour)
+    return render_template('namizu/calendarPage.html', theme=theme)
 
 @bp.route("/sketcher/canvas")
 def oldSketcherApp():
