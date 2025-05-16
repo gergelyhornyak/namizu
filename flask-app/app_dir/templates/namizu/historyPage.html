@@ -85,10 +85,20 @@
         font-size: x-large;
         text-align: center;
     }
+    .header-text {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
     .author {
-        display: grid;
-        justify-items: end;
-        font-size: large;
+      margin: 1% 0% 1%;
+      font-size: 18px;
+        
+    }
+    .textdate {
+      font-size: small;
+      margin: 1% 0% 1%;
+        
     }
     .vote {
       letter-spacing: 1px;
@@ -134,10 +144,23 @@
     <div class="container">
       
       {% for date, details in historyData.items() %}
+      {% if details['DailyPoll'].get('AnswersOld') %}
+      <div class="film-strip">
+          <div class="strip">
+              <p><i>This frame is being restored. <br>We appreciate your patience and understanding during this process.</i></p>
+              <p class="textdate">{{ details.textdate }}</p>
+          </div>
+      </div>
+      {% else %}
       <div class="film-strip">
         <div class="strip">
           <p class="question">"{{ details.DailyPoll.Question }}"</p>
-          <p class="author"><i>by {{ details.DailyPoll.Pollster }}</i></p>
+          <div class="header-text">
+            <p class="textdate">{{ details.textdate }}</p>
+            <p class="author">by {{ details.DailyPoll.Pollster }}</p>
+            
+          </div>
+          
           <hr>
           {% for uid, vote in details.DailyPoll.Answers.items() %}
           <p class="vote"><u>{{smallUsersData[uid]}}</u>: {{vote}}</p>
@@ -151,9 +174,23 @@
           <hr>
         </div>
       </div>
+      {% endif %}
       {% endfor %}
       
     </div>
   </div>
+  <script>
+    function ConvertDateToString(input){
+      const date = new Date(input);
+
+      const options = { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' };
+      const formatted = date.toLocaleDateString('en-GB', options);
+
+      // Format to match "Wednesday, 14. May, 2025"
+      const parts = formatted.split(' ');
+      const finalFormat = `${parts[0]}, ${parts[1]}. ${parts[2]}, ${parts[3]}`;
+      return finalFormat;
+    }
+  </script>
 </body>
 </html>

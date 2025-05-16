@@ -1268,9 +1268,12 @@ def historyRollApp():
         historyData = json.load(f)
     # reverse history order
     reversedHistoryData = dict(reversed(list(historyData.items())))
+    for hdate in reversedHistoryData.keys():
+        date_obj = datetime.strptime(hdate, "%Y-%m-%d")
+        reversedHistoryData[hdate]["textdate"] = date_obj.strftime("%A, %d. %B, %Y").upper()
     usersData = getUsersDatabase()
     smallUsersData = {uid:details["uname"] for uid,details in usersData.items()}
-    return render_template('namizu/filmStripPage.html', historyData=reversedHistoryData, smallUsersData=smallUsersData)
+    return render_template('namizu/historyPage.html', historyData=reversedHistoryData, smallUsersData=smallUsersData)
 
 @bp.route("/admin/bannerslist")
 def bannersList():
