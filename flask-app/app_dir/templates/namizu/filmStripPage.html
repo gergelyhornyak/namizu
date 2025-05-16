@@ -3,16 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Film Strip Layout</title>
+  <title>naMizu History</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Girassol&family=Oxanium:wght@200..800&family=Playwrite+AU+SA:wght@200&family=Sansation:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
     }
 
     body {
+      font-family: "Girassol", serif;
+      font-weight: 400;
+      font-style: normal;
       margin: 0;
       background-color: black;
-      font-family: Arial, sans-serif;
     }
 
     .page-wrapper {
@@ -47,8 +52,8 @@
     }
 
     .container {
-      margin: 5%;
-      padding: 6px;
+      margin: 1%;
+      padding: 3%;
       display: flex;
       gap: 10px;
       flex-direction: column;
@@ -61,6 +66,7 @@
       display: flex;
       justify-content: center;
       padding: 2px 0;
+      min-width: 100%;
     }
 
     .strip {
@@ -70,70 +76,83 @@
       max-width: 75%;
       padding: 10px;
     }
-    
-    .strip p {
-        margin: 1% 0% 1%;
-    }
 
     .strip + .strip {
       margin-top: 20px;
     }
 
     .question {
-        font-size: larger;
+        font-size: x-large;
+        text-align: center;
     }
     .author {
         display: grid;
         justify-items: end;
+        font-size: large;
+    }
+    .vote {
+      letter-spacing: 1px;
+      margin: 1% 0% 2%;
+    }
+    .comment {
+      letter-spacing: 1px;
+      margin: 1% 0% 2%;
+    }
+    .comment-header {
+      display: grid; 
+      justify-items: center; 
+      font-size: larger;
+      margin: auto;
+      width: 70%;
+      padding-bottom: 3%;
+      border-bottom: 4px double;
+      margin-bottom: 4%;
+    }
+    .floating-circle {
+        position: fixed;
+        top: 3%;
+        right: 17%;
+        width: 50px;
+        height: 40px;
+        background-color: #0000007d;
+        border: 4px ridge gold;
+        border-radius: 50%;
+        z-index: 10;
+        box-shadow: 0 0 10px rgba(0,0,0,0.5);
     }
 
   </style>
 </head>
 <body>
+  <a href="{{ url_for('namizu.landingPage') }}">
+    <div class="floating-circle">
+    </div>
+  </a>
+
   <div class="page-wrapper">
+
     <div class="container">
+      
+      {% for date, details in historyData.items() %}
       <div class="film-strip">
         <div class="strip">
-          <p>"Where would you stay during a summer trip?"</p>
+          <p class="question">"{{ details.DailyPoll.Question }}"</p>
+          <p class="author"><i>by {{ details.DailyPoll.Pollster }}</i></p>
           <hr>
-          <p>A) In a tent</p>
-          <p>B) I could imagine a caravan</p>
-          <p>C) In a 4 star hotel</p>
-        </div>
-      </div>
-      <div class="film-strip">
-        <div class="strip">
-          <p class="question">"Ana de Armas: hot or not?"</p>
-          <p class="author"><i>by Geri</i></p>
+          {% for uid, vote in details.DailyPoll.Answers.items() %}
+          <p class="vote"><u>{{smallUsersData[uid]}}</u>: {{vote}}</p>
           <hr>
-          <p>Hot(1) - Nope(7)</p>
-          <p>Bálint: 2</p>
-          <p>Bella: 1</p>
-          <p>Comments:</p>
-          <p>Herczi: WHO?</p>
-          <p>Koppány: who?</p>
+          {% endfor %}
+          
+          <p class="comment-header">comments</p>
+          {% for timestamp, comment in details.DailyPoll.Comments.items() %}
+          <p class="comment"><u>{{smallUsersData[comment.UID]}}</u>: {{comment.message}}</p>
+          {% endfor %}
+          <hr>
         </div>
       </div>
-      <div class="film-strip">
-        <div class="strip">
-          <p>Finally, a third example with even more text content to simulate a longer scene or dialogue. This is to ensure that the height of the film strip expands naturally based on the content length, just like in real film reels. It’s flexible and works great for storytelling layouts.</p>
-        </div>
-      </div>
-      <div class="film-strip">
-        <div class="strip">
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore </p>
-        </div>
-      </div>
-      <div class="film-strip">
-        <div class="strip">
-          <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex </p>
-        </div>
-      </div>
-      <div class="film-strip">
-        <div class="strip">
-          <p>This one has a bit more content. Let's make sure the height adjusts accordingly and keeps everything well-aligned and readable inside the white rectangle, with the classic film strip frame.</p>
-        </div>
-      </div>
+      {% endfor %}
+      
     </div>
   </div>
 </body>

@@ -176,6 +176,13 @@ def getDailyPoll() -> dict:
     except json.decoder.JSONDecodeError:
         return {}
     
+def getTodaySideQuest() -> dict:
+    try:
+        with open(SPELLING_BEE_BANK, 'r') as f:
+            return json.load(f)
+    except json.decoder.JSONDecodeError:
+        return {}
+    
 def getEventsBank() -> dict:
     try:
         with open(EVENTS_BANK, 'r') as f:
@@ -191,29 +198,36 @@ def queryMotto(day:int) -> str:
 
 def querySideEventOccurance(eventName) -> bool:
     """
-    dailyJoke, sideQuest, story, trivia
+    dailyJoke, story, sideQuest: trivia,categories,hangman,betting
     """
+    #* sidequest
     sideQuestNumSeq = [1,4,8,11,15,18,22,25,28] # 3-4 days
-    triviaNumSeq    = [1,4,8,11,15,18,22,25,28] # 3-4 days
-    storyNumSeq =     [3,9,15,21,28]
+    trivia          = [1,       15            ] # 3-4 days
+    categories      = [  4,        18,      28] # 3-4 days
+    hangman         = [    8,         22      ] # 3-4 days
+    betting         = [      11,         25   ] # 3-4 days
+    storyNumSeq     = [3,9,15,21,28]
     dailyJokeNumSeq = [2,3,5,6,7,9,10,12,13,14,16,17,19,20,21,23,24,26,27,29,30,31]
     
+    #          datetime(year, month, day, hour, minute)
+    today = datetime(2025, 6, 1, 18, 5)
+    #today = datetime.now()
     yesterday = datetime.now() - timedelta(days=1)
     if(eventName == "dailyJoke"):
-        if((datetime.now().day in dailyJokeNumSeq and datetime.now().hour >= 5) or
-           ( yesterday.day in dailyJokeNumSeq and datetime.now().hour < 5)):
+        if((today.day in dailyJokeNumSeq and today.hour >= 5) or
+           ( yesterday.day in dailyJokeNumSeq and today.hour < 5)):
             return True
     if(eventName == "sideQuest"):
-        if((datetime.now().day in sideQuestNumSeq and datetime.now().hour >= 5) or
-           ( yesterday.day in sideQuestNumSeq and datetime.now().hour < 5)):
+        if((today.day in sideQuestNumSeq and today.hour >= 5) or
+           ( yesterday.day in sideQuestNumSeq and today.hour < 5)):
             return True
     if(eventName == "trivia"):
-        if((datetime.now().day in triviaNumSeq and datetime.now().hour >= 5) or
-           ( yesterday.day in triviaNumSeq and datetime.now().hour < 5)):
+        if((today.day in trivia and today.hour >= 5) or
+           ( yesterday.day in trivia and today.hour < 5)):
             return True
     if(eventName == "story"):
-        if((datetime.now().day in storyNumSeq and datetime.now().hour >= 5) or
-           ( yesterday.day in storyNumSeq and datetime.now().hour < 5)):
+        if((today.day in storyNumSeq and today.hour >= 5) or
+           ( yesterday.day in storyNumSeq and today.hour < 5)):
             return True
     return False
 
@@ -1032,6 +1046,25 @@ def funnyBannerApp():
             json.dump(bannerTexts,f,indent=4)
         return redirect(url_for('namizu.landingPage'))
 
+@bp.route("/hangmanwords", methods=["GET","POST"])
+def hangmanGather():
+    # char len: 8-10
+    updateSessionCookie("hangmanGather")
+    if request.method == "GET":
+        theme = queryThemeDayMode(datetime.now().hour)
+        return render_template('namizu/hangmanGatherPage.html', theme=theme)
+    elif request.method == "POST":
+        bannerText = request.form.get("bannertext")
+        anyNumberIn = any(char.isdigit() for char in bannerText)
+        if anyNumberIn:
+            return redirect(url_for('namizu.hangmanGather'))
+        with open("database/hangman_words.json","r") as f:
+            bannerTexts = json.load(f)
+        bannerTexts[f"W{len(bannerTexts)+1}"] = bannerText
+        with open("database/hangman_words.json","w") as f:
+            json.dump(bannerTexts,f,indent=4)
+        return redirect(url_for('namizu.landingPage'))
+
 @bp.route("/drawing/canvas")    
 def drawingApp():
     updateSessionCookie("drawingApp")
@@ -1227,6 +1260,18 @@ def historyList():
     smallUsersData = {uid:details["uname"] for uid,details in usersData.items()}
     return render_template('namizu/historyBankPage.html', historyData=reversedHistoryData, smallUsersData=smallUsersData)
 
+@bp.route("/historyroll")
+def historyRollApp():
+    updateSessionCookie("historyRollApp")
+    historyData = {}
+    with open("database/history.json","r") as f:
+        historyData = json.load(f)
+    # reverse history order
+    reversedHistoryData = dict(reversed(list(historyData.items())))
+    usersData = getUsersDatabase()
+    smallUsersData = {uid:details["uname"] for uid,details in usersData.items()}
+    return render_template('namizu/filmStripPage.html', historyData=reversedHistoryData, smallUsersData=smallUsersData)
+
 @bp.route("/admin/bannerslist")
 def bannersList():
     updateSessionCookie("bannersList")
@@ -1246,9 +1291,11 @@ def resetDay():
 
     eventsBank = getEventsBank()
     dailyPollData = getDailyPoll()
+    todaySideQuest = getTodaySideQuest()
     commentsData = getTodayComments()
     usersData = getUsersDatabase()
     comments_packet = {}
+    historyData = {}
     yesterday = datetime.now() - timedelta(days=1)
     yesterdayDate = yesterday.strftime(DATE_SHORT)
     if(dailyPollData and "dailyPoll" in commentsData):
@@ -1268,16 +1315,32 @@ def resetDay():
                 "Comments": comments_packet
             }
         }
-        
-        with open("database/history.json","r") as f:
-            historyAll = json.load(f)
-        if(yesterdayDate not in historyAll):
-            historyAll[yesterdayDate] = historyData
-        else:
-            print("History log already exists for this date.")
-        
-        with open("database/history.json","w") as f:
-            json.dump(historyAll,f,indent=4)
+    if(todaySideQuest and "miniGame" in commentsData):
+        for timestamp, details in commentsData["miniGame"].items():
+            comments_packet[timestamp] = {} 
+            comments_packet[timestamp]["UID"] = details["userID"]
+            comments_packet[timestamp]["message"] = details["text"]
+
+        historyData = {
+            "SideQuest": {
+                "Type": todaySideQuest["Type"],
+                "Body": {},
+                "Submissions": {},
+                "Pollster": "",
+                "Theme": "",
+                "Comments": comments_packet
+            }
+        }
+    
+    with open("database/history.json","r") as f:
+        historyAll = json.load(f)
+    if(yesterdayDate not in historyAll):
+        historyAll[yesterdayDate] = historyData
+    else:
+        print("History log already exists for this date.")
+    
+    with open("database/history.json","w") as f:
+        json.dump(historyAll,f,indent=4)
     current_app.logger.info(f"DAILY_RESET: History saved")
 
     ## CHANGE streak according to events
@@ -1337,47 +1400,49 @@ def resetDay():
 
     ## SideQuest
 
-    # Get all lowercase letters
-    alphabet = ["A","Á","B","C","D","E","É","F","G","H","I","J","K","L","M","N","O","P","R","S","T","U","Ü","V","Z"]
-    # Select a random letter
-    random.seed(datetime.now().day*datetime.now().month) # theoretically should play every letter within 60 days
-    random_letter = random.choice(alphabet)
-    spellingBeeBody = {
-        "Datetime": datetime.now().strftime(DATE_SHORT),
-        "letter": random_letter,
-        "submissions": {}
+    sidequestBody = {
+        "Type": "",
+        "Datetime": "",
+        "Body": {},
+        "Submissions": {},
+        "Pollster": "",
+        "Theme": "",
+        "Comments": {}
     }
 
-    with open("database/spelling_bee.json","w") as f:
-        json.dump(spellingBeeBody,f,indent=4)
-
-    current_app.logger.info(f"DAILY_RESET: sidequest set")
-
-    ## secure GH backup
-
-    ## set daily joke 
-
+    triviaStatus = querySideEventOccurance("trivia")
+    categoriesStatus = querySideEventOccurance("categories")
+    hangmanStatus = querySideEventOccurance("hangman")
+    bettingStatus = querySideEventOccurance("betting")
     dailyJokeStatus = querySideEventOccurance("dailyJoke")
-    current_app.logger.info(f"{dailyJokeStatus = }")
-    joke_data = {}
-    if(dailyJokeStatus):
-        # Set the headers to accept plain text response
-        headers = {"Accept": "application/json"}
-        # Perform the GET request to the dad joke API
-        response = requests.get("https://icanhazdadjoke.com/", headers=headers)
-        joke_data = response.json()
-    else:
-        joke_data = {"joke":"NONE"}
-    with open("database/daily_joke.json","w") as f:
-        json.dump(joke_data,f,indent=4)
 
-    current_app.logger.info(f"DAILY_RESET: daily joke set")
+    if(bettingStatus):
+        pass
+
+    if(hangmanStatus):
+        pass
+
+    spellingBeeBody = {}
+    if(categoriesStatus):
+
+        # Get all lowercase letters
+        alphabet = ["A","Á","B","C","D","E","É","F","G","H","I","J","K","L","M","N","O","Ó","P","R","S","T","U","Ú","Ü","V","Z"]
+        # Select a random letter
+        random.seed(datetime.now().day*datetime.now().month) # theoretically should play every letter within 60 days
+        random_letter = random.choice(alphabet)
+        spellingBeeBody = {
+            "Datetime": datetime.now().strftime(DATE_SHORT),
+            "letter": random_letter,
+            "submissions": {}
+        }
+        with open("database/spelling_bee.json","w") as f:
+            json.dump(spellingBeeBody,f,indent=4)
+        current_app.logger.info(f"DAILY_RESET: categories set")
+
     
     ## set Trivia
 
     # https://opentdb.com/api.php?amount=3&category=9&difficulty=easy
-    triviaStatus = querySideEventOccurance("trivia")
-    current_app.logger.info(f"{dailyJokeStatus = }")
     trivia_data = {}
     trivia_data_refined = {}
     if(triviaStatus):
@@ -1412,6 +1477,22 @@ def resetDay():
     with open("database/trivia.json","w") as f:
         json.dump(trivia_data_refined,f,indent=4)
     current_app.logger.info(f"DAILY_RESET: trivia set")
+
+    ## set daily joke 
+    joke_data = {}
+    if(dailyJokeStatus):
+        joke_data = {}
+        if(dailyJokeStatus):
+            # Set the headers to accept plain text response
+            headers = {"Accept": "application/json"}
+            # Perform the GET request to the dad joke API
+            response = requests.get("https://icanhazdadjoke.com/", headers=headers)
+            joke_data = response.json()
+        else:
+            joke_data = {"joke":"NONE"}
+        with open("database/daily_joke.json","w") as f:
+            json.dump(joke_data,f,indent=4)
+        current_app.logger.info(f"DAILY_RESET: daily joke set")
 
 ## ARCHIVED APPS
 
