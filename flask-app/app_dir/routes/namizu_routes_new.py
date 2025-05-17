@@ -185,7 +185,7 @@ def getDailyPoll() -> dict:
     
 def getTodaySideQuest() -> dict:
     try:
-        with open(SPELLING_BEE_BANK, 'r') as f:
+        with open("database/today_sidequest.json", 'r') as f:
             return json.load(f)
     except json.decoder.JSONDecodeError:
         return {}
@@ -1338,7 +1338,7 @@ def resetDay():
 
         historyData = {
             "SideQuest": {
-                "Type": todaySideQuest["Type"],
+                "Type": "",#todaySideQuest["Type"],
                 "Body": {},
                 "Submissions": {},
                 "Pollster": "",
