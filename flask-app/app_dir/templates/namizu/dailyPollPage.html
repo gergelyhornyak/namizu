@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Pangolin&family=Playwrite+AU+SA:wght@200&family=Playwrite+RO:wght@100..400&family=Sansation:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
 
-  <title>naMizu daily poll</title>
+  <title>naMizu DailyPoll</title>
   <style>
     :root {
         --bg-colour1: {{ theme.mainBG1 }};
@@ -90,7 +90,12 @@
       font-size: 1.6rem;
       border-radius: 50%;
       padding: 10px;
-      background: radial-gradient(circle, var(--icon-colour1), var(--icon-colour2))
+      background: radial-gradient(circle, var(--icon-colour1), var(--icon-colour2));
+      text-decoration: none;
+    }
+
+    .nav-icon:visited {
+      text-decoration: none;
     }
 
     /* Poll question styling */
@@ -650,15 +655,19 @@
   <div class="container">
 
     <header>
-      <a href="{{ url_for('namizu.landingPage') }}">
-        <div class="nav-icon">&#127968;</div>
+      <a href="{{ url_for('namizu.landingPage') }}" style="text-decoration: none;">
+        <div class="nav-icon">
+          🏠
+        </div>
       </a>
       <h1>naMizu DailyPoll</h1>
-      <!--
-      <a href="{{ url_for('namizu.calendarApp') }}">
-        <div class="nav-icon">&#128197;</div>
+      <a href="{{ url_for('namizu.historyApp') }}" style="text-decoration: none;">
+        <div class="nav-icon">
+          🎞️
+          <!--<img src="{{ url_for('static', filename='img/film-frames_emoji.png') }}" alt="filmRoll" class="profile-pic" style="height: 34px;">-->
+        </div> <!--&#128197;-->
       </a>
-      -->
+      
     </header>
 
     <section class="question-section">
