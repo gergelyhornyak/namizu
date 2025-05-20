@@ -351,11 +351,7 @@ Edit
 
 ## TODO
 
-!!!TEST CRONJOB!!!
-
-gallery fix X
-
-button to switch between day and night theme X
+gallery fix
 
 research new line and submit difference
 
@@ -363,20 +359,6 @@ new line in textarea - <pre> and "white-space: pre-wrap;"
 
 profile pics could be uploaded, to use funny images
 
-sideQuest - event maybe constrained to days
-more events: for each
-or 3 days
-
-IMPORTANT: implement notice system: notice bank, expiry, message, colour [...]
-
-ranking: minimum 3 options ✅
-ranking: maximum 7 options ✅
-
 ranking: sum up points: 1st 5 pts 2nd 4 pts - show on bottom 
 
-editor: range: scale size note on max 10 - integer ✅
-
-country city male female ✅
-
-yesorno ✅
 
