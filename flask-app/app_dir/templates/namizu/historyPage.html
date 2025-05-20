@@ -140,16 +140,31 @@
   </a>
 
   <div class="page-wrapper">
-
     <div class="container">
-      
       {% for date, details in historyData.items() %}
+
       {% if details['DailyPoll'].get('AnswersOld') %}
       <div class="film-strip">
-          <div class="strip">
-              <p><i>This frame is being restored. <br>We appreciate your patience and understanding during this process.</i></p>
-              <p class="textdate">{{ details.textdate }}</p>
+        <div class="strip">
+          <p class="question">"{{ details.DailyPoll.Question }}"</p>
+          <div class="header-text">
+                  <p class="textdate">{{ details.textdate }}</p>                
           </div>
+          
+          <hr>
+          
+          {% for name, votecount in details.DailyPoll.AnswersOld.items() %}
+          <p class="vote"><u>{{name}}</u>: {{votecount}}</p>
+          <hr>
+          {% endfor %}
+
+          <p class="comment-header">comments</p>
+          {% for comment in details.DailyPoll.Comments %}
+          <p class="comment"><u>{{comment.name}}</u>: {{comment.message}}</p>
+          {% endfor %}
+          <hr>
+
+        </div>
       </div>
       {% else %}
       <div class="film-strip">
@@ -158,10 +173,10 @@
           <div class="header-text">
             <p class="textdate">{{ details.textdate }}</p>
             <p class="author">by {{ details.DailyPoll.Pollster }}</p>
-            
           </div>
           
           <hr>
+
           {% for uid, vote in details.DailyPoll.Answers.items() %}
           <p class="vote"><u>{{smallUsersData[uid]}}</u>: {{vote}}</p>
           <hr>
