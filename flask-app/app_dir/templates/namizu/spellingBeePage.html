@@ -125,6 +125,7 @@
 
       document.getElementById("startBtn").disabled = true;
       document.getElementById("letterBox").style.display = 'block';
+      document.getElementById("earlySubmit").style.display = 'block';
       document.getElementById("letterBox2").style.display = 'none';
       const timer = document.getElementById('timer');
 
@@ -165,6 +166,11 @@
     <label>Állat: <input type="text" name="animal" id="animal" /></label><br />
     <label>Férfi név: <input type="text" name="male" id="male" /></label><br />
     <label>Női név: <input type="text" name="female" id="female" /></label><br />
+
+    <div id="earlySubmit" class="leave-button" style="display: none">
+      <button>Korábbi leadás</button>
+    </div>
+
   </form>
 
   <div class="leave-button">
