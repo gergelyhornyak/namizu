@@ -140,6 +140,8 @@
       }, 1000);
     }
 
+    
+
     function autoSubmit() {
       document.getElementById('userForm').submit();
     }
@@ -167,11 +169,11 @@
     <label>Férfi név: <input type="text" name="male" id="male" /></label><br />
     <label>Női név: <input type="text" name="female" id="female" /></label><br />
 
-    <div id="earlySubmit" class="leave-button" style="display: none">
-      <button>Korábbi leadás</button>
-    </div>
-
   </form>
+
+  <div id="earlySubmit" class="leave-button" style="display: none">
+      <button onclick="autoSubmit()">Korábbi leadás</button>
+  </div>
 
   <div class="leave-button">
     <a href="{{ url_for('namizu.landingPage') }}">PASSZOLOM INKÁBB</a>
