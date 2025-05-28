@@ -1426,7 +1426,7 @@ def resetDay():
     }
 
     triviaStatus = querySideEventOccurance("trivia")
-    categoriesStatus = querySideEventOccurance("categories")
+    categoriesStatus = querySideEventOccurance("sideQuest")
     hangmanStatus = querySideEventOccurance("hangman")
     bettingStatus = querySideEventOccurance("betting")
     dailyJokeStatus = querySideEventOccurance("dailyJoke")
@@ -1453,7 +1453,6 @@ def resetDay():
         with open("database/spelling_bee.json","w") as f:
             json.dump(spellingBeeBody,f,indent=4)
         current_app.logger.info(f"DAILY_RESET: categories set")
-
     
     ## set Trivia
 
@@ -1510,7 +1509,6 @@ def resetDay():
         current_app.logger.info(f"DAILY_RESET: daily joke set")
 
 ## ARCHIVED APPS
-
 
 @bp.route("/calendar")
 def calendarApp():
