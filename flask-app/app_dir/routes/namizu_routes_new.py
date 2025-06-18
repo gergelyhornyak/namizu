@@ -209,7 +209,7 @@ def querySideEventOccurance(eventName) -> bool:
     """
     #* sidequest
     #  trivia and categories are more frequent
-    #    betting is only for names and 
+    #    betting is only for names, yes-or-no, teams, open-ended
     sideQuestNumSeq = [1,4,8,11,15,18,22,25,28] # 3-4 days
     trivia          = [1,       15            ] # 3-4 days
     categories      = [  4,        18,      28] # 3-4 days
