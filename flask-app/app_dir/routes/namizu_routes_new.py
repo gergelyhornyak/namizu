@@ -208,6 +208,8 @@ def querySideEventOccurance(eventName) -> bool:
     dailyJoke, story, sideQuest: trivia,categories,hangman,betting
     """
     #* sidequest
+    #  trivia and categories are more frequent
+    #    betting is only for names and 
     sideQuestNumSeq = [1,4,8,11,15,18,22,25,28] # 3-4 days
     trivia          = [1,       15            ] # 3-4 days
     categories      = [  4,        18,      28] # 3-4 days
@@ -1545,3 +1547,5 @@ def sketcher_save():
          #   print(f"Image saved")
         return redirect(url_for('namizu.index'))
     return "No image data received!", 400
+
+# sudo docker-compose build && sudo docker-compose down && sudo docker-compose up -d
