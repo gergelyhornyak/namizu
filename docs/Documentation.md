@@ -2,9 +2,7 @@
 
 ## Overview
 
-naMizu is a dynamic event-based polling application, where users interact through various events like DailyPolls, SideQuests, and Story-based adventures. It supports rich customization, anonymity, and 
-
-Tech Stack: Flask · Jinja · Python3 · CSS · Bootstrap
+naMizu is a dynamic event-based polling application, where users interact through various events like daily polls, sidequests, and story-based adventures. It supports rich customization.
 
 Backup Policy: Daily backup to a private GitHub repository
 
@@ -21,11 +19,20 @@ Version Log: Logged in version tracker
 7. [Planned Features](#third-example)
 8. [TODO](#third-example)
 
-## Theme - Day/Night
+## Installation
 
-!fix! css variables
+### System Requirements
 
-## Event Structure
+- Server - virtual machine - only Linux (Debian, Ubuntu, Redhat)
+- Docker, Kubernetes, Apache2 proxy
+- SQL database
+- API services
+
+### Configuration
+
+## Architecture Overview
+
+### Event Structure
 
 Each event contains the following components:
 
@@ -76,7 +83,7 @@ Style: Hangman,
 Mode: Asynchronous Multiplayer,
 Goal: Collaboratively guess the word before running out of lives (wrong attempts)
 
-## Story
+### Story
 
 A multi-event narrative experience.
 
@@ -84,7 +91,7 @@ Each new poll inherits previous answers.
 
 Designed like a branching DnD-style adventure.
 
-## Question Type Format
+### Question Type Format
 
 `<category>,<variable>,<prompt>,<choice_type>,<visibility>,<answer_type>`
 
@@ -98,7 +105,7 @@ Designed like a branching DnD-style adventure.
 - ranking ❌ with prompt, yesorno, teams
 - public ❌ range
 
-## Question JSON Structure
+### Question JSON Structure
 
 ```json
 {
@@ -137,48 +144,15 @@ Example: DMNX = Daily, Multi-choice, Names, Anonym
 
 ---
 
+### Tech stack
 
-## SVG & Graphing
+Flask · Jinja · Python3 · CSS · Bootstrap
 
-Custom themes and range plots can use SVG Bezier curves:
+### Dataflow 
 
-SVG Commands:
+### 3rdP Dependencies
 
-M - Move \
-L - Line \
-C - Curve \
-Z - Close path
-
-
-Future update: use SVG curve for Range plotting
-
-```css
-
-path {
-    fill: #4f46e5; /* Indigo-600 */
-    stroke: #1e40af; /* Indigo-900 */
-    stroke-width: 2;
-}
-svg {
-    width: 400px;
-    height: 300px;
-    background-color: white;
-}
-
-  <svg viewBox="0 0 400 200">
-    <!-- Cubic Bezier Curve filled and closed to make a shape -->
-    <path d="
-      M 50 150
-      C 150 110, 50 50, 350 150
-      L 350 160
-      L 50 160
-      Z
-    " />
-  </svg>
-
-```
-
-## App Routes & Components
+## Functionalities: App Routes & Components
 
 ### Landing Page
 
@@ -256,6 +230,18 @@ Could be in raw json format
 User visits
 Voter tracking
 Event bank management
+
+## API docs
+
+### Authentication
+
+### REST endpoints
+
+### Webhooks
+
+### Troubleshooting
+
+## Developer Guide
 
 ## Database Overview
 
