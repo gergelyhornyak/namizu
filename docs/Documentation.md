@@ -237,6 +237,12 @@ Event bank management
 
 ### REST endpoints
 
+- dailyPolls,
+- sketches,
+- createPoll
+- games: wordle, NCCAT, betOnPoll
+- story
+
 ### Webhooks
 
 ### Troubleshooting
