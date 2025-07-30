@@ -6,7 +6,7 @@
 
 ## 📖 Introduction
 
-naMizu is a free, open-source event-based web application, where community fun happens every day!
+naMizu is a free, event-based web application, where community fun happens every day!
 
 Participate in creative polls or create your own, and play with your friends! If you got inspired, draw sketches, or dive into story-based adventures or weekly challenges — all in a lively, friendly platform designed for you and your friends.
 
