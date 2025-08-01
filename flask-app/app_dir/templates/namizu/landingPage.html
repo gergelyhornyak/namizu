@@ -244,23 +244,22 @@
 
     {% if noticeBank %}
 
-    {% for notice in noticeBank.values() %} 
+        {% for notice in noticeBank.values() %} 
 
-    {% if notice.render %}
+            {% if notice.render %}
 
+            <div class="feature-card" style="border-left: 14px solid rgba(29, 211, 5, 0.5)">
+                <div id="countdown" style="background: #fffb0086; color: var(--banner-text);; padding: 4px 10px; border-radius: 8px; font-weight: bolder; font-size: 1rem;margin-left: 52%;">
+                    ends in {{ notice.remainingDays }} days
+                </div>
+                <h3>{{ notice.title }}</h3>
+                <p style="font-size: large;margin: 0.5%;">{{ notice.subtitle }}</p>
+                <a href="{{ url_for(notice.redirect) }}">{{ notice.caption }}</a>
+            </div>
 
-    <div class="feature-card" style="border-left: 14px solid rgba(29, 211, 5, 0.5)">
-        <div id="countdown" style="background: #fffb0086; color: var(--banner-text);; padding: 4px 10px; border-radius: 8px; font-weight: bolder; font-size: 1rem;margin-left: 52%;">
-            ends in {{ notice.remainingDays }} days
-        </div>
-        <h3>{{ notice.title }}</h3>
-        <p style="font-size: large;margin: 0.5%;">{{ notice.subtitle }}</p>
-        <a href="{{ url_for(notice.redirect) }}">{{ notice.caption }}</a>
-    </div>
+            {% endif %}
 
-    {% endif %}
-
-    {% endfor %}
+        {% endfor %}
 
     {% endif %}
 <!--
@@ -273,13 +272,13 @@
     </div>
 -->
 
-    <div class="feature-card" style="border-left: 16px solid #00d8ff78">
+    <!-- <div class="feature-card" style="border-left: 16px solid #00d8ff78">
         <div id="countdown" style="background: #96fcff7d; color: var(--banner-text);; padding: 4px 10px; border-radius: 8px; font-weight: bolder; font-size: 1rem;margin-left: 40%;">
             ends by 5th of June
         </div>
         <h3>Temporary Calendar</h3>  
         <a href="{{ url_for('namizu.historyList') }}">naMizu Archives</a>
-    </div>
+    </div> -->
 
     <div class="feature-card">
         <h3>Ad-Free</h3>
