@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EUR to HUF Exchange Rate Chart</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background: #f3f3f3;
+      text-align: center;
+    }
+    canvas {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 700px;
+      margin: 20px auto;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>EUR to HUF Exchange Rate (Past 30 Days)</h1>
+  <canvas id="rateChart" width="700" height="400"></canvas>
+
+  <script>
+    async function drawChart() {
+      const endDate = new Date().toISOString().split('T')[0];
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - 30);
+      const startStr = startDate.toISOString().split('T')[0];
+
+      const url = `https://api.frankfurter.app/${startStr}..${endDate}?from=EUR&to=HUF`;
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        const labels = Object.keys(data.rates);
+        const rates = labels.map(date => data.rates[date].HUF);
+
+        const ctx = document.getElementById('rateChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels,
+            datasets: [{
+              label: 'EUR to HUF',
+              data: rates,
+              borderColor: 'rgb(75, 192, 192)',
+              fill: false,
+              tension: 0.1
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              x: {
+                ticks: { autoSkip: true, maxTicksLimit: 10 }
+              },
+              y: {
+                beginAtZero: false
+              }
+            }
+          }
+        });
+      } catch (error) {
+        console.error('Chart fetch failed:', error);
+      }
+    }
+
+    drawChart();
+  </script>
+
+</body>
+</html>

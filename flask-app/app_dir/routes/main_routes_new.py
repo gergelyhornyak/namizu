@@ -15,3 +15,7 @@ def page_not_found(e):
 @bp.route('/index')
 def home():
     return render_template('homeNew.html')
+
+@bp.route('/exchange')
+def exchange():
+    return render_template('exchange.html')

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HUF Exchange Rate</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      font-size: larger;
+      padding: 2rem;
+      background: #f3f3f3;
+    }
+    #rates {
+      background: #fff;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 600px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+    }
+    .rate {
+      text-align: center;
+      font-size: 1.6em;
+      margin: 0.5em 0;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div id="rates">
+    <h1>HUF Exchange Rates</h1>
+    <div class="rate" id="eur-rate">Loading EUR...</div>
+    <div class="rate" id="gbp-rate">Loading GBP...</div>
+    <div class="rate" id="usd-rate">Loading USD...</div>
+    
+  </div>
+
+  <script>
+    async function fetchRates() {
+      try {
+        // Fetch EUR to HUF
+        const eurRes = await fetch('https://api.frankfurter.app/latest?from=EUR&to=HUF');
+        const eurData = await eurRes.json();
+        const eurToHuf = eurData.rates.HUF.toFixed(2);
+
+        // Fetch GBP to HUF
+        const gbpRes = await fetch('https://api.frankfurter.app/latest?from=GBP&to=HUF');
+        const gbpData = await gbpRes.json();
+        const gbpToHuf = gbpData.rates.HUF.toFixed(2);
+
+        // Fetch USD to HUF
+        const usdRes = await fetch('https://api.frankfurter.app/latest?from=USD&to=HUF');
+        const usdData = await usdRes.json();
+        const usdToHuf = usdData.rates.HUF.toFixed(2);
+
+        document.getElementById('eur-rate').textContent = `1 EUR = ${eurToHuf} HUF`;
+        document.getElementById('gbp-rate').textContent = `1 GBP = ${gbpToHuf} HUF`;
+        document.getElementById('usd-rate').textContent = `1 USD = ${usdToHuf} HUF`;
+      } catch (error) {
+        document.getElementById('usd-rate').textContent = 'Error loading USD rate.';
+        document.getElementById('gbp-rate').textContent = 'Error loading GBP rate.';
+        document.getElementById('eur-rate').textContent = 'Error loading EUR rate.';
+        console.error('Fetch error:', error);
+      }
+    }
+
+    fetchRates();
+  </script>
+
+</body>
+</html>
